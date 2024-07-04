@@ -126,7 +126,6 @@ class SearchReplace
 		$fileJson = (array) json_decode($fileContent, true);
 		$fileJson['name'] = $this->replacements['project_name'];
 		$fileJson['autoload']['psr-4'] = [$this->replacements['php_namespace'] . '\\' => 'app/'];
-		$fileJson['extra']['syntatis']['project']['initialized'] = true;
 		$encodedJson = json_encode($fileJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
 
 		$this->filesystem->dumpFile($filePath, $encodedJson);

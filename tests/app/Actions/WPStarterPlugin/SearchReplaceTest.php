@@ -132,8 +132,7 @@ class SearchReplaceTest extends TestCase
 			    "extra": {
 			        "syntatis": {
 			            "project": {
-			                "name": "wp-starter-plugin",
-			                "initialized": true
+			                "name": "wp-starter-plugin"
 			            }
 			        }
 			    }
