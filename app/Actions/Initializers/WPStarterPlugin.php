@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Syntatis\ComposerProjectPlugin\Actions\Initializers;
 
-use Composer\Factory;
 use Composer\IO\ConsoleIO;
 use SplFileInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -12,15 +11,18 @@ use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\ProjectF
 use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\SearchReplace;
 use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\UserInputs;
 use Syntatis\ComposerProjectPlugin\Contracts\Executable;
+use Syntatis\ComposerProjectPlugin\Traits\Common;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
 use Throwable;
 
 use function count;
+use function file_exists;
 use function sprintf;
 use function str_replace;
 
 class WPStarterPlugin implements Executable
 {
+	use Common;
 	use ConsoleOutput;
 
 	public function __construct(ConsoleIO $io)
@@ -31,6 +33,12 @@ class WPStarterPlugin implements Executable
 
 	public function execute(): int
 	{
+		if (! file_exists(self::getComposerFile() . '/wp-starter-plugin.php')) {
+			$this->io->write($this->comment('Project is already initialized.'));
+
+			return self::SUCCESS;
+		}
+
 		$confirm = $this->io->askConfirmation(
 			$this->prefixed('Would you like to customize your WordPress plugin project [' . $this->asComment('yes') . ']?'),
 		);
@@ -43,7 +51,7 @@ class WPStarterPlugin implements Executable
 
 		try {
 			$userInputs = new UserInputs($this->io, $this->consoleOutputPrefix);
-			$composerFile = new SplFileInfo(Factory::getComposerFile());
+			$composerFile = new SplFileInfo(self::getComposerFile());
 			$projectFiles = new ProjectFiles($composerFile);
 			$projectRoot = $projectFiles->getRootDirectory();
 			$fileCount = count($projectFiles);
