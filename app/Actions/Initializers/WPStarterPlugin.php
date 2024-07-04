@@ -40,7 +40,7 @@ class WPStarterPlugin implements Executable
 		}
 
 		$confirm = $this->io->askConfirmation(
-			$this->prefixed('Would you like to customize your WordPress plugin project [' . $this->asComment('yes') . ']?'),
+			$this->prefixed('Would you like to customize your WordPress plugin project [' . $this->asComment('yes') . ']? '),
 		);
 
 		if (! $confirm) {
