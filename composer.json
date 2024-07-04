@@ -32,7 +32,7 @@
         "php": ">=7.4",
         "composer-plugin-api": "^2.0",
         "symfony/finder": "^5.4",
-        "syntatis/utils": "^1.1"
+        "syntatis/utils": "^1.2"
     },
     "require-dev": {
         "composer/composer": "^2.7",
