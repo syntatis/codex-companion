@@ -1,0 +1,69 @@
+{
+    "name": "syntatis/composer-project-plugin",
+    "description": "Support tools for Composer projects",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "keywords": [
+        "cli",
+        "composer"
+    ],
+    "homepage": "https://github.com/syntatis/composer-project-plugin#README",
+    "authors": [
+        {
+            "name": "Thoriq Firdaus",
+            "homepage": "https://github.com/tfirdaus",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Syntatis\\ComposerProjectPlugin\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Syntatis\\ComposerProjectPlugin\\Tests\\": [
+                "tests/app/",
+                "tests/phpunit/"
+            ]
+        }
+    },
+    "require": {
+        "php": ">=7.4",
+        "composer-plugin-api": "^2.0",
+        "symfony/finder": "^5.4",
+        "syntatis/utils": "^1.1"
+    },
+    "require-dev": {
+        "composer/composer": "^2.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^1.11",
+        "phpstan/phpstan-deprecation-rules": "^1.2",
+        "phpstan/phpstan-phpunit": "^1.4",
+        "phpstan/phpstan-strict-rules": "^1.6",
+        "phpunit/phpunit": "^9.6",
+        "symfony/filesystem": "^5.4",
+        "symfony/var-dumper": "^5.4",
+        "syntatis/coding-standard": "^1.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "class": "Syntatis\\ComposerProjectPlugin\\Plugin"
+    },
+    "scripts": {
+        "phpcs": "phpcs",
+        "phpcsbf": "phpcsbf",
+        "phpstan": "phpstan",
+        "phpunit": "phpunit --no-coverage",
+        "phpunit:coverage": "phpunit"
+    },
+    "non-feature-branches": ["dependabot/*"]
+}
