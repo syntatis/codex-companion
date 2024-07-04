@@ -4,7 +4,7 @@
 
 This Composer plugin provides a set of tools, like commands and scripts, designed to support Syntatis projects like the [wp-starter-plugin](https://github.com/syntatis/wp-starter-plugin).
 
-## Usage
+## Installation
 
 To install, use [Composer](https://getcomposer.org/) and require this package as a development dependency:
 
