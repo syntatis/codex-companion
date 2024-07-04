@@ -1,6 +1,9 @@
 <div align="center">
   <strong>📦 composer-project-plugin</strong>
   <p>Supporting tools for Syntatis packages</p>
+  
+  [![php](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml/badge.svg)](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml)
+  
 </div>
 
 ---
