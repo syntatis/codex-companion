@@ -8,7 +8,7 @@
 
 ---
 
-This Composer plugin provides a set of tools, like commands and scripts, designed to support Syntatis projects like [wp-startar-plugin](https://github.com/syntatis/wp-starter-plugin).
+This Composer plugin provides a set of tools, like commands and scripts, designed to support Syntatis projects like the [wp-starter-plugin](https://github.com/syntatis/wp-starter-plugin).
 
 ## Usage
 
