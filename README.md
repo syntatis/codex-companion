@@ -1,4 +1,4 @@
-# 📦 composer-project-plugin
+# 🖲 composer-project-plugin
 
 [![php](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml/badge.svg)](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml)
 
