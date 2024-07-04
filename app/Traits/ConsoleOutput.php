@@ -20,9 +20,19 @@ trait ConsoleOutput
 		return sprintf('<comment>%s</comment>', $output);
 	}
 
+	private function asInfo(string $output): string
+	{
+		return sprintf('<info>%s</info>', $output);
+	}
+
 	private function comment(string $output): string
 	{
-		return $this->prefixed($this->asComment($output));
+		return $this->asComment($this->prefixed($output));
+	}
+
+	private function info(string $output): string
+	{
+		return $this->asInfo($this->prefixed($output));
 	}
 
 	private function prefixed(string $output): string

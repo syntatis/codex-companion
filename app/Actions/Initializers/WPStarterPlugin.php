@@ -34,7 +34,7 @@ class WPStarterPlugin implements Executable
 	public function execute(): int
 	{
 		if (! file_exists(self::getComposerFile() . '/wp-starter-plugin.php')) {
-			$this->io->write($this->comment('Project is already initialized.'));
+			$this->io->write($this->info('Project is already initialized.'));
 
 			return self::SUCCESS;
 		}
