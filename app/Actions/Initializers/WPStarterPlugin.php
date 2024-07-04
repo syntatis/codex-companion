@@ -72,7 +72,7 @@ class WPStarterPlugin implements Executable
 					$progressBar->advance();
 				}
 
-				$progressBar->setMessage('<info>Done!</info>', 'comment');
+				$progressBar->setMessage("<info>Done!</info>\n", 'comment');
 				$progressBar->finish();
 			}
 		} catch (Throwable $th) {
