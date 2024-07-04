@@ -5,7 +5,7 @@
 
 ---
 
-This Composer plugin provides a set of tools, like commands and scripts, specifically designed to support [Syntatis packages](https://packagist.org/packages/syntatis/).
+This Composer plugin provides a set of tools, like commands and scripts, designed to support [Syntatis packages](https://packagist.org/packages/syntatis/).
 
 ## Usage
 
