@@ -1,12 +1,6 @@
-<div align="center">
-  <strong>📦 composer-project-plugin</strong>
-  <p>Syntatis projects companion</p>
-  
-  [![php](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml/badge.svg)](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml)
-  
-</div>
+# 📦 composer-project-plugin
 
----
+[![php](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml/badge.svg)](https://github.com/syntatis/composer-project-plugin/actions/workflows/php.yml)
 
 This Composer plugin provides a set of tools, like commands and scripts, designed to support Syntatis projects like the [wp-starter-plugin](https://github.com/syntatis/wp-starter-plugin).
 
