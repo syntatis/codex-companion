@@ -10,7 +10,6 @@ use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin;
 use Syntatis\ComposerProjectPlugin\Contracts\Executable;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
 
-use function is_int;
 use function Syntatis\Utils\is_blank;
 
 class Initialize implements Executable
@@ -36,14 +35,6 @@ class Initialize implements Executable
 		$project = $extra['syntatis']['project'] ?? null;
 
 		if (is_blank($project)) {
-			return self::SUCCESS;
-		}
-
-		$projectInit = $extra['syntatis']['project']['initialized'] ?? null;
-
-		if ($projectInit === true || (is_int($projectInit) && $projectInit >= 1)) {
-			$this->io->info($this->prefixed('Project is already initialized.'));
-
 			return self::SUCCESS;
 		}
 
