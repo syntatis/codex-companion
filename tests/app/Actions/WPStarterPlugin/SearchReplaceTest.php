@@ -151,7 +151,7 @@ class SearchReplaceTest extends TestCase
 			JSON,
 			<<<'JSON'
 			{
-			    "name": "@acme/awesome-plugin",
+			    "name": "acme-awesome-plugin",
 			    "version": "1.0.0",
 			    "description": "A starting point for your next plugin project"
 			}

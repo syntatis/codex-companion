@@ -146,7 +146,7 @@ class SearchReplace
 		}
 
 		$fileJson = (array) json_decode($fileContent, true);
-		$fileJson['name'] = '@' . $this->replacements['project_name'];
+		$fileJson['name'] = $this->replacements['wp_plugin_slug'];
 		$encodedJson = json_encode($fileJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
 
 		$this->filesystem->dumpFile($filePath, $encodedJson);
