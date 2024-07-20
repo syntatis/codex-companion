@@ -146,14 +146,32 @@ class SearchReplaceTest extends TestCase
 			{
 			    "name": "@syntatis/wp-starter-plugin",
 			    "version": "1.0.0",
-				"description": "A starting point for your next plugin project"
+				"description": "A starting point for your next plugin project",
+				"files": [
+					"app",
+					"dist-autoload",
+					"dist",
+					"inc",
+					"index.php",
+					"uninstall.php",
+					"wp-starter-plugin.php"
+				]
 			}
 			JSON,
 			<<<'JSON'
 			{
 			    "name": "acme-awesome-plugin",
 			    "version": "1.0.0",
-			    "description": "A starting point for your next plugin project"
+			    "description": "A starting point for your next plugin project",
+			    "files": [
+			        "app",
+			        "dist-autoload",
+			        "dist",
+			        "inc",
+			        "index.php",
+			        "uninstall.php",
+			        "acme-awesome-plugin.php"
+			    ]
 			}
 			JSON,
 		];

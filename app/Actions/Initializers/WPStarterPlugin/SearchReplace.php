@@ -10,6 +10,7 @@ use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use Syntatis\ComposerProjectPlugin\Exceptions\SearchReplaceException;
 
+use function array_map;
 use function array_merge;
 use function array_values;
 use function dirname;
@@ -147,6 +148,10 @@ class SearchReplace
 
 		$fileJson = (array) json_decode($fileContent, true);
 		$fileJson['name'] = $this->replacements['wp_plugin_slug'];
+		$fileJson['files'] = array_map(
+			fn (string $file) => str_replace('wp-starter-plugin', $this->replacements['wp_plugin_slug'], $file),
+			$fileJson['files'] ?? [],
+		);
 		$encodedJson = json_encode($fileJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
 
 		$this->filesystem->dumpFile($filePath, $encodedJson);
