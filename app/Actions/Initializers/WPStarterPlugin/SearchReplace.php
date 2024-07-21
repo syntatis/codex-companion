@@ -10,6 +10,7 @@ use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use Syntatis\ComposerProjectPlugin\Exceptions\SearchReplaceException;
 
+use function addslashes;
 use function array_map;
 use function array_merge;
 use function array_values;
@@ -98,6 +99,10 @@ class SearchReplace
 				$this->handleFilePackage($filePath);
 				break;
 
+			case 'scoper.inc.php':
+				$this->handleScoperInc($filePath);
+				break;
+
 			case 'wp-starter-plugin.php':
 				$newFilePath = dirname($filePath) . '/' . $this->replacements['wp_plugin_slug'] . '.php';
 				$this->filesystem->rename($filePath, $newFilePath);
@@ -108,6 +113,29 @@ class SearchReplace
 				$this->handleFile($filePath);
 				break;
 		}
+	}
+
+	/**
+	 * Handle the scoper.inc.php file.
+	 *
+	 * @throws SearchReplaceException When failed retrieving content of the file.
+	 * @throws JsonException When failed encoding to JSON.
+	 */
+	private function handleScoperInc(string $filePath): void
+	{
+		$fileContent = file_get_contents($filePath);
+
+		if ($fileContent === false || is_blank($fileContent)) {
+			throw new SearchReplaceException($filePath);
+		}
+
+		$modifiedContent = str_replace(
+			'WPStarterPlugin',
+			addslashes($this->replacements['php_namespace']),
+			$fileContent,
+		);
+
+		$this->filesystem->dumpFile($filePath, $modifiedContent);
 	}
 
 	/**

@@ -222,6 +222,32 @@ class SearchReplaceTest extends TestCase
 			JSON,
 		];
 
+		yield 'scoper.inc.php' => [
+			'scoper.inc.php',
+			<<<'CONTENT'
+			<?php
+			declare(strict_types=1);
+
+			use Isolated\Symfony\Component\Finder\Finder;
+
+			return [
+				'prefix' => 'WPStarterPlugin\\Vendor',
+				'exclude-namespaces' => ['WPStarterPlugin'],
+			];
+			CONTENT,
+			<<<'CONTENT'
+			<?php
+			declare(strict_types=1);
+
+			use Isolated\Symfony\Component\Finder\Finder;
+
+			return [
+				'prefix' => 'Acme\\AwesomePlugin\\Vendor',
+				'exclude-namespaces' => ['Acme\\AwesomePlugin'],
+			];
+			CONTENT,
+		];
+
 		yield 'php_namespace' => [
 			'foo.php',
 			<<<'JSON'
