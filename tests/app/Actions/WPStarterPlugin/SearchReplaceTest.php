@@ -104,7 +104,7 @@ class SearchReplaceTest extends TestCase
 	{
 		yield [
 			'composer.json',
-			<<<'JSON'
+			<<<'CONTENT'
 			{
 				"name": "syntatis/wp-starter-plugin",
 				"autoload": {
@@ -120,8 +120,8 @@ class SearchReplaceTest extends TestCase
 					}
 				}
 			}
-			JSON,
-			<<<'JSON'
+			CONTENT,
+			<<<'CONTENT'
 			{
 			    "name": "acme/awesome-plugin",
 			    "autoload": {
@@ -137,12 +137,12 @@ class SearchReplaceTest extends TestCase
 			        }
 			    }
 			}
-			JSON,
+			CONTENT,
 		];
 
 		yield [
 			'package.json',
-			<<<'JSON'
+			<<<'CONTENT'
 			{
 			    "name": "@syntatis/wp-starter-plugin",
 			    "version": "1.0.0",
@@ -157,8 +157,8 @@ class SearchReplaceTest extends TestCase
 					"wp-starter-plugin.php"
 				]
 			}
-			JSON,
-			<<<'JSON'
+			CONTENT,
+			<<<'CONTENT'
 			{
 			    "name": "acme-awesome-plugin",
 			    "version": "1.0.0",
@@ -173,12 +173,12 @@ class SearchReplaceTest extends TestCase
 			        "acme-awesome-plugin.php"
 			    ]
 			}
-			JSON,
+			CONTENT,
 		];
 
 		yield [
 			'foo.php',
-			<<<'JSON'
+			<<<'CONTENT'
 			/**
 			 * Plugin bootstrap file.
 			 *
@@ -198,8 +198,8 @@ class SearchReplaceTest extends TestCase
 			 * Text Domain:       wp-starter-plugin
 			 * Domain Path:       /inc/languages
 			 */
-			JSON,
-			<<<'JSON'
+			CONTENT,
+			<<<'CONTENT'
 			/**
 			 * Plugin bootstrap file.
 			 *
@@ -219,7 +219,7 @@ class SearchReplaceTest extends TestCase
 			 * Text Domain:       acme-awesome-plugin
 			 * Domain Path:       /inc/languages
 			 */
-			JSON,
+			CONTENT,
 		];
 
 		yield 'scoper.inc.php' => [
@@ -250,7 +250,7 @@ class SearchReplaceTest extends TestCase
 
 		yield 'php_namespace' => [
 			'foo.php',
-			<<<'JSON'
+			<<<'CONTENT'
 			<?php
 			declare(strict_types=1);
 
@@ -259,8 +259,8 @@ class SearchReplaceTest extends TestCase
 			use RecursiveDirectoryIterator;
 			use WPStarterPlugin\Vendor\Syntatis\WPHook\Contract\WithHook;
 			use WPStarterPlugin\Vendor\Syntatis\WPHook\Hook;
-			JSON,
-			<<<'JSON'
+			CONTENT,
+			<<<'CONTENT'
 			<?php
 			declare(strict_types=1);
 
@@ -269,31 +269,31 @@ class SearchReplaceTest extends TestCase
 			use RecursiveDirectoryIterator;
 			use Acme\AwesomePlugin\Vendor\Syntatis\WPHook\Contract\WithHook;
 			use Acme\AwesomePlugin\Vendor\Syntatis\WPHook\Hook;
-			JSON,
+			CONTENT,
 		];
 
 		yield [
 			'foo.php',
-			<<<'JSON'
+			<<<'CONTENT'
 			<?php
 			window.__wpStarterPluginFoo = "bar";
-			JSON,
-			<<<'JSON'
+			CONTENT,
+			<<<'CONTENT'
 			<?php
 			window.__acmeAwesomePluginFoo = "bar";
-			JSON,
+			CONTENT,
 		];
 
 		yield [
 			'foo.php',
-			<<<'JSON'
+			<<<'CONTENT'
 			<?php
 			define('WP_STARTER_PLUGIN_FILE', __FILE__);
-			JSON,
-			<<<'JSON'
+			CONTENT,
+			<<<'CONTENT'
 			<?php
 			define('ACME_AWESOME_PLUGIN_FILE', __FILE__);
-			JSON,
+			CONTENT,
 		];
 	}
 }
