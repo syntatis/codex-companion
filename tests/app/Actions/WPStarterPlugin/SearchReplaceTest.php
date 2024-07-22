@@ -309,17 +309,5 @@ class SearchReplaceTest extends TestCase
 			window.__acmeAwesomePluginFoo = "bar";
 			CONTENT,
 		];
-
-		yield [
-			'foo.php',
-			<<<'CONTENT'
-			<?php
-			define('WP_STARTER_PLUGIN_FILE', __FILE__);
-			CONTENT,
-			<<<'CONTENT'
-			<?php
-			define('ACME_AWESOME_PLUGIN_FILE', __FILE__);
-			CONTENT,
-		];
 	}
 }

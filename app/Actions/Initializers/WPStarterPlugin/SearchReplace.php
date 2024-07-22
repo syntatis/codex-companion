@@ -133,8 +133,14 @@ class SearchReplace
 		}
 
 		$modifiedContent = str_replace(
-			'WPStarterPlugin',
-			addslashes($this->replacements['php_namespace']),
+			[
+				'WPStarterPlugin\\\\Vendor',
+				'WPStarterPlugin',
+			],
+			[
+				addslashes($this->replacements['vendor_prefix']),
+				addslashes($this->replacements['php_namespace']),
+			],
 			$fileContent,
 		);
 
