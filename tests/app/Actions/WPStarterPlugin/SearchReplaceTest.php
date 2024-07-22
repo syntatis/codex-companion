@@ -45,8 +45,17 @@ class SearchReplaceTest extends TestCase
 			->method('get')
 			->will(self::returnCallback(static function ($param) {
 				switch ($param) {
+					case 'php_namespace':
+						return 'Acme\AwesomePlugin';
+
 					case 'project_name':
 						return 'acme/awesome-plugin';
+
+					case 'wp_plugin_name':
+						return 'Acme Awesome Plugin';
+
+					case 'wp_plugin_slug':
+						return 'acme-awesome-plugin';
 
 					default:
 						return [
@@ -80,8 +89,17 @@ class SearchReplaceTest extends TestCase
 			->method('get')
 			->will(self::returnCallback(static function ($param) {
 				switch ($param) {
+					case 'php_namespace':
+						return 'Acme\AwesomePlugin';
+
 					case 'project_name':
 						return 'acme/awesome-plugin';
+
+					case 'wp_plugin_name':
+						return 'Acme Awesome Plugin';
+
+					case 'wp_plugin_slug':
+						return 'acme-awesome-plugin';
 
 					default:
 						return [

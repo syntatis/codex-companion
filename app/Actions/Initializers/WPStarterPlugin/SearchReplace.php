@@ -55,29 +55,31 @@ class SearchReplace
 		'project_name' => 'syntatis/wp-starter-plugin',
 		'wp_plugin_name' => 'WP Starter Plugin',
 		'wp_plugin_slug' => 'wp-starter-plugin',
-		'variables' => 'wpStarterPlugin',
-		'constants' => 'WP_STARTER_PLUGIN',
+		'camelcases' => 'wpStarterPlugin',
+		'macrocases' => 'WP_STARTER_PLUGIN',
+		'snakecases' => 'wp_starter_plugin',
 	];
 
 	public function __construct(UserInputs $userInputs)
 	{
-		$projectName = $userInputs->get('project_name');
+		$pluginSlug = $userInputs->get('wp_plugin_slug');
 
-		if (is_blank($projectName)) {
+		if (is_blank($pluginSlug)) {
 			throw new InvalidArgumentException(
-				sprintf('Invalid "wp_plugin_slug" argument. %s given.', var_export($projectName)),
+				sprintf('Invalid "wp_plugin_slug" argument. %s given.', var_export($pluginSlug)),
 			);
 		}
 
-		$projectName = snakecased(lowercased(str_replace(['/', '-'], '_', $projectName)));
+		$pluginSlug = snakecased(lowercased($pluginSlug));
 
 		$this->userInputs = $userInputs;
 		$this->filesystem = new Filesystem();
 		$this->replacements = array_merge(
 			$this->userInputs->get(),
 			[
-				'variables' => camelcased($projectName),
-				'constants' => macrocased($projectName),
+				'camelcases' => camelcased($pluginSlug),
+				'macrocases' => macrocased($pluginSlug),
+				'snakecases' => snakecased($pluginSlug),
 			],
 		);
 	}
