@@ -29,7 +29,6 @@ use function str_replace;
 use function Syntatis\Utils\camelcased;
 use function Syntatis\Utils\is_blank;
 use function Syntatis\Utils\lowercased;
-use function Syntatis\Utils\macrocased;
 use function Syntatis\Utils\snakecased;
 use function var_export;
 
@@ -52,11 +51,14 @@ class SearchReplace
 	 */
 	private const SEARCHES = [
 		'php_namespace' => 'WPStarterPlugin',
+		'vendor_prefix' => 'WPStarterPlugin\\Vendor',
 		'project_name' => 'syntatis/wp-starter-plugin',
 		'wp_plugin_name' => 'WP Starter Plugin',
 		'wp_plugin_slug' => 'wp-starter-plugin',
+		/**
+		 * Misc. cases.
+		 */
 		'camelcases' => 'wpStarterPlugin',
-		'macrocases' => 'WP_STARTER_PLUGIN',
 		'snakecases' => 'wp_starter_plugin',
 	];
 
@@ -78,7 +80,6 @@ class SearchReplace
 			$this->userInputs->get(),
 			[
 				'camelcases' => camelcased($pluginSlug),
-				'macrocases' => macrocased($pluginSlug),
 				'snakecases' => snakecased($pluginSlug),
 			],
 		);
@@ -132,8 +133,14 @@ class SearchReplace
 		}
 
 		$modifiedContent = str_replace(
-			'WPStarterPlugin',
-			addslashes($this->replacements['php_namespace']),
+			[
+				'WPStarterPlugin\\\\Vendor',
+				'WPStarterPlugin',
+			],
+			[
+				addslashes($this->replacements['vendor_prefix']),
+				addslashes($this->replacements['php_namespace']),
+			],
 			$fileContent,
 		);
 
