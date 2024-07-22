@@ -49,7 +49,7 @@ class SearchReplaceTest extends TestCase
 						return 'Acme\AwesomePlugin';
 
 					case 'vendor_prefix':
-						return 'Acme\AwesomePlugin\Vendor';
+						return 'AAV\Lib';
 
 					case 'project_name':
 						return 'acme/awesome-plugin';
@@ -62,8 +62,8 @@ class SearchReplaceTest extends TestCase
 
 					default:
 						return [
+							'vendor_prefix' => 'AAV\Lib',
 							'php_namespace' => 'Acme\AwesomePlugin',
-							'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
 							'project_name' => 'acme/awesome-plugin',
 							'wp_plugin_name' => 'Acme Awesome Plugin',
 							'wp_plugin_slug' => 'acme-awesome-plugin',
@@ -97,7 +97,7 @@ class SearchReplaceTest extends TestCase
 						return 'Acme\AwesomePlugin';
 
 					case 'vendor_prefix':
-						return 'Acme\AwesomePlugin\Vendor';
+						return 'AAV\Lib';
 
 					case 'project_name':
 						return 'acme/awesome-plugin';
@@ -111,7 +111,7 @@ class SearchReplaceTest extends TestCase
 					default:
 						return [
 							'php_namespace' => 'Acme\AwesomePlugin',
-							'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
+							'vendor_prefix' => 'AAV\Lib',
 							'project_name' => 'acme/awesome-plugin',
 							'wp_plugin_name' => 'Acme Awesome Plugin',
 							'wp_plugin_slug' => 'acme-awesome-plugin',
@@ -268,7 +268,7 @@ class SearchReplaceTest extends TestCase
 			use Isolated\Symfony\Component\Finder\Finder;
 
 			return [
-				'prefix' => 'Acme\\AwesomePlugin\\Vendor',
+				'prefix' => 'AAV\\Lib',
 				'exclude-namespaces' => ['Acme\\AwesomePlugin'],
 			];
 			CONTENT,
@@ -285,6 +285,7 @@ class SearchReplaceTest extends TestCase
 			use RecursiveDirectoryIterator;
 			use WPStarterPlugin\Vendor\Syntatis\WPHook\Contract\WithHook;
 			use WPStarterPlugin\Vendor\Syntatis\WPHook\Hook;
+			use WPStarterPlugin\HelloWorld\Plugin;
 			CONTENT,
 			<<<'CONTENT'
 			<?php
@@ -293,8 +294,9 @@ class SearchReplaceTest extends TestCase
 			namespace Acme\AwesomePlugin;
 
 			use RecursiveDirectoryIterator;
-			use Acme\AwesomePlugin\Vendor\Syntatis\WPHook\Contract\WithHook;
-			use Acme\AwesomePlugin\Vendor\Syntatis\WPHook\Hook;
+			use AAV\Lib\Syntatis\WPHook\Contract\WithHook;
+			use AAV\Lib\Syntatis\WPHook\Hook;
+			use Acme\AwesomePlugin\HelloWorld\Plugin;
 			CONTENT,
 		];
 

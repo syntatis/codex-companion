@@ -40,8 +40,8 @@ class UserInputsTest extends TestCase
 			}));
 
 		self::assertSame([
-			'php_namespace' => 'Acme\AwesomePlugin',
 			'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
+			'php_namespace' => 'Acme\AwesomePlugin',
 			'project_name' => 'acme/awesome-plugin',
 			'wp_plugin_name' => 'Acme Awesome Plugin',
 			'wp_plugin_slug' => 'acme-awesome-plugin',
@@ -77,8 +77,8 @@ class UserInputsTest extends TestCase
 			}));
 
 		self::assertSame([
-			'php_namespace' => 'AwesomePlugin',
 			'vendor_prefix' => 'SV',
+			'php_namespace' => 'AwesomePlugin',
 			'project_name' => 'acme/awesome-plugin',
 			'wp_plugin_name' => 'Awesome Plugin',
 			'wp_plugin_slug' => 'awesome-plugin',
