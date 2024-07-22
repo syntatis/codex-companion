@@ -7,6 +7,7 @@ namespace Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin;
 use Composer\IO\ConsoleIO;
 use Syntatis\ComposerProjectPlugin\Helpers\PHPNamespace;
 use Syntatis\ComposerProjectPlugin\Helpers\ProjectName;
+use Syntatis\ComposerProjectPlugin\Helpers\VendorPrefix;
 use Syntatis\ComposerProjectPlugin\Helpers\WPPluginName;
 use Syntatis\ComposerProjectPlugin\Helpers\WPPluginSlug;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
@@ -73,8 +74,19 @@ class UserInputs
 			$defaultPHPNamespace,
 		);
 
+		$defaultVendorPrefix = $defaultPHPNamespace . '\\Vendor';
+
+		/** @var VendorPrefix $vendorPrefix */
+		$vendorPrefix = $this->io->askAndValidate(
+			$this->prefixed('Vendor prefix (optional) [' . $this->asComment($defaultVendorPrefix) . ']: '),
+			fn ($namespace) => new VendorPrefix($namespace, $this->consoleOutputPrefix),
+			2,
+			$defaultVendorPrefix,
+		);
+
 		$this->inputs = [
 			'php_namespace' => (string) $phpNamespace,
+			'vendor_prefix' => (string) $vendorPrefix,
 			'project_name' => (string) $projectName,
 			'wp_plugin_name' => (string) $wpPluginName,
 			'wp_plugin_slug' => (string) $wpPluginSlug,

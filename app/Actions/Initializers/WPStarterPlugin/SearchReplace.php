@@ -52,6 +52,7 @@ class SearchReplace
 	 */
 	private const SEARCHES = [
 		'php_namespace' => 'WPStarterPlugin',
+		'vendor_prefix' => 'WPStarterPlugin\\Vendor',
 		'project_name' => 'syntatis/wp-starter-plugin',
 		'wp_plugin_name' => 'WP Starter Plugin',
 		'wp_plugin_slug' => 'wp-starter-plugin',

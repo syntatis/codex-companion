@@ -48,6 +48,9 @@ class SearchReplaceTest extends TestCase
 					case 'php_namespace':
 						return 'Acme\AwesomePlugin';
 
+					case 'vendor_prefix':
+						return 'Acme\AwesomePlugin\Vendor';
+
 					case 'project_name':
 						return 'acme/awesome-plugin';
 
@@ -60,6 +63,7 @@ class SearchReplaceTest extends TestCase
 					default:
 						return [
 							'php_namespace' => 'Acme\AwesomePlugin',
+							'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
 							'project_name' => 'acme/awesome-plugin',
 							'wp_plugin_name' => 'Acme Awesome Plugin',
 							'wp_plugin_slug' => 'acme-awesome-plugin',
@@ -92,6 +96,9 @@ class SearchReplaceTest extends TestCase
 					case 'php_namespace':
 						return 'Acme\AwesomePlugin';
 
+					case 'vendor_prefix':
+						return 'Acme\AwesomePlugin\Vendor';
+
 					case 'project_name':
 						return 'acme/awesome-plugin';
 
@@ -104,6 +111,7 @@ class SearchReplaceTest extends TestCase
 					default:
 						return [
 							'php_namespace' => 'Acme\AwesomePlugin',
+							'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
 							'project_name' => 'acme/awesome-plugin',
 							'wp_plugin_name' => 'Acme Awesome Plugin',
 							'wp_plugin_slug' => 'acme-awesome-plugin',

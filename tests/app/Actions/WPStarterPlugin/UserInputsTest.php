@@ -18,7 +18,7 @@ class UserInputsTest extends TestCase
 			->disableOriginalConstructor()
 			->getMock();
 		$ioMock
-			->expects(self::exactly(4))
+			->expects(self::exactly(5))
 			->method('askAndValidate')
 			->will(self::returnCallback(static function ($param, $validate, $retries, $default) {
 				switch ($param) {
@@ -33,11 +33,15 @@ class UserInputsTest extends TestCase
 
 					case '[acme] PHP namespace (optional) [<comment>' . $default . '</comment>]: ':
 						return $validate($default);
+
+					case '[acme] Vendor prefix (optional) [<comment>' . $default . '</comment>]: ':
+						return $validate($default);
 				}
 			}));
 
 		self::assertSame([
 			'php_namespace' => 'Acme\AwesomePlugin',
+			'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
 			'project_name' => 'acme/awesome-plugin',
 			'wp_plugin_name' => 'Acme Awesome Plugin',
 			'wp_plugin_slug' => 'acme-awesome-plugin',
@@ -51,7 +55,7 @@ class UserInputsTest extends TestCase
 			->disableOriginalConstructor()
 			->getMock();
 		$ioMock
-			->expects(self::exactly(4))
+			->expects(self::exactly(5))
 			->method('askAndValidate')
 			->will(self::returnCallback(static function ($param, $validate, $retries, $default) {
 				switch ($param) {
@@ -66,11 +70,15 @@ class UserInputsTest extends TestCase
 
 					case '[acme] PHP namespace (optional) [<comment>' . $default . '</comment>]: ':
 						return $validate('AwesomePlugin');
+
+					case '[acme] Vendor prefix (optional) [<comment>' . $default . '</comment>]: ':
+						return $validate('SV');
 				}
 			}));
 
 		self::assertSame([
 			'php_namespace' => 'AwesomePlugin',
+			'vendor_prefix' => 'SV',
 			'project_name' => 'acme/awesome-plugin',
 			'wp_plugin_name' => 'Awesome Plugin',
 			'wp_plugin_slug' => 'awesome-plugin',
