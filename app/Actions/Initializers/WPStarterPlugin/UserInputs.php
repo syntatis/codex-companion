@@ -85,8 +85,8 @@ class UserInputs
 		);
 
 		$this->inputs = [
-			'php_namespace' => (string) $phpNamespace,
 			'vendor_prefix' => (string) $vendorPrefix,
+			'php_namespace' => (string) $phpNamespace,
 			'project_name' => (string) $projectName,
 			'wp_plugin_name' => (string) $wpPluginName,
 			'wp_plugin_slug' => (string) $wpPluginSlug,
