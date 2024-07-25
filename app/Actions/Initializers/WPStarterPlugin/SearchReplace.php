@@ -216,7 +216,7 @@ class SearchReplace
 			return;
 		}
 
-		while (($line = fgets($fileHandle, 64)) !== false) {
+		while (($line = fgets($fileHandle)) !== false) {
 			$modifiedLine = str_replace(
 				array_values(self::SEARCHES),
 				array_values($this->replacements),

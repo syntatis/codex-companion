@@ -311,5 +311,35 @@ class SearchReplaceTest extends TestCase
 			window.__acmeAwesomePluginFoo = "bar";
 			CONTENT,
 		];
+
+		yield [
+			'wp-starter-plugin.pot',
+			<<<'CONTENT'
+			"Project-Id-Version: Foo Bar 1.0.0\n"
+			"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-starter-plugin\n"
+			"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+			"Language-Team: LANGUAGE <LL@li.org>\n"
+			"MIME-Version: 1.0\n"
+			"Content-Type: text/plain; charset=UTF-8\n"
+			"Content-Transfer-Encoding: 8bit\n"
+			"POT-Creation-Date: 2024-07-21T11:06:28+00:00\n"
+			"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+			"X-Generator: WP-CLI 2.10.0\n"
+			"X-Domain: wp-starter-plugin\n"
+			CONTENT,
+			<<<'CONTENT'
+			"Project-Id-Version: Foo Bar 1.0.0\n"
+			"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/acme-awesome-plugin\n"
+			"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+			"Language-Team: LANGUAGE <LL@li.org>\n"
+			"MIME-Version: 1.0\n"
+			"Content-Type: text/plain; charset=UTF-8\n"
+			"Content-Transfer-Encoding: 8bit\n"
+			"POT-Creation-Date: 2024-07-21T11:06:28+00:00\n"
+			"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+			"X-Generator: WP-CLI 2.10.0\n"
+			"X-Domain: acme-awesome-plugin\n"
+			CONTENT,
+		];
 	}
 }
