@@ -106,8 +106,10 @@ class SearchReplace
 				$this->handleScoperInc($filePath);
 				break;
 
+			case 'wp-stater-plugin.pot':
 			case 'wp-starter-plugin.php':
-				$newFilePath = dirname($filePath) . '/' . $this->replacements['wp_plugin_slug'] . '.php';
+				$extension = $fileInfo->getExtension();
+				$newFilePath = dirname($filePath) . '/' . $this->replacements['wp_plugin_slug'] . '.' . $extension;
 				$this->filesystem->rename($filePath, $newFilePath);
 				$this->handleFile($newFilePath);
 				break;
@@ -214,7 +216,7 @@ class SearchReplace
 			return;
 		}
 
-		while (($line = fgets($fileHandle, 64)) !== false) {
+		while (($line = fgets($fileHandle)) !== false) {
 			$modifiedLine = str_replace(
 				array_values(self::SEARCHES),
 				array_values($this->replacements),
