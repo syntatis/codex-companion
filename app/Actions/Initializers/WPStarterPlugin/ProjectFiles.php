@@ -26,7 +26,7 @@ class ProjectFiles implements IteratorAggregate, Countable
 		$finder = Finder::create()
 			->files()
 			->in($rootDir)
-			->name('/(.*\.(php|json|js|pot)|readme\.txt|phpcs\.xml(\.dist)?)$/')
+			->name('/(.*\.(php|json|js|jsx|ts|tsx|pot)|readme\.txt|phpcs\.xml(\.dist)?)$/')
 			->notPath('/vendor|node_modules|(?<!xml\.)dist(.*)?|.*\.config.js|.*\-lock\.json/');
 		$this->rootDir = $rootDir;
 		$this->finder = $finder;
