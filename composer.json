@@ -45,7 +45,7 @@
         "phpstan/phpstan-strict-rules": "^1.6",
         "phpunit/phpunit": "^9.6",
         "symfony/filesystem": "^5.4",
-        "symfony/var-dumper": "^5.4",
+        "symfony/var-dumper": "^6.4",
         "syntatis/coding-standard": "^1.4"
     },
     "config": {
