@@ -7,11 +7,11 @@ namespace Syntatis\ComposerProjectPlugin\Helpers;
 use InvalidArgumentException;
 use Stringable;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
+use Syntatis\Utils\Val;
 
 use function is_int;
 use function preg_match;
 use function strlen;
-use function Syntatis\Utils\is_blank;
 
 class VendorPrefix implements Stringable
 {
@@ -32,7 +32,7 @@ class VendorPrefix implements Stringable
 
 	private function validate(string $namespace): string
 	{
-		if (is_blank($namespace)) {
+		if (Val::isBlank($namespace)) {
 			throw new InvalidArgumentException(
 				$this->prefixed('Vendor prefix cannot be blank.'),
 			);

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Tests\Actions\WPStarterPlugin;
+namespace Syntatis\ComposerProjectPlugin\Tests\Actions\Howdy;
 
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\ProjectFiles;
+use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\ProjectFiles;
 use Syntatis\ComposerProjectPlugin\Tests\Traits\WithTempFiles;
 
 use function count;
