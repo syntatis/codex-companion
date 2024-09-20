@@ -14,9 +14,9 @@ updates:
       day: "sunday"
     ignore:
       - dependency-name: "symfony/*"
-        versions: [">=6.*"]
+        versions: [">=6.0"]
       - dependency-name: "phpunit/*"
-        versions: [">=6.*"]
+        versions: [">=6.0"]
     groups:
       composer-require:
         dependency-type: "production"
