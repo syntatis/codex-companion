@@ -6,11 +6,10 @@ namespace Syntatis\ComposerProjectPlugin\Actions;
 
 use Composer\Composer;
 use Composer\IO\ConsoleIO;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin;
+use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy;
 use Syntatis\ComposerProjectPlugin\Contracts\Executable;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
-
-use function Syntatis\Utils\is_blank;
+use Syntatis\Utils\Val;
 
 class Initialize implements Executable
 {
@@ -34,15 +33,15 @@ class Initialize implements Executable
 		$extra = $this->composer->getPackage()->getExtra();
 		$project = $extra['syntatis']['project'] ?? null;
 
-		if (is_blank($project)) {
+		if (Val::isBlank($project)) {
 			return self::SUCCESS;
 		}
 
 		$projectName = $extra['syntatis']['project']['name'] ?? null;
 
 		switch ($projectName) {
-			case 'wp-starter-plugin':
-				return (new WPStarterPlugin($this->io))->execute();
+			case 'howdy':
+				return (new Howdy($this->io))->execute();
 
 			default:
 				return self::SUCCESS;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin;
+namespace Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy;
 
 use Countable;
 use IteratorAggregate;
