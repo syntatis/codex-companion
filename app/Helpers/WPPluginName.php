@@ -7,9 +7,9 @@ namespace Syntatis\ComposerProjectPlugin\Helpers;
 use InvalidArgumentException;
 use Stringable;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
+use Syntatis\Utils\Val;
 
 use function strlen;
-use function Syntatis\Utils\is_blank;
 
 class WPPluginName implements Stringable
 {
@@ -25,7 +25,7 @@ class WPPluginName implements Stringable
 
 	private function validate(string $name): string
 	{
-		if (is_blank($name)) {
+		if (Val::isBlank($name)) {
 			throw new InvalidArgumentException(
 				$this->prefixed('The plugin name cannnot be blank.'),
 			);

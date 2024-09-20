@@ -7,9 +7,9 @@ namespace Syntatis\ComposerProjectPlugin\Actions\Initializers;
 use Composer\IO\ConsoleIO;
 use SplFileInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\ProjectFiles;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\SearchReplace;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\UserInputs;
+use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\ProjectFiles;
+use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\SearchReplace;
+use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\UserInputs;
 use Syntatis\ComposerProjectPlugin\Contracts\Executable;
 use Syntatis\ComposerProjectPlugin\Traits\Common;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
@@ -20,7 +20,7 @@ use function file_exists;
 use function sprintf;
 use function str_replace;
 
-class WPStarterPlugin implements Executable
+class Howdy implements Executable
 {
 	use Common;
 	use ConsoleOutput;
@@ -28,12 +28,13 @@ class WPStarterPlugin implements Executable
 	public function __construct(ConsoleIO $io)
 	{
 		$this->io = $io;
-		$this->consoleOutputPrefix = '[wp-starter-plugin]';
+		$this->consoleOutputPrefix = '[howdy]';
 	}
 
 	public function execute(): int
 	{
-		if (! file_exists(self::getRootDir() . '/wp-starter-plugin.php')) {
+		/** @todo Add the ability to allow developers to reinitialize existing the project. */
+		if (! file_exists(self::getRootDir() . '/plugin-name.php')) {
 			$this->io->write($this->info('Project is already initialized.'));
 
 			return self::SUCCESS;

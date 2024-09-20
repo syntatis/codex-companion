@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Tests\Actions\WPStarterPlugin;
+namespace Syntatis\ComposerProjectPlugin\Tests\Actions\Howdy;
 
 use Composer\IO\ConsoleIO;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin\UserInputs;
+use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\UserInputs;
 
 class UserInputsTest extends TestCase
 {
@@ -18,15 +18,12 @@ class UserInputsTest extends TestCase
 			->disableOriginalConstructor()
 			->getMock();
 		$ioMock
-			->expects(self::exactly(5))
+			->expects(self::exactly(4))
 			->method('askAndValidate')
 			->will(self::returnCallback(static function ($param, $validate, $retries, $default) {
 				switch ($param) {
-					case '[acme] Project name: ':
-						return $validate('acme/awesome-plugin');
-
-					case '[acme] Plugin slug (optional) [<comment>' . $default . '</comment>]: ':
-						return $validate($default);
+					case '[acme] Plugin slug: ':
+						return $validate('acme-awesome-plugin');
 
 					case '[acme] Plugin name (optional) [<comment>' . $default . '</comment>]: ':
 						return $validate($default);
@@ -40,9 +37,8 @@ class UserInputsTest extends TestCase
 			}));
 
 		self::assertSame([
-			'vendor_prefix' => 'Acme\AwesomePlugin\Vendor',
-			'php_namespace' => 'Acme\AwesomePlugin',
-			'project_name' => 'acme/awesome-plugin',
+			'vendor_prefix' => 'AcmeAwesomePlugin\Vendor',
+			'php_namespace' => 'AcmeAwesomePlugin',
 			'wp_plugin_name' => 'Acme Awesome Plugin',
 			'wp_plugin_slug' => 'acme-awesome-plugin',
 		], (new UserInputs($ioMock, '[acme]'))->get());
@@ -55,14 +51,11 @@ class UserInputsTest extends TestCase
 			->disableOriginalConstructor()
 			->getMock();
 		$ioMock
-			->expects(self::exactly(5))
+			->expects(self::exactly(4))
 			->method('askAndValidate')
 			->will(self::returnCallback(static function ($param, $validate, $retries, $default) {
 				switch ($param) {
-					case '[acme] Project name: ':
-						return $validate('acme/awesome-plugin');
-
-					case '[acme] Plugin slug (optional) [<comment>' . $default . '</comment>]: ':
+					case '[acme] Plugin slug: ':
 						return $validate('awesome-plugin');
 
 					case '[acme] Plugin name (optional) [<comment>' . $default . '</comment>]: ':
@@ -79,7 +72,6 @@ class UserInputsTest extends TestCase
 		self::assertSame([
 			'vendor_prefix' => 'SV',
 			'php_namespace' => 'AwesomePlugin',
-			'project_name' => 'acme/awesome-plugin',
 			'wp_plugin_name' => 'Awesome Plugin',
 			'wp_plugin_slug' => 'awesome-plugin',
 		], (new UserInputs($ioMock, '[acme]'))->get());

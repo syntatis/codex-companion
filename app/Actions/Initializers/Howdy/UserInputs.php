@@ -2,19 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Actions\Initializers\WPStarterPlugin;
+namespace Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy;
 
 use Composer\IO\ConsoleIO;
 use Syntatis\ComposerProjectPlugin\Helpers\PHPNamespace;
-use Syntatis\ComposerProjectPlugin\Helpers\ProjectName;
 use Syntatis\ComposerProjectPlugin\Helpers\VendorPrefix;
 use Syntatis\ComposerProjectPlugin\Helpers\WPPluginName;
 use Syntatis\ComposerProjectPlugin\Helpers\WPPluginSlug;
 use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
-
-use function str_replace;
-use function Syntatis\Utils\is_blank;
-use function Syntatis\Utils\kebabcased;
+use Syntatis\Utils\Val;
 
 class UserInputs
 {
@@ -36,22 +32,12 @@ class UserInputs
 
 	private function prompt(): void
 	{
-		/** @var ProjectName $projectName */
-		$projectName = $this->io->askAndValidate(
-			$this->prefixed('Project name: '),
-			fn ($name) => new ProjectName($name, $this->consoleOutputPrefix),
-			3,
-			'',
-		);
-
-		$defaultPluginSlug = kebabcased(str_replace('/', '-', (string) $projectName));
-
 		/** @var WPPluginSlug $wpPluginSlug */
 		$wpPluginSlug = $this->io->askAndValidate(
-			$this->prefixed('Plugin slug (optional) [' . $this->asComment($defaultPluginSlug) . ']: '),
+			$this->prefixed('Plugin slug: '),
 			fn ($slug) => new WPPluginSlug($slug, $this->consoleOutputPrefix),
-			2,
-			$defaultPluginSlug,
+			3,
+			'',
 		);
 
 		$defaultPluginName = $wpPluginSlug->toPluginName();
@@ -64,7 +50,7 @@ class UserInputs
 			$defaultPluginName,
 		);
 
-		$defaultPHPNamespace = $projectName->toNamespace();
+		$defaultPHPNamespace = $wpPluginSlug->toNamespace();
 
 		/** @var PHPNamespace $phpNamespace */
 		$phpNamespace = $this->io->askAndValidate(
@@ -87,21 +73,20 @@ class UserInputs
 		$this->inputs = [
 			'vendor_prefix' => (string) $vendorPrefix,
 			'php_namespace' => (string) $phpNamespace,
-			'project_name' => (string) $projectName,
 			'wp_plugin_name' => (string) $wpPluginName,
 			'wp_plugin_slug' => (string) $wpPluginSlug,
 		];
 	}
 
 	/**
-	 * @return array<string,string>|string|null
-	 *
 	 * @phpstan-param non-empty-string|null $offset
+	 *
+	 * @return array<string,string>|string|null
 	 * @phpstan-return ($offset is non-empty-string ? string|null : array<string,string>)
 	 */
 	public function get(?string $offset = null)
 	{
-		if (is_blank($offset)) {
+		if (Val::isBlank($offset)) {
 			return $this->inputs;
 		}
 
