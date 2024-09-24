@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Actions;
+namespace Syntatis\Codex\Companion\Actions;
 
-use Codex\Companion\Actions\Initializers\Howdy;
-use Codex\Companion\Contracts\Executable;
-use Codex\Companion\Traits\ConsoleOutput;
 use Composer\Composer;
 use Composer\IO\ConsoleIO;
+use Syntatis\Codex\Companion\Actions\Initializers\Howdy;
+use Syntatis\Codex\Companion\Contracts\Executable;
+use Syntatis\Codex\Companion\Traits\ConsoleOutput;
 use Syntatis\Utils\Val;
 
 class Initialize implements Executable

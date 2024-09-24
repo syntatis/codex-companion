@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Helpers;
+namespace Syntatis\Codex\Companion\Helpers;
 
-use Codex\Companion\Traits\ConsoleOutput;
 use InvalidArgumentException;
 use Stringable;
+use Syntatis\Codex\Companion\Traits\ConsoleOutput;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 

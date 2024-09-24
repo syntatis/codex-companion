@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Exceptions;
+namespace Syntatis\Codex\Companion\Exceptions;
 
 use RuntimeException;
 use Throwable;

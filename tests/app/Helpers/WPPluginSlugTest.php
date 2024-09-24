@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Tests\Helpers;
+namespace Syntatis\Tests\Helpers;
 
-use Codex\Companion\Helpers\WPPluginSlug;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Syntatis\Codex\Companion\Helpers\WPPluginSlug;
 
 use function str_repeat;
 

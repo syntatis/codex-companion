@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Tests\Actions\Howdy;
+namespace Syntatis\Tests\Actions\Howdy;
 
-use Codex\Companion\Actions\Initializers\Howdy\SearchReplace;
-use Codex\Companion\Actions\Initializers\Howdy\UserInputs;
-use Codex\Companion\Tests\Traits\WithTempFiles;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
+use Syntatis\Codex\Companion\Actions\Initializers\Howdy\SearchReplace;
+use Syntatis\Codex\Companion\Actions\Initializers\Howdy\UserInputs;
+use Syntatis\Codex\Companion\Tests\Traits\WithTempFiles;
 
 use function file_get_contents;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Contracts;
+namespace Syntatis\Codex\Companion\Contracts;
 
 interface Executable
 {

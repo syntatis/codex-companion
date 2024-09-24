@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Actions\Initializers\Howdy;
+namespace Syntatis\Codex\Companion\Actions\Initializers\Howdy;
 
-use Codex\Companion\Helpers\PHPNamespace;
-use Codex\Companion\Helpers\VendorPrefix;
-use Codex\Companion\Helpers\WPPluginName;
-use Codex\Companion\Helpers\WPPluginSlug;
-use Codex\Companion\Traits\ConsoleOutput;
 use Composer\IO\ConsoleIO;
+use Syntatis\Codex\Companion\Helpers\PHPNamespace;
+use Syntatis\Codex\Companion\Helpers\VendorPrefix;
+use Syntatis\Codex\Companion\Helpers\WPPluginName;
+use Syntatis\Codex\Companion\Helpers\WPPluginSlug;
+use Syntatis\Codex\Companion\Traits\ConsoleOutput;
 use Syntatis\Utils\Val;
 
 class UserInputs

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Traits;
+namespace Syntatis\Codex\Companion\Traits;
 
 use Composer\Factory;
 

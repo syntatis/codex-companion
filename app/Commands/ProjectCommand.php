@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Commands;
+namespace Syntatis\Codex\Companion\Commands;
 
-use Codex\Companion\Actions\Initialize;
 use Composer\Command\BaseCommand;
 use Composer\Composer;
 use Composer\IO\ConsoleIO;
@@ -13,6 +12,7 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Syntatis\Codex\Companion\Actions\Initialize;
 
 use function version_compare;
 

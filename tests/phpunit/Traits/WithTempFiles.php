@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Tests\Traits;
+namespace Syntatis\Tests\Traits;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;

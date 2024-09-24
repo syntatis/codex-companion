@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Tests\Actions\Howdy;
+namespace Syntatis\Tests\Actions\Howdy;
 
-use Codex\Companion\Actions\Initializers\Howdy\ProjectFiles;
-use Codex\Companion\Tests\Traits\WithTempFiles;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
+use Syntatis\Codex\Companion\Actions\Initializers\Howdy\ProjectFiles;
+use Syntatis\Tests\Traits\WithTempFiles;
 
 use function count;
 

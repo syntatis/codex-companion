@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion;
+namespace Syntatis\Codex\Companion;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
@@ -26,6 +26,6 @@ class Plugin implements PluginInterface, Capable
 	// phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
 	public function getCapabilities(): array
 	{
-		return ['Composer\Plugin\Capability\CommandProvider' => 'Codex\Companion\PluginCommands'];
+		return ['Composer\Plugin\Capability\CommandProvider' => 'Syntatis\Codex\Companion\PluginCommands'];
 	}
 }

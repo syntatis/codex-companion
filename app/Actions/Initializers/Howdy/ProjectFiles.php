@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Codex\Companion\Actions\Initializers\Howdy;
+namespace Syntatis\Codex\Companion\Actions\Initializers\Howdy;
 
 use Countable;
 use IteratorAggregate;
