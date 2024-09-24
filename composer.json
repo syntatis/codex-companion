@@ -1,6 +1,6 @@
 {
     "name": "syntatis/codex-companion",
-    "description": "Codex project companion for Composer",
+    "description": "Helpful companion for Codex projects",
     "type": "composer-plugin",
     "license": "MIT",
     "keywords": [
