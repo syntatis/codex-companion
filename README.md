@@ -1,4 +1,4 @@
-# 🖲 codex-companion
+# 😊 codex-companion
 
 [![ci](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml)
 
