@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy;
+namespace Codex\Companion\Actions\Initializers\Howdy;
 
+use Codex\Companion\Exceptions\SearchReplaceException;
 use InvalidArgumentException;
 use JsonException;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
-use Syntatis\ComposerProjectPlugin\Exceptions\SearchReplaceException;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 

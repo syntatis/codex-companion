@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Tests\Actions\Howdy;
+namespace Codex\Companion\Tests\Actions\Howdy;
 
+use Codex\Companion\Actions\Initializers\Howdy\SearchReplace;
+use Codex\Companion\Actions\Initializers\Howdy\UserInputs;
+use Codex\Companion\Tests\Traits\WithTempFiles;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use SplFileInfo;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\SearchReplace;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\UserInputs;
-use Syntatis\ComposerProjectPlugin\Tests\Traits\WithTempFiles;
 
 use function file_get_contents;
 

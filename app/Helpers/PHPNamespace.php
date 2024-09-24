@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Helpers;
+namespace Codex\Companion\Helpers;
 
+use Codex\Companion\Traits\ConsoleOutput;
 use InvalidArgumentException;
 use Stringable;
-use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
 use Syntatis\Utils\Val;
 
 use function is_int;

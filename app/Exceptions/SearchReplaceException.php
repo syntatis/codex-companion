@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Exceptions;
+namespace Codex\Companion\Exceptions;
 
 use RuntimeException;
 use Throwable;

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Actions;
+namespace Codex\Companion\Actions;
 
+use Codex\Companion\Actions\Initializers\Howdy;
+use Codex\Companion\Contracts\Executable;
+use Codex\Companion\Traits\ConsoleOutput;
 use Composer\Composer;
 use Composer\IO\ConsoleIO;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy;
-use Syntatis\ComposerProjectPlugin\Contracts\Executable;
-use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
 use Syntatis\Utils\Val;
 
 class Initialize implements Executable

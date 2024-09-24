@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Actions\Initializers;
+namespace Codex\Companion\Actions\Initializers;
 
+use Codex\Companion\Actions\Initializers\Howdy\ProjectFiles;
+use Codex\Companion\Actions\Initializers\Howdy\SearchReplace;
+use Codex\Companion\Actions\Initializers\Howdy\UserInputs;
+use Codex\Companion\Contracts\Executable;
+use Codex\Companion\Traits\Common;
+use Codex\Companion\Traits\ConsoleOutput;
 use Composer\IO\ConsoleIO;
 use SplFileInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\ProjectFiles;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\SearchReplace;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\UserInputs;
-use Syntatis\ComposerProjectPlugin\Contracts\Executable;
-use Syntatis\ComposerProjectPlugin\Traits\Common;
-use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
 use Throwable;
 
 use function count;

@@ -28,9 +28,9 @@
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
 			<property name="rootNamespaces" type="array">
-				<element key="app" value="Syntatis\ComposerProjectPlugin"/>
-				<element key="tests/app" value="Syntatis\ComposerProjectPlugin\Tests"/>
-				<element key="tests/phpunit" value="Syntatis\ComposerProjectPlugin\Tests"/>
+				<element key="app" value="Codex\Companion"/>
+				<element key="tests/app" value="Codex\Companion\Tests"/>
+				<element key="tests/phpunit" value="Codex\Companion\Tests"/>
 			</property>
 		</properties>
 	</rule>

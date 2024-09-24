@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Traits;
+namespace Codex\Companion\Traits;
 
 use Composer\Factory;
 

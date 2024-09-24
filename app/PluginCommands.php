@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin;
+namespace Codex\Companion;
 
+use Codex\Companion\Commands\ProjectCommand;
 use Composer\Command\BaseCommand;
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
-use Syntatis\ComposerProjectPlugin\Commands\ProjectCommand;
 
 class PluginCommands implements CommandProviderCapability
 {

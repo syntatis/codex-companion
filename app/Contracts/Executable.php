@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Contracts;
+namespace Codex\Companion\Contracts;
 
 interface Executable
 {
