@@ -17,12 +17,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Codex\\Companion\\": "app/"
+            "Syntatis\\Codex\\Companion\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Codex\\Companion\\Tests\\": [
+            "Syntatis\\Tests\\": [
                 "tests/app/",
                 "tests/phpunit/"
             ]
