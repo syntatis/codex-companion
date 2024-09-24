@@ -1,4 +1,7 @@
-# 😊 codex-companion
+# 🪵 👨‍🏭 codex-companion
+
+> [!CAUTION]
+> This project is currently in active development. It is not recommended for production use *just yet*.
 
 [![ci](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml)
 
