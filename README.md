@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml)
 
-This Composer plugin provides a set of tools, like commands and scripts, designed as a supporting for some projects, like [Howdy](https://github.com/syntatis/howdy).
+This Composer plugin provides a set of tools, like commands and scripts, designed as a supporting for projects extending functionalities from the [Codex](https://github.com/syntatis/codex), like [Howdy](https://github.com/syntatis/howdy).
 
 ## Installation
 
