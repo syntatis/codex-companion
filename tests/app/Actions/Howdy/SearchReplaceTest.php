@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use SplFileInfo;
 use Syntatis\Codex\Companion\Actions\Initializers\Howdy\SearchReplace;
 use Syntatis\Codex\Companion\Actions\Initializers\Howdy\UserInputs;
-use Syntatis\Codex\Companion\Tests\Traits\WithTempFiles;
+use Syntatis\Tests\Traits\WithTempFiles;
 
 use function file_get_contents;
 
