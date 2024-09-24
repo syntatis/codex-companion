@@ -29,15 +29,15 @@ class Initialize implements Executable
 
 	public function execute(): int
 	{
-		/** @var array{syntatis?:array{project?:array{name?:string,initialized?:int|bool}}} $extra */
+		/** @var array{codex?:array{project?:array{name?:string,initialized?:int|bool}}} $extra */
 		$extra = $this->composer->getPackage()->getExtra();
-		$project = $extra['syntatis']['project'] ?? null;
+		$project = $extra['codex']['project'] ?? null;
 
 		if (Val::isBlank($project)) {
 			return self::SUCCESS;
 		}
 
-		$projectName = $extra['syntatis']['project']['name'] ?? null;
+		$projectName = $extra['codex']['project']['name'] ?? null;
 
 		switch ($projectName) {
 			case 'howdy':

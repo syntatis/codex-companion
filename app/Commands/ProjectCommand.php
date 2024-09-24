@@ -20,12 +20,12 @@ class ProjectCommand extends BaseCommand
 {
 	protected function configure(): void
 	{
-		$this->setName('syntatis:project')
+		$this->setName('codex:project')
 			->setDescription('Commands to manage project')
 			->setHelp(<<<'EOT'
-			The <info>syntatis:project</info> command allows you to manage project
+			The <info>codex:project</info> command allows you to manage project
 			in the current directory. The command depends on the
-			<info>syntatis</info> to be provided as an <info>extra</info> data in
+			<info>codex</info> to be provided as an <info>extra</info> data in
 			the composer.json file.
 			EOT)
 			->addArgument('action', InputArgument::REQUIRED, 'The action to execute on the project')
