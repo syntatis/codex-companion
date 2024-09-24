@@ -56,7 +56,7 @@
         "sort-packages": true
     },
     "extra": {
-        "class": "Syntatis\\CodexCompanion\\Plugin"
+        "class": "Codex\\Companion\\Plugin"
     },
     "scripts": {
         "phpcs": "phpcs",
