@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Actions;
+namespace Codex\Companion\Actions;
 
+use Codex\Companion\Actions\Initializers\Howdy;
+use Codex\Companion\Contracts\Executable;
+use Codex\Companion\Traits\ConsoleOutput;
 use Composer\Composer;
 use Composer\IO\ConsoleIO;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy;
-use Syntatis\ComposerProjectPlugin\Contracts\Executable;
-use Syntatis\ComposerProjectPlugin\Traits\ConsoleOutput;
 use Syntatis\Utils\Val;
 
 class Initialize implements Executable
@@ -29,15 +29,15 @@ class Initialize implements Executable
 
 	public function execute(): int
 	{
-		/** @var array{syntatis?:array{project?:array{name?:string,initialized?:int|bool}}} $extra */
+		/** @var array{codex?:array{project?:array{name?:string,initialized?:int|bool}}} $extra */
 		$extra = $this->composer->getPackage()->getExtra();
-		$project = $extra['syntatis']['project'] ?? null;
+		$project = $extra['codex']['project'] ?? null;
 
 		if (Val::isBlank($project)) {
 			return self::SUCCESS;
 		}
 
-		$projectName = $extra['syntatis']['project']['name'] ?? null;
+		$projectName = $extra['codex']['project']['name'] ?? null;
 
 		switch ($projectName) {
 			case 'howdy':

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\ComposerProjectPlugin\Tests\Actions\Howdy;
+namespace Codex\Companion\Tests\Actions\Howdy;
 
+use Codex\Companion\Actions\Initializers\Howdy\UserInputs;
 use Composer\IO\ConsoleIO;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Syntatis\ComposerProjectPlugin\Actions\Initializers\Howdy\UserInputs;
 
 class UserInputsTest extends TestCase
 {

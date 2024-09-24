@@ -1,13 +1,13 @@
 {
-    "name": "syntatis/composer-project-plugin",
-    "description": "Support tools for Composer projects",
+    "name": "syntatis/codex-companion",
+    "description": "Helpful companion for Codex projects",
     "type": "composer-plugin",
     "license": "MIT",
     "keywords": [
         "cli",
         "composer"
     ],
-    "homepage": "https://github.com/syntatis/composer-project-plugin#README",
+    "homepage": "https://github.com/syntatis/codex-companion#README",
     "authors": [
         {
             "name": "Thoriq Firdaus",
@@ -17,12 +17,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Syntatis\\ComposerProjectPlugin\\": "app/"
+            "Codex\\Companion\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Syntatis\\ComposerProjectPlugin\\Tests\\": [
+            "Codex\\Companion\\Tests\\": [
                 "tests/app/",
                 "tests/phpunit/"
             ]
@@ -56,7 +56,7 @@
         "sort-packages": true
     },
     "extra": {
-        "class": "Syntatis\\ComposerProjectPlugin\\Plugin"
+        "class": "Syntatis\\CodexCompanion\\Plugin"
     },
     "scripts": {
         "phpcs": "phpcs",

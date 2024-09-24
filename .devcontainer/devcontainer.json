@@ -1,5 +1,5 @@
 {
-    "name": "syntatis/php-utils",
+    "name": "syntatis/codex-companion",
     "image": "ghcr.io/syntatis/php:7.4-fpm",
     "customizations": {
         "vscode": {

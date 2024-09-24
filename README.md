@@ -1,6 +1,6 @@
-# 🖲 composer-project-plugin
+# 🖲 codex-companion
 
-[![ci](https://github.com/syntatis/composer-project-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/composer-project-plugin/actions/workflows/ci.yml)
+[![ci](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml)
 
 This Composer plugin provides a set of tools, like commands and scripts, designed as a supporting for some projects, like [Howdy](https://github.com/syntatis/howdy).
 
@@ -9,7 +9,7 @@ This Composer plugin provides a set of tools, like commands and scripts, designe
 To install, use [Composer](https://getcomposer.org/) and require this package as a development dependency:
 
 ```bash
-composer require syntatis/composer-project-plugin --dev
+composer require syntatis/codex-companion --dev
 ```
 
 If you're using Composer 2.2 or higher, it will [ask for permission](https://blog.packagist.com/composer-2-2/#more-secure-plugin-execution) to allow this plugin to run code. You'll need to grant this permission for the plugin to work. Once permission is granted, Composer will automatically add the following snippet to your `composer.json` file:
@@ -18,7 +18,7 @@ If you're using Composer 2.2 or higher, it will [ask for permission](https://blo
 {
 	"config": {
 		"allow-plugins": {
-			"syntatis/composer-project-plugin": true
+			"syntatis/codex-companion": true
 		}
 	}
 }
