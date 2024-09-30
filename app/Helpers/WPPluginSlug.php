@@ -52,7 +52,7 @@ class WPPluginSlug implements Stringable
 			);
 		}
 
-		$slug = Str::toSlug(Str::toKebabCase($slug));
+		$slug = Str::toKebabCase(Str::toKebabCase($slug));
 
 		if (strlen($slug) > 214) {
 			throw new InvalidArgumentException(
