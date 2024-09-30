@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Helpers;
 
-use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use InvalidArgumentException;
 use Stringable;
-use Symfony\Component\String\Inflector\EnglishInflector;
 use Syntatis\Codex\Companion\Traits\ConsoleOutput;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
