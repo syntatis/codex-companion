@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Helpers;
 
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use InvalidArgumentException;
 use Stringable;
+use Symfony\Component\String\Inflector\EnglishInflector;
 use Syntatis\Codex\Companion\Traits\ConsoleOutput;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
@@ -52,7 +55,8 @@ class WPPluginSlug implements Stringable
 			);
 		}
 
-		$slug = Str::toKebabCase(Str::toKebabCase($slug));
+		$inflector = InflectorFactory::create()->build();
+		$slug = $inflector->urlize(Str::toKebabCase($slug));
 
 		if (strlen($slug) > 214) {
 			throw new InvalidArgumentException(
