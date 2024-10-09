@@ -6,7 +6,7 @@ namespace Syntatis\Tests\Clients;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Finder;
-use Syntatis\Codex\Companion\Clients\ScoperInc;
+use Syntatis\Codex\Companion\Clients\PHPScoperInc;
 use Syntatis\Tests\WithTemporaryFiles;
 
 class PHPScoperIncTest extends TestCase
@@ -42,7 +42,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testExposeGlobals(): void
 	{
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 
 		$this->assertTrue($instance->getAll()['expose-global-constants']);
 		$this->assertTrue($instance->getAll()['expose-global-classes']);
@@ -51,7 +51,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testOverrideExposeGlobals(): void
 	{
-		$instance = new ScoperInc(self::getTemporaryPath(), [
+		$instance = new PHPScoperInc(self::getTemporaryPath(), [
 			'expose-global-constants' => false,
 			'expose-global-classes' => false,
 		]);
@@ -77,7 +77,7 @@ class PHPScoperIncTest extends TestCase
 			CONTENT,
 		);
 
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 
 		$this->assertNull($instance->getAll()['prefix']);
 	}
@@ -104,7 +104,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 
 		$this->assertSame('PVA\\Vendor', $instance->getAll()['prefix']);
 	}
@@ -131,7 +131,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new ScoperInc(self::getTemporaryPath(), ['prefix' => 'FOO\\Bar']);
+		$instance = new PHPScoperInc(self::getTemporaryPath(), ['prefix' => 'FOO\\Bar']);
 
 		$this->assertSame('PVA\\Vendor', $instance->getAll()['prefix']);
 	}
@@ -158,7 +158,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 
 		$this->assertContains('PluginName', $instance->getAll()['exclude-namespaces']);
 	}
@@ -186,7 +186,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 
 		$this->assertContains('PluginName', $instance->getAll()['exclude-namespaces']);
 		$this->assertContains('Whoops', $instance->getAll()['exclude-namespaces']);
@@ -213,7 +213,7 @@ class PHPScoperIncTest extends TestCase
 		self::createTemporaryFile('/vendor/foo.js', '');
 		self::createTemporaryFile('/vendor/foo.html.php', '');
 
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 		$instance = $instance->excludeFiles([
 			self::getTemporaryPath('/vendor/foo.css'),
 			self::getTemporaryPath('/vendor/foo.html'),
@@ -243,7 +243,7 @@ class PHPScoperIncTest extends TestCase
 			CONTENT,
 		);
 
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 
 		$finder = Finder::create();
 		$instance = $instance->addFinder($finder);
@@ -270,7 +270,7 @@ class PHPScoperIncTest extends TestCase
 		$patcher = static function () {
 			return 'patched';
 		};
-		$instance = new ScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc(self::getTemporaryPath());
 		$instance = $instance->addPatcher($patcher);
 
 		$this->assertContains($patcher, $instance->getAll()['patchers']);

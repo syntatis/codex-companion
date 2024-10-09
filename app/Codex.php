@@ -26,6 +26,10 @@ class Codex
 		$this->projectPath = $projectPath;
 	}
 
+	/**
+	 * @param string|null $path The path to append to the project path. The path appended should start
+	 *                          with a trailing slash e.g. `/path/to/file.json`.
+	 */
 	public function getProjectPath(?string $path = null): string
 	{
 		$projectPath = $this->projectPath ?? '';

@@ -18,7 +18,7 @@ trait WithTemporaryFiles
 
 	protected static function setUpTemporaryPath(): void
 	{
-		self::$tempDir = Path::canonicalize(dirname(__DIR__, 2) . '/tmp/phpunit-' . md5(static::class));
+		self::$tempDir = Path::normalize(dirname(__DIR__, 2) . '/tmp/phpunit-' . md5(static::class));
 		self::$filesystem = new Filesystem();
 		self::$filesystem->mkdir(self::$tempDir);
 	}
@@ -26,10 +26,10 @@ trait WithTemporaryFiles
 	public static function getTemporaryPath(?string $path = null): string
 	{
 		if ($path) {
-			return self::$tempDir . $path;
+			return Path::normalize(self::$tempDir . $path);
 		}
 
-		return self::$tempDir;
+		return Path::normalize(self::$tempDir);
 	}
 
 	public static function createTemporaryFile(string $path, string $content): void

@@ -16,6 +16,7 @@ use function array_unique;
 use function array_values;
 use function basename;
 use function is_array;
+use function is_string;
 use function iterator_to_array;
 use function json_decode;
 use function json_encode;
@@ -46,24 +47,10 @@ class PHPScoperInc
 				'expose-global-constants' => true,
 				'expose-global-classes' => true,
 				'expose-global-functions' => true,
+				'exclude-namespaces' => [],
+				'exclude-files' => [],
 			],
 			$configs,
-			[
-				/**
-				 * These configurations contain defaults to make it works out of the box.
-				 * Users may add to these configurations through the methods provided.
-				 */
-				'finders' => $this->getDefaultFinders(),
-				'patchers' => $this->getDefaultPatchers(),
-				'exclude-files' => $this->getDefaultExcludeFiles(),
-
-				/**
-				 * The following configs are set in the `composer.json`. Any changes have
-				 * to be done in the `composer.json` file.
-				 */
-				'prefix' => $this->codex->getConfig('scoper.prefix'),
-				'exclude-namespaces' => $this->getDefaultExcludeNamespaces(),
-			],
 		));
 	}
 
@@ -91,10 +78,10 @@ class PHPScoperInc
 	 *
 	 * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md#excluded-files
 	 *
-	 * @param array<string>|iterable<SplFileInfo> $files A list of path of files to exclude. Each path may be an
+	 * @param iterable<mixed> $files A list of path of files to exclude. Each path may be an
 	 *                                                   absolute or relative to the PHP-Scoper config file.
 	 */
-	public function excludeFiles($files): self
+	public function excludeFiles(iterable $files): self
 	{
 		clone $self = $this;
 
@@ -103,11 +90,15 @@ class PHPScoperInc
 		$current = is_array($current) ? $current : [];
 
 		foreach ($files as $file) {
-			if (! ($file instanceof SplFileInfo)) {
+			if (is_string($file)) {
+				$merger[] = $file;
 				continue;
 			}
 
-			$merger[] = (string) $file;
+			if ($file instanceof SplFileInfo) {
+				$merger[] = (string) $file;
+				continue;
+			}
 		}
 
 		$self->data->set(
@@ -121,6 +112,21 @@ class PHPScoperInc
 	/** @return array<string,mixed> */
 	public function getAll(): array
 	{
+		/**
+		 * These configurations contain defaults to make it works out of the box.
+		 * Users may add to these configurations through the methods provided.
+		 */
+		$this->data->merge('finders', $this->getDefaultFinders());
+		$this->data->merge('patchers', $this->getDefaultPatchers());
+		$this->data->merge('exclude-files', $this->getDefaultExcludeFiles());
+		$this->data->merge('exclude-namespaces', $this->getDefaultExcludeNamespaces());
+
+		/**
+		 * The following configs are set in the `composer.json`. Any changes have
+		 * to be done in the `composer.json` file.
+		 */
+		$this->data->set('prefix', $this->codex->getConfig('scoper.prefix'));
+
 		return $this->data->all();
 	}
 

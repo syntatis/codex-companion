@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Console\ProjectInitCommand;
 
-use SplFileInfo;
 use Symfony\Component\Console\Style\StyleInterface;
+use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputs;
 use Syntatis\Codex\Companion\Contracts\Executable;
@@ -33,26 +33,33 @@ class Howdy implements Executable
 	public function execute(StyleInterface $style): int
 	{
 		$projectProps = new ProjectProps($this->codex);
-		$pluginFile = $projectProps->getPluginFile();
+
+		/**
+		 * Normalize the plugin file path to handle the descrepencies in the path
+		 * format between different operating systems.
+		 */
+		$pluginFile = Path::normalize((string) $projectProps->getPluginFile());
+
+		if (! file_exists($pluginFile)) {
+			$style->error('Unable to find the plugin main file.');
+
+			return 1;
+		}
 
 		/**
 		 * This command is executed on initialization of a fresh project.
 		 *
-		 * It assumes that the main plugin file name is unchanged otherwise we may
-		 * presume that the project is already initialized. This is to prevent
+		 * It assumes that the main plugin file name is unchanged. If the file is
+		 * found to be different from the default, we are going to assume that
+		 * the project is already initialized.
+		 *
+		 * It is too risky to proceed, if the file is already changed as we could
+		 * not fully determine, what are the changes made to the file.
 		 */
-		$defaultPluginFile = $this->codex->getProjectPath('/plugin-name.php');
-
-		if ($pluginFile instanceof SplFileInfo && (string) $pluginFile !== $defaultPluginFile) {
+		if ($pluginFile !== $this->codex->getProjectPath('/plugin-name.php')) {
 			$style->warning('Project is already initialized.');
 
 			return 0;
-		}
-
-		if (! file_exists($defaultPluginFile)) {
-			$style->error('Unable to find the plugin main file.');
-
-			return 1;
 		}
 
 		try {

@@ -26,19 +26,25 @@ class PHPScoperFilesystemTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile('/composer.json', json_encode([
-			'name' => 'syntatis/howdy',
-			'require' => ['php' => '>=7.4'],
-			'autoload' => [
-				'psr-4' => [
-					'Syntatis\\' => 'src',
-					'Syntatis\\Lib\\' => ['lib', 'ext'],
+		self::createTemporaryFile(
+			'/composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'autoload' => [
+						'psr-4' => [
+							'Syntatis\\' => 'src',
+							'Syntatis\\Lib\\' => ['lib', 'ext'],
+						],
+					],
+					'autoload-dev' => [
+						'psr-4' => ['Syntatis\\Tests\\' => 'tests/phpunit'],
+					],
 				],
-			],
-			'autoload-dev' => [
-				'psr-4' => ['Syntatis\\Tests\\' => 'tests/phpunit'],
-			],
-		], JSON_UNESCAPED_SLASHES));
+				JSON_UNESCAPED_SLASHES,
+			),
+		);
 
 		$this->codex = new Codex(self::getTemporaryPath());
 	}
@@ -224,13 +230,15 @@ class PHPScoperFilesystemTest extends TestCase
 		$this->assertDirectoryDoesNotExist($filesystem->getBuildPath());
 	}
 
+	/** @group test-path */
 	public function testRemoveAll(): void
 	{
 		$filesystem = new PHPScoperFilesystem($this->codex);
 		$filesystem->dumpComposerFile();
+
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
-		self::createTemporaryFile($temporaryFile, '{}');
+		self::$filesystem->dumpFile($temporaryFile, '{ "name": "syntatis/howdy" }');
 
 		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
 		$this->assertFileExists($temporaryFile);
