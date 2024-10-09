@@ -224,6 +224,7 @@ class PHPScoperFilesystemTest extends TestCase
 		$this->assertDirectoryDoesNotExist($filesystem->getBuildPath());
 	}
 
+	/** @group test-path */
 	public function testRemoveAll(): void
 	{
 		$filesystem = new PHPScoperFilesystem($this->codex);
@@ -231,9 +232,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
-		dd($temporaryFile);
-
-		self::createTemporaryFile($temporaryFile, '{}');
+		self::createTemporaryFile($temporaryFile, '{ "name": "syntatis/howdy" }');
 
 		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
 		$this->assertFileExists($temporaryFile);

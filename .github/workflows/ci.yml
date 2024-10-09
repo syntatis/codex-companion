@@ -61,9 +61,8 @@ jobs:
 
       - name: Setup Composer cache
         uses: actions/cache@v4
-        if: runner.os != 'Windows'
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ${{ runner.os != 'Windows' && 'vendor' || steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-
 
@@ -81,7 +80,7 @@ jobs:
       - name: Run test
         run: |
           composer phpstan
-          vendor/bin/phpunit --testdox --coverage-clover coverage.xml
+          vendor/bin/phpunit --coverage-clover coverage.xml --group test-path
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
