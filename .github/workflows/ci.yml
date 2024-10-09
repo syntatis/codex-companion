@@ -61,8 +61,9 @@ jobs:
 
       - name: Setup Composer cache
         uses: actions/cache@v4
+        if: runner.os != 'Windows'
         with:
-          path: ${{ runner.os != 'Windows' && 'vendor' || steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-
 
