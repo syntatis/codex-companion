@@ -26,7 +26,7 @@ trait WithTemporaryFiles
 	public static function getTemporaryPath(?string $path = null): string
 	{
 		if ($path) {
-			return self::$tempDir . $path;
+			return Path::canonicalize(Path::normalize(self::$tempDir . $path));
 		}
 
 		return self::$tempDir;
