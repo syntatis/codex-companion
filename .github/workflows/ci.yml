@@ -50,34 +50,28 @@ jobs:
       matrix:
         php-version: [7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
         install-preference: [prefer-lowest, prefer-stable]
-        machine: [windows-latest]
+        machine: [windows-latest, ubuntu-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Setup Composer cache
+        uses: actions/cache@v4
+        if: runner.os != 'Windows'
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
-
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: |
-          echo "dir-bs=$(composer config cache-files-dir | sed 's|/|\\|g')" >> $GITHUB_OUTPUT
-          echo "dir-fs=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Test directory
-        run: |
-          echo ${{ steps.composer-cache.outputs.dir-bs }}
-          echo ${{ steps.composer-cache.outputs.dir-fs }}
-
-      - name: Setup Composer cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir-bs }}
-          key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ matrix.install-preference }}-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ matrix.install-preference }}-
 
       - name: Install dependencies
         run: |
