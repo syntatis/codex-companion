@@ -8,6 +8,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 
 use function dirname;
+use function md5;
 
 trait WithTemporaryFiles
 {
@@ -17,7 +18,7 @@ trait WithTemporaryFiles
 
 	protected static function setUpTemporaryPath(): void
 	{
-		self::$tempDir = Path::normalize(dirname(__DIR__, 2) . '/tmp/phpunit');
+		self::$tempDir = Path::normalize(dirname(__DIR__, 2) . '/tmp/phpunit-' . md5(static::class));
 		self::$filesystem = new Filesystem();
 		self::$filesystem->mkdir(self::$tempDir);
 	}
