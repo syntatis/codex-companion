@@ -16,7 +16,6 @@ use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
 use function dirname;
 use function is_dir;
-use function is_string;
 
 /** @codeCoverageIgnore */
 class ComposerPlugin implements PluginInterface, EventSubscriberInterface
