@@ -64,12 +64,16 @@ jobs:
       - name: Get Composer cache directory
         id: composer-cache
         run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+          if [${{ runner.os }} == 'Windows']; then
+            echo "dir=$(composer config cache-files-dir | sed 's|/|\\|g')" >> $GITHUB_OUTPUT
+          else
+            echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+          fi
 
       - name: Setup Composer cache
         uses: actions/cache@v4
         with:
-          path: C:\Users\runneradmin\AppData\Local\Composer\files
+          path: C:/Users/runneradmin/AppData/Local/Composer/files
           key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ matrix.install-preference }}-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ matrix.install-preference }}-
 
