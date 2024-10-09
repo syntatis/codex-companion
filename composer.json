@@ -5,7 +5,8 @@
     "license": "MIT",
     "keywords": [
         "cli",
-        "composer"
+        "scoper",
+        "dev"
     ],
     "homepage": "https://github.com/syntatis/codex-companion#README",
     "authors": [
@@ -31,8 +32,12 @@
     "require": {
         "php": ">=7.4",
         "composer-plugin-api": "^2.0",
+        "adbario/php-dot-notation": "^3.3",
         "doctrine/inflector": "^2.0",
+        "symfony/console": "^5.4",
+        "symfony/filesystem": "^5.4",
         "symfony/finder": "^5.4",
+        "symfony/process": "^5.4",
         "syntatis/utils": "^2.0"
     },
     "require-dev": {
@@ -45,10 +50,10 @@
         "phpstan/phpstan-phpunit": "^1.4",
         "phpstan/phpstan-strict-rules": "^1.6",
         "phpunit/phpunit": "^9.6",
-        "symfony/filesystem": "^5.4",
         "symfony/var-dumper": "^5.4",
         "syntatis/coding-standard": "^1.4"
     },
+    "bin": ["bin/codex"],
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
@@ -57,7 +62,7 @@
         "sort-packages": true
     },
     "extra": {
-        "class": "Syntatis\\Codex\\Companion\\Plugin"
+        "class": "Syntatis\\Codex\\Companion\\ComposerPlugin"
     },
     "scripts": {
         "phpcs": "phpcs",

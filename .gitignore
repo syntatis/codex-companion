@@ -22,7 +22,6 @@ vendor/
 vendor-*
 composer.lock
 package-lock.*
-syntatis.json
 
 # Temporary #
 #############

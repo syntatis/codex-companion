@@ -1,6 +1,10 @@
 {
     "name": "syntatis/codex-companion",
-    "image": "ghcr.io/syntatis/php:7.4-fpm",
+    "dockerComposeFile": [
+        "./compose.yml"
+    ],
+    "service": "php",
+    "workspaceFolder": "/var/www/workspace",
     "customizations": {
         "vscode": {
             "settings": {
