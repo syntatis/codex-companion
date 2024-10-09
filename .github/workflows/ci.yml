@@ -75,7 +75,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer install --prefer-dist --no-ansi --no-interaction --no-progress
-          composer require composer/composer:^2.0 --${{ matrix.install-preference }} --no-interaction --dev
+          composer require composer/composer:^2.0 --${{ matrix.install-preference }} --no-interaction --dev --with-all-dependencies
 
       - name: Run test
         run: |
