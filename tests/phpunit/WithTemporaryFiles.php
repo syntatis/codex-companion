@@ -34,6 +34,9 @@ trait WithTemporaryFiles
 
 	public static function createTemporaryFile(string $path, string $content): void
 	{
+		var_dump(self::getTemporaryPath());
+		var_dump(self::getTemporaryPath($path));
+
 		self::$filesystem->dumpFile(self::getTemporaryPath($path), $content);
 	}
 
