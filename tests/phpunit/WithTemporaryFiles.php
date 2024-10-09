@@ -29,7 +29,7 @@ trait WithTemporaryFiles
 			return Path::normalize(self::$tempDir . $path);
 		}
 
-		return Path::canonicalize(self::$tempDir);
+		return Path::normalize(self::$tempDir);
 	}
 
 	public static function createTemporaryFile(string $path, string $content): void
