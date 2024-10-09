@@ -44,11 +44,13 @@ jobs:
         run: composer phpcs
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.machine }}
     strategy:
       fail-fast: true
       matrix:
-        version: [7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
+        php-version: [7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
+        install-preference: ['prefer-lowest', 'prefer-stable']
+        machine: [windows-latest, ubuntu-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,17 +63,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-${{ matrix.version }}-${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.version }}-composer-
+          key: composer-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: php-${{ matrix.php-version }}-composer-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.version }}
+          php-version: ${{ matrix.php-version }}
           tools: composer:v2
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-ansi --no-interaction --no-progress
+        run: |
+          composer install --${{ matrix.install-preference }}
 
       - name: Run test
         run: |
