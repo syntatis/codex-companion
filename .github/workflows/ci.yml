@@ -28,6 +28,35 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.4"
+          tools: composer:v2
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Setup Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.os == 'Windows' && 'C:\Users\runneradmin\AppData\Local\Composer\files' || steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-7.4-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-7.4-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-ansi --no-interaction --no-progress
+
+      - name: Run code sniffer
+        run: composer phpcs
+
+  static-analysis:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
@@ -40,13 +69,21 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Setup Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.os == 'Windows' && 'C:\Users\runneradmin\AppData\Local\Composer\files' || steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-ansi --no-interaction --no-progress
-
-      - name: Run code sniffer
-        if: matrix.php-version == '7.4'
-        run: composer phpcs
 
       - name: Run static analysis
         run: composer phpstan
@@ -63,6 +100,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+
       - name: Get Composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -73,12 +116,6 @@ jobs:
           path: ${{ runner.os == 'Windows' && 'C:\Users\runneradmin\AppData\Local\Composer\files' || steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-${{ matrix.php-version }}-
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          tools: composer:v2
 
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --with-all-dependencies
