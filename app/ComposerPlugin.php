@@ -15,6 +15,7 @@ use Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
 use function dirname;
+use function is_dir;
 
 /** @codeCoverageIgnore */
 class ComposerPlugin implements PluginInterface, EventSubscriberInterface
@@ -50,6 +51,11 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 	public function onPostCreateProject(Event $event): void
 	{
 		$codex = $this->codex($event);
+
+		if ($codex === null) {
+			return;
+		}
+
 		$output = Factory::createOutput();
 
 		ProjectInitCommand::executeOnComposer(
@@ -71,6 +77,11 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 		}
 
 		$codex = $this->codex($event);
+
+		if ($codex === null) {
+			return;
+		}
+
 		$output = Factory::createOutput();
 
 		ScoperInitCommand::executeOnComposer(
@@ -85,9 +96,13 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 		$this->onPostInstall($event);
 	}
 
-	private function codex(Event $event): Codex
+	private function codex(Event $event): ?Codex
 	{
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+
+		if (! is_dir($vendorDir)) {
+			return null;
+		}
 
 		return new Codex(dirname($vendorDir));
 	}
