@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Symfony\Component\Console\Application;
+use Syntatis\Codex\Companion\Codex;
+use Syntatis\Codex\Companion\Console\ProjectInitCommand;
+use Syntatis\Codex\Companion\Console\ScoperInitCommand;
+use Syntatis\Codex\Companion\Console\ScoperPurgeCommand;
+use Syntatis\Codex\Companion\Console\ToolsSetupCommand;
+
+$autoloadFile = dirname(__DIR__, 4) . '/vendor/autoload.php';
+
+if (file_exists($autoloadFile)) {
+    require_once $autoloadFile;
+} else {
+    $autoloadFile = dirname(__DIR__) . '/vendor/autoload.php';
+	require_once $autoloadFile;
+}
+
+$codex = new Codex(dirname($autoloadFile, 2));
+$app = new Application('Codex', '0.1.0-alpha.0');
+$app->addCommands([
+	new ProjectInitCommand($codex),
+	new ScoperInitCommand($codex),
+	new ScoperPurgeCommand($codex),
+]);
+$app->run();

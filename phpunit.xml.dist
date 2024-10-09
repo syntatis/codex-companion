@@ -23,7 +23,7 @@
 	</php>
 	<testsuites>
 		<testsuite name="src">
-			<directory suffix="Test.php">./tests/app</directory>
+			<directory suffix="Test.php">tests/phpunit/app</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

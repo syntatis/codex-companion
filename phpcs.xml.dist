@@ -16,6 +16,7 @@
 	<!-- The directories to apply the rules -->
 	<file>./app/</file>
 	<file>./tests/</file>
+	<file>./bin/codex</file>
 
 	<!-- Show the warning but exit with 0. The Warning is fine -->
 	<config name="ignore_warnings_on_exit" value="1"/>
@@ -29,7 +30,7 @@
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="app" value="Syntatis\Codex\Companion"/>
-				<element key="tests/app" value="Syntatis\Tests"/>
+				<element key="tests/phpunit/app" value="Syntatis\Tests"/>
 				<element key="tests/phpunit" value="Syntatis\Tests"/>
 			</property>
 		</properties>

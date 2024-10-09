@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Contracts;
 
+use Symfony\Component\Console\Style\StyleInterface;
+
 interface Executable
 {
-	public const SUCCESS = 0;
-
-	public const FAILURE = 1;
-
-	public const INVALID = 2;
-
-	public function execute(): int;
+	public function execute(StyleInterface $style): int;
 }
