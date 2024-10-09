@@ -34,7 +34,7 @@ trait WithTemporaryFiles
 
 	public static function createTemporaryFile(string $path, string $content): void
 	{
-		self::$filesystem->dumpFile(Path::isAbsolute($path) ? $path : self::getTemporaryPath($path), $content);
+		self::$filesystem->dumpFile(self::getTemporaryPath($path), $content);
 	}
 
 	protected static function tearDownTemporaryPath(): void

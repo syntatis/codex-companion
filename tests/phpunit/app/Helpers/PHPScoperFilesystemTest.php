@@ -9,9 +9,11 @@ use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Tests\WithTemporaryFiles;
 
+use function file_exists;
 use function file_get_contents;
 use function json_decode;
 use function json_encode;
+use function var_dump;
 
 use const JSON_UNESCAPED_SLASHES;
 
@@ -26,19 +28,27 @@ class PHPScoperFilesystemTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile('/composer.json', json_encode([
-			'name' => 'syntatis/howdy',
-			'require' => ['php' => '>=7.4'],
-			'autoload' => [
-				'psr-4' => [
-					'Syntatis\\' => 'src',
-					'Syntatis\\Lib\\' => ['lib', 'ext'],
+		self::createTemporaryFile(
+			'/composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'autoload' => [
+						'psr-4' => [
+							'Syntatis\\' => 'src',
+							'Syntatis\\Lib\\' => ['lib', 'ext'],
+						],
+					],
+					'autoload-dev' => [
+						'psr-4' => ['Syntatis\\Tests\\' => 'tests/phpunit'],
+					],
 				],
-			],
-			'autoload-dev' => [
-				'psr-4' => ['Syntatis\\Tests\\' => 'tests/phpunit'],
-			],
-		], JSON_UNESCAPED_SLASHES));
+				JSON_UNESCAPED_SLASHES,
+			),
+		);
+
+		var_dump(file_exists(self::getTemporaryPath('/composer.json')));
 
 		$this->codex = new Codex(self::getTemporaryPath());
 	}
@@ -232,7 +242,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
-		self::createTemporaryFile($temporaryFile, '{ "name": "syntatis/howdy" }');
+		self::$filesystem->dumpFile($temporaryFile, '{ "name": "syntatis/howdy" }');
 
 		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
 		$this->assertFileExists($temporaryFile);
