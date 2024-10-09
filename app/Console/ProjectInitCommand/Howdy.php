@@ -41,6 +41,9 @@ class Howdy implements Executable
 		$pluginFile = Path::normalize((string) $projectProps->getPluginFile());
 		$defaultPluginFile = $this->codex->getProjectPath('/plugin-name.php');
 
+		var_dump($pluginFile);
+		var_dump($defaultPluginFile);
+
 		/**
 		 * This command is executed on initialization of a fresh project.
 		 *

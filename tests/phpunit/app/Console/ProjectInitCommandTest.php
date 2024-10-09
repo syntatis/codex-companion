@@ -78,6 +78,7 @@ class ProjectInitCommandTest extends TestCase
 		parent::tearDown();
 	}
 
+	/** @group test-cli */
 	public function testMissingPluginMainFile(): void
 	{
 		self::$filesystem->remove(self::getTemporaryPath('/plugin-name.php'));

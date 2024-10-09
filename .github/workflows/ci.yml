@@ -80,7 +80,7 @@ jobs:
       - name: Run test
         run: |
           composer phpstan
-          vendor/bin/phpunit --coverage-clover coverage.xml
+          vendor/bin/phpunit --coverage-clover coverage.xml --group test-cli
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
