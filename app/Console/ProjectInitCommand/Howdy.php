@@ -39,10 +39,12 @@ class Howdy implements Executable
 		 * format between different operating systems.
 		 */
 		$pluginFile = Path::normalize((string) $projectProps->getPluginFile());
-		$defaultPluginFile = $this->codex->getProjectPath('/plugin-name.php');
 
-		var_dump($pluginFile);
-		var_dump($defaultPluginFile);
+		if (! file_exists($pluginFile)) {
+			$style->error('Unable to find the plugin main file.');
+
+			return 1;
+		}
 
 		/**
 		 * This command is executed on initialization of a fresh project.
@@ -54,16 +56,10 @@ class Howdy implements Executable
 		 * It is too risky to proceed, if the file is already changed as we could
 		 * not fully determine, what are the changes made to the file.
 		 */
-		if ($pluginFile !== $defaultPluginFile) {
+		if ($pluginFile !== $this->codex->getProjectPath('/plugin-name.php')) {
 			$style->warning('Project is already initialized.');
 
 			return 0;
-		}
-
-		if (! file_exists($defaultPluginFile)) {
-			$style->error('Unable to find the plugin main file.');
-
-			return 1;
 		}
 
 		try {
