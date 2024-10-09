@@ -8,7 +8,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 
 use function dirname;
-use function md5;
 
 trait WithTemporaryFiles
 {
@@ -34,11 +33,9 @@ trait WithTemporaryFiles
 
 	public static function createTemporaryFile(string $path, string $content): void
 	{
-		var_dump($path . "\n");
-		var_dump(self::getTemporaryPath() . "\n");
-		var_dump(self::getTemporaryPath($path) . "\n");
+		$path = Path::isAbsolute($path) ?: $path = self::getTemporaryPath($path);
 
-		self::$filesystem->dumpFile(self::getTemporaryPath($path), $content);
+		self::$filesystem->dumpFile($path, $content);
 	}
 
 	protected static function tearDownTemporaryPath(): void
