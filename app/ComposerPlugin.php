@@ -98,11 +98,12 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 
 	private function codex(Event $event): ?Codex
 	{
-		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-
 		// There is a descrepancy in the return type in Composer older versions,
 		// but safely assume that it will always be a string.
 		// @phpstan-disable-next-line
+		/** @var string $vendorDir */
+		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+
 		if (! is_dir($vendorDir)) {
 			return null;
 		}
