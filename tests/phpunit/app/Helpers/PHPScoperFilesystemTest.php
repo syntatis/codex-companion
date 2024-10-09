@@ -228,6 +228,7 @@ class PHPScoperFilesystemTest extends TestCase
 	{
 		$filesystem = new PHPScoperFilesystem($this->codex);
 		$filesystem->dumpComposerFile();
+
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
 		self::createTemporaryFile($temporaryFile, '{}');

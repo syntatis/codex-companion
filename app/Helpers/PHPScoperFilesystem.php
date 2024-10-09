@@ -16,6 +16,7 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function json_encode;
+use function ltrim;
 use function md5;
 use function time;
 use function trim;
@@ -40,7 +41,7 @@ class PHPScoperFilesystem
 		$this->codex = $codex;
 		$this->filesystem = new Filesystem();
 		$this->hash = md5((string) time());
-		$this->outputPath = 'dist-autoload';
+		$this->outputPath = '/dist-autoload';
 	}
 
 	public function getHash(): string
@@ -50,7 +51,7 @@ class PHPScoperFilesystem
 
 	public function getOutputPath(?string $path = null): string
 	{
-		$outputPath = '/' . $this->outputPath;
+		$outputPath = $this->outputPath;
 
 		if ($path !== null) {
 			$outputPath .= $path;
@@ -61,7 +62,7 @@ class PHPScoperFilesystem
 
 	public function getBuildPath(?string $path = null): string
 	{
-		$dir = '/' . $this->outputPath . '-build-' . $this->hash;
+		$dir = $this->outputPath . '-build-' . $this->hash;
 
 		if ($path !== null) {
 			$dir .= $path;
@@ -116,7 +117,7 @@ class PHPScoperFilesystem
 			 * error due to compatibility issue with the actual `Finder` loaded in
 			 * `composer` CLI.
 			 */
-			->name($this->outputPath . '*');
+			->name(ltrim($this->outputPath, '/') . '-*');
 
 		foreach ($results as $result) {
 			$this->filesystem->remove((string) $result);
