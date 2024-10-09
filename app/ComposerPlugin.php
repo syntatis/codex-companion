@@ -101,7 +101,10 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 	{
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
 
-		if (! is_string($vendorDir) || ! is_dir($vendorDir)) {
+		// There is a descrepancy in the return type in Composer older versions,
+		// but safely assume that it will always be a string.
+		// @phpstan-disable-next-line
+		if (! is_dir($vendorDir)) {
 			return null;
 		}
 
