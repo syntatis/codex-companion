@@ -74,7 +74,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer install --${{ matrix.install-preference }}
+          composer require composer/composer:2.0 --${{ matrix.install-preference }} --no-interaction --no-update --dev
+          composer install
 
       - name: Run test
         run: |
