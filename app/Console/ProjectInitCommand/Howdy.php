@@ -33,17 +33,25 @@ class Howdy implements Executable
 	public function execute(StyleInterface $style): int
 	{
 		$projectProps = new ProjectProps($this->codex);
-		$pluginFile = $projectProps->getPluginFile();
 
 		/**
 		 * This command is executed on initialization of a fresh project.
 		 *
-		 * It assumes that the main plugin file name is unchanged otherwise we may
-		 * presume that the project is already initialized. This is to prevent
+		 * It assumes that the main plugin file name is unchanged. If the file is
+		 * found to be different from the default, we are going to assume that
+		 * the project is already initialized.
+		 *
+		 * It is too risky to proceed, if the file is alredy changed since we can
+		 * not fully determine, what are the changes made to the file.
 		 */
+		$pluginFile = (string) $projectProps->getPluginFile();
 		$defaultPluginFile = $this->codex->getProjectPath('/plugin-name.php');
 
-		if ($pluginFile instanceof SplFileInfo && (string) $pluginFile !== $defaultPluginFile) {
+		var_dump($pluginFile);
+		var_dump($defaultPluginFile);
+		die;
+
+		if ($pluginFile !== $defaultPluginFile) {
 			$style->warning('Project is already initialized.');
 
 			return 0;

@@ -48,8 +48,6 @@ class PHPScoperFilesystemTest extends TestCase
 			),
 		);
 
-		var_dump(file_exists(self::getTemporaryPath('/composer.json')));
-
 		$this->codex = new Codex(self::getTemporaryPath());
 	}
 

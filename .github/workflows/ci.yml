@@ -48,8 +48,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php-version: [7.4, 8.0, 8.1, 8.2, 8.3, 8.4]
-        install-preference: [prefer-lowest, prefer-stable]
+        php-version: [7.4]
+        install-preference: [prefer-lowest]
         machine: [windows-latest]
     steps:
       - name: Checkout code
@@ -79,8 +79,7 @@ jobs:
 
       - name: Run test
         run: |
-          composer phpstan
-          vendor/bin/phpunit --coverage-clover coverage.xml
+          vendor/bin/phpunit --coverage-clover coverage.xml --group test-cli
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

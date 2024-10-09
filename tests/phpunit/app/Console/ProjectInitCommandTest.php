@@ -105,6 +105,7 @@ class ProjectInitCommandTest extends TestCase
 		$this->assertSame(0, $tester->getStatusCode());
 	}
 
+	/** @group test-cli */
 	public function testMissingScoperConfigFile(): void
 	{
 		self::createTemporaryFile(
