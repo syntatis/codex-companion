@@ -103,7 +103,7 @@ class InitializeFilesTest extends TestCase
 			}
 
 			$this->assertEquals(
-				$content['expect'],
+				str_replace("\r\n", "\n", $content['expect']),
 				str_replace(PHP_EOL, "\n", $editedContent),
 			);
 		}
