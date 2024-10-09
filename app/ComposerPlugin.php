@@ -16,6 +16,7 @@ use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
 use function dirname;
 use function is_dir;
+use function is_string;
 
 /** @codeCoverageIgnore */
 class ComposerPlugin implements PluginInterface, EventSubscriberInterface
@@ -100,7 +101,7 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 	{
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
 
-		if (! is_dir($vendorDir)) {
+		if (! is_string($vendorDir) || ! is_dir($vendorDir)) {
 			return null;
 		}
 
