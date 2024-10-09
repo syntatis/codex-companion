@@ -9,11 +9,9 @@ use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Tests\WithTemporaryFiles;
 
-use function file_exists;
 use function file_get_contents;
 use function json_decode;
 use function json_encode;
-use function var_dump;
 
 use const JSON_UNESCAPED_SLASHES;
 
