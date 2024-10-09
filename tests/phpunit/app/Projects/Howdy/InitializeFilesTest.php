@@ -16,6 +16,9 @@ use Syntatis\Codex\Companion\Projects\Howdy\ProjectProps;
 use Syntatis\Tests\WithTemporaryFiles;
 
 use function file_get_contents;
+use function str_replace;
+
+use const PHP_EOL;
 
 class InitializeFilesTest extends TestCase
 {
@@ -99,7 +102,10 @@ class InitializeFilesTest extends TestCase
 					break;
 			}
 
-			$this->assertSame($content['expect'], $editedContent);
+			$this->assertEquals(
+				$content['expect'],
+				str_replace(PHP_EOL, "\n", $editedContent),
+			);
 		}
 	}
 
