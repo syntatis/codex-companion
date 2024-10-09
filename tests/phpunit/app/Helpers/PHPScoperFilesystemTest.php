@@ -231,6 +231,8 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
+		dd($temporaryFile);
+
 		self::createTemporaryFile($temporaryFile, '{}');
 
 		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
