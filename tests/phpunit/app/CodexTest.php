@@ -6,6 +6,8 @@ namespace Syntatis\Tests;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Symfony\Component\Filesystem\Path;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Exceptions\MissingRequiredFile;
 
@@ -61,8 +63,8 @@ class CodexTest extends TestCase
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame('syntatis/howdy', $codex->getComposer()->get('name'));
-		$this->assertSame('syntatis/howdy', $codex->getName());
+		$this->assertSame('syntatis/howdy', $codex->getComposer('name'));
+		$this->assertSame('syntatis/howdy', $codex->getProjectName());
 	}
 
 	public function testGetRequire(): void
@@ -79,7 +81,7 @@ class CodexTest extends TestCase
 
 		$this->assertSame(
 			['php' => '>=7.4', 'ext-json' => '*'],
-			(new Codex(self::getTemporaryPath()))->getComposer()->get('require'),
+			(new Codex(self::getTemporaryPath()))->getComposer('require'),
 		);
 	}
 
@@ -87,7 +89,7 @@ class CodexTest extends TestCase
 	{
 		self::createTemporaryFile('/composer.json', json_encode([]));
 
-		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer()->get('require'));
+		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer('require'));
 	}
 
 	public function testGetRequireEmpty(): void
@@ -96,7 +98,7 @@ class CodexTest extends TestCase
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame([], $codex->getComposer()->get('require'));
+		$this->assertSame([], $codex->getComposer('require'));
 	}
 
 	public function testGetRequireDev(): void
@@ -111,7 +113,7 @@ class CodexTest extends TestCase
 
 		$this->assertSame(
 			['phpunit/phpunit' => '^9.5'],
-			(new Codex(self::getTemporaryPath()))->getComposer()->get('require-dev'),
+			(new Codex(self::getTemporaryPath()))->getComposer('require-dev'),
 		);
 	}
 
@@ -125,7 +127,7 @@ class CodexTest extends TestCase
 			'require-dev' => [],
 		]));
 
-		$this->assertSame([], (new Codex(self::getTemporaryPath()))->getComposer()->get('require-dev'));
+		$this->assertSame([], (new Codex(self::getTemporaryPath()))->getComposer('require-dev'));
 	}
 
 	public function testGetRequireDevNotSet(): void
@@ -137,7 +139,7 @@ class CodexTest extends TestCase
 			],
 		]));
 
-		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer()->get('require-dev'));
+		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer('require-dev'));
 	}
 
 	public function testGetAutoloadDev(): void
@@ -150,7 +152,7 @@ class CodexTest extends TestCase
 
 		$this->assertSame(
 			['psr-4' => ['Tests\\' => 'tests/']],
-			(new Codex(self::getTemporaryPath()))->getComposer()->get('autoload-dev'),
+			(new Codex(self::getTemporaryPath()))->getComposer('autoload-dev'),
 		);
 	}
 
@@ -162,7 +164,7 @@ class CodexTest extends TestCase
 			],
 		]));
 
-		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer()->get('autoload-dev'));
+		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer('autoload-dev'));
 	}
 
 	public function testGetAutoloadDevEmpty(): void
@@ -171,23 +173,90 @@ class CodexTest extends TestCase
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame([], $codex->getComposer()->get('autoload-dev'));
+		$this->assertSame([], $codex->getComposer('autoload-dev'));
 	}
 
-	public function testGetConfig(): void
+	public function testGetConfigOutputPathDefault(): void
 	{
 		self::createTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => 'dist-autoload'],
+					'scoper' => [],
 				],
 			],
 		]));
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame(['scoper' => ['output-path' => 'dist-autoload']], $codex->getConfig());
-		$this->assertSame('dist-autoload', $codex->getConfig('scoper.output-path'));
+		$this->assertSame(['scoper' => ['output-dir' => self::getTemporaryPath('/dist/autoload')]], $codex->getConfig());
+		$this->assertSame(self::getTemporaryPath('/dist/autoload'), $codex->getConfig('scoper.output-dir'));
+	}
+
+	public function testGetConfigOutputPathInvalidValue(): void
+	{
+		self::createTemporaryFile('/composer.json', json_encode([
+			'extra' => [
+				'codex' => [
+					'scoper' => ['output-dir' => null],
+				],
+			],
+		]));
+
+		$this->expectException(InvalidOptionsException::class);
+
+		$codex = new Codex(self::getTemporaryPath());
+	}
+
+	/** @dataProvider dataGetConfigOutputPathRelative */
+	public function testGetConfigOutputPathRelative(string $path): void
+	{
+		self::createTemporaryFile('/composer.json', json_encode([
+			'extra' => [
+				'codex' => [
+					'scoper' => ['output-dir' => $path],
+				],
+			],
+		]));
+
+		$codex = new Codex(self::getTemporaryPath());
+
+		$this->assertSame(Path::makeAbsolute($path, self::getTemporaryPath()), $codex->getConfig('scoper.output-dir'));
+	}
+
+	public static function dataGetConfigOutputPathRelative(): iterable
+	{
+		yield './relative-path' => ['./relative-path'];
+		yield '../relative-path' => ['../relative-path'];
+		yield 'relative-path/' => ['relative-path/'];
+		yield 'relative-path' => ['relative-path'];
+	}
+
+	public function testGetConfigOutputPathAbsolute(): void
+	{
+		self::createTemporaryFile('/composer.json', json_encode([
+			'extra' => [
+				'codex' => [
+					'scoper' => ['output-dir' => '/absolute-path'],
+				],
+			],
+		]));
+
+		$codex = new Codex(self::getTemporaryPath());
+
+		$this->assertSame('/absolute-path', $codex->getConfig('scoper.output-dir'));
+	}
+
+	public function testGetConfigInvalidKey(): void
+	{
+		self::createTemporaryFile('/composer.json', json_encode([
+			'extra' => [
+				'codex' => [
+					'scoper' => ['output-dir' => 'dist-autoload'],
+				],
+			],
+		]));
+
+		$codex = new Codex(self::getTemporaryPath());
 		$this->assertNull($codex->getConfig('foo'));
 	}
 }

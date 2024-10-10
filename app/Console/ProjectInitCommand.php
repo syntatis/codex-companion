@@ -23,7 +23,7 @@ class ProjectInitCommand extends BaseCommand
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$style = new SymfonyStyle($input, $output);
-		$projectName = $this->codex->getName();
+		$projectName = $this->codex->getProjectName();
 
 		switch ($projectName) {
 			case 'syntatis/howdy':

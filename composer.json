@@ -37,6 +37,7 @@
         "symfony/console": "^5.4",
         "symfony/filesystem": "^5.4",
         "symfony/finder": "^5.4",
+        "symfony/options-resolver": "^5.4",
         "symfony/process": "^5.4",
         "syntatis/utils": "^2.0"
     },

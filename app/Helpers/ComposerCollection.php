@@ -16,7 +16,11 @@ use function json_decode;
 
 use const JSON_THROW_ON_ERROR;
 
-/** @phpstan-extends Dot<string,mixed> */
+/**
+ * Handles data collection from composer.json file.
+ *
+ * @phpstan-extends Dot<string,mixed>
+ */
 class ComposerCollection extends Dot
 {
 	/** @param string $path The path to the Composer file. */
