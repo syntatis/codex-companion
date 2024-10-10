@@ -6,7 +6,6 @@ namespace Syntatis\Codex\Companion\Clients;
 
 use Adbar\Dot;
 use SplFileInfo;
-use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Utils\Val;
