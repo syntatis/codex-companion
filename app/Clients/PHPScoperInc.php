@@ -8,6 +8,7 @@ use Adbar\Dot;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
+use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Utils\Val;
 
 use function array_map;
@@ -35,6 +36,8 @@ class PHPScoperInc
 {
 	private Codex $codex;
 
+	private PHPScoperFilesystem $scoper;
+
 	/** @var Dot<string,mixed> */
 	private Dot $data;
 
@@ -42,6 +45,7 @@ class PHPScoperInc
 	public function __construct(string $projectPath, array $configs = [])
 	{
 		$this->codex = new Codex($projectPath);
+		$this->scoper = new PHPScoperFilesystem($this->codex);
 		$this->data = new Dot(array_merge(
 			[
 				'expose-global-constants' => true,
@@ -112,6 +116,8 @@ class PHPScoperInc
 	/** @return array<string,mixed> */
 	public function getAll(): array
 	{
+		$this->data->set('output-dir', $this->scoper->getOutputPath());
+
 		/**
 		 * These configurations contain defaults to make it works out of the box.
 		 * Users may add to these configurations through the methods provided.

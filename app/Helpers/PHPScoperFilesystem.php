@@ -6,7 +6,6 @@ namespace Syntatis\Codex\Companion\Helpers;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
-use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Utils\Val;
 
@@ -16,7 +15,6 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function json_encode;
-use function ltrim;
 use function md5;
 use function time;
 use function trim;
@@ -39,9 +37,16 @@ class PHPScoperFilesystem
 	public function __construct(Codex $codex)
 	{
 		$this->codex = $codex;
-		$this->filesystem = new Filesystem();
 		$this->hash = md5((string) time());
-		$this->outputPath = '/dist-autoload';
+		$this->filesystem = new Filesystem();
+
+		$outputPath = $this->codex->getConfig('scoper.output-path');
+
+		if (! is_string($outputPath)) {
+			return;
+		}
+
+		$this->outputPath = $outputPath;
 	}
 
 	public function getHash(): string
@@ -57,26 +62,26 @@ class PHPScoperFilesystem
 			$outputPath .= $path;
 		}
 
-		return $this->codex->getProjectPath($outputPath);
+		return $outputPath;
 	}
 
 	public function getBuildPath(?string $path = null): string
 	{
-		$dir = $this->outputPath . '-build-' . $this->hash;
+		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
 		if ($path !== null) {
-			$dir .= $path;
+			$buildPath .= $path;
 		}
 
-		return $this->codex->getProjectPath($dir);
+		return $buildPath;
 	}
 
-	public function getScoperBinPath(): string
+	public function getBinPath(): string
 	{
 		return $this->codex->getProjectPath('/vendor/bin/php-scoper');
 	}
 
-	public function getScoperConfigPath(): string
+	public function getConfigPath(): string
 	{
 		return $this->codex->getProjectPath('/scoper.inc.php');
 	}
@@ -87,7 +92,7 @@ class PHPScoperFilesystem
 			[
 				'autoload' => $this->getAutoload('autoload'),
 				'autoload-dev' => $this->getAutoload('autoload-dev'),
-				'require' => $this->codex->getComposer()->get('require'),
+				'require' => $this->codex->getComposer('require'),
 				'require-dev' => $this->getInstallDev(),
 			],
 			static fn ($value): bool => ! Val::isBlank($value),
@@ -108,20 +113,8 @@ class PHPScoperFilesystem
 	 */
 	public function removeAll(): void
 	{
-		$results = Finder::create()
-			->directories()
-			->depth(0)
-			->in($this->codex->getProjectPath())
-			/**
-			 * Passing name pattern as a string instead of an array which may cause an
-			 * error due to compatibility issue with the actual `Finder` loaded in
-			 * `composer` CLI.
-			 */
-			->name(ltrim($this->outputPath, '/') . '-*');
-
-		foreach ($results as $result) {
-			$this->filesystem->remove((string) $result);
-		}
+		$this->filesystem->remove($this->getOutputPath());
+		$this->filesystem->remove($this->getBuildPath());
 	}
 
 	/**
@@ -141,7 +134,7 @@ class PHPScoperFilesystem
 	 */
 	private function getInstallDev(): array
 	{
-		$requireDev = $this->codex->getComposer()->get('require-dev');
+		$requireDev = $this->codex->getComposer('require-dev');
 
 		if (! is_array($requireDev) || Val::isBlank($requireDev)) {
 			return [];
@@ -183,7 +176,7 @@ class PHPScoperFilesystem
 			return $paths;
 		};
 
-		$autoloads = $this->codex->getComposer()->get($key);
+		$autoloads = $this->codex->getComposer($key);
 
 		if (is_array($autoloads) && ! Val::isBlank($autoloads)) {
 			foreach ($autoloads as $std => $autoload) {

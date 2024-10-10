@@ -73,7 +73,7 @@ class ScoperInitCommand extends BaseCommand
 
 	private function getConfirmation(StyleInterface $style): bool
 	{
-		$prefix = $this->codex->getName() === 'syntatis/howdy' ?
+		$prefix = $this->codex->getProjectName() === 'syntatis/howdy' ?
 			(new ProjectProps($this->codex))->getVendorPrefix() :
 			null;
 

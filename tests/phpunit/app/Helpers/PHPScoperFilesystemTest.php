@@ -34,8 +34,8 @@ class PHPScoperFilesystemTest extends TestCase
 					'require' => ['php' => '>=7.4'],
 					'autoload' => [
 						'psr-4' => [
-							'Syntatis\\' => 'src',
-							'Syntatis\\Lib\\' => ['lib', 'ext'],
+							'Syntatis\\' => 'src/',
+							'Syntatis\\Lib\\' => ['lib/', 'ext/'],
 						],
 					],
 					'autoload-dev' => [
@@ -67,12 +67,12 @@ class PHPScoperFilesystemTest extends TestCase
 	public function testGetOutputPath(): void
 	{
 		$this->assertSame(
-			self::getTemporaryPath('/dist-autoload'),
+			self::getTemporaryPath('/dist/autoload'),
 			(new PHPScoperFilesystem($this->codex))->getOutputPath(),
 		);
 
 		$this->assertSame(
-			self::getTemporaryPath('/dist-autoload/foo'),
+			self::getTemporaryPath('/dist/autoload/foo'),
 			(new PHPScoperFilesystem($this->codex))->getOutputPath('/foo'),
 		);
 
@@ -81,14 +81,13 @@ class PHPScoperFilesystemTest extends TestCase
 			'require' => ['php' => '>=7.4'],
 			'extra' => [
 				'codex' => [
-					// Adding `output-path` config currently does not change the output path.
 					'scoper' => ['output-path' => 'foo-autoload'],
 				],
 			],
 		], JSON_UNESCAPED_SLASHES));
 
 		$this->assertSame(
-			self::getTemporaryPath('/dist-autoload'),
+			self::getTemporaryPath('/foo-autoload'),
 			(new PHPScoperFilesystem(new Codex(self::getTemporaryPath())))->getOutputPath(),
 		);
 	}
@@ -98,13 +97,13 @@ class PHPScoperFilesystemTest extends TestCase
 		$filesystem = new PHPScoperFilesystem($this->codex);
 
 		$this->assertSame(
+			self::getTemporaryPath('/dist/autoload-build-' . $filesystem->getHash()),
 			$filesystem->getBuildPath(),
-			self::getTemporaryPath('/dist-autoload-build-' . $filesystem->getHash()),
 		);
 
 		$this->assertSame(
+			self::getTemporaryPath('/dist/autoload-build-' . $filesystem->getHash() . '/foo'),
 			$filesystem->getBuildPath('/foo'),
-			self::getTemporaryPath('/dist-autoload-build-' . $filesystem->getHash() . '/foo'),
 		);
 	}
 
@@ -112,7 +111,7 @@ class PHPScoperFilesystemTest extends TestCase
 	{
 		$this->assertSame(
 			self::getTemporaryPath('/vendor/bin/php-scoper'),
-			(new PHPScoperFilesystem($this->codex))->getScoperBinPath(),
+			(new PHPScoperFilesystem($this->codex))->getBinPath(),
 		);
 	}
 
@@ -120,7 +119,7 @@ class PHPScoperFilesystemTest extends TestCase
 	{
 		$this->assertSame(
 			self::getTemporaryPath('/scoper.inc.php'),
-			(new PHPScoperFilesystem($this->codex))->getScoperConfigPath(),
+			(new PHPScoperFilesystem($this->codex))->getConfigPath(),
 		);
 	}
 
@@ -142,15 +141,15 @@ class PHPScoperFilesystemTest extends TestCase
 		$this->assertEquals(
 			[
 				'psr-4' => [
-					'Syntatis\\' => '../src',
-					'Syntatis\\Lib\\' => ['../lib', '../ext'],
+					'Syntatis\\' => '../../src',
+					'Syntatis\\Lib\\' => ['../../lib', '../../ext'],
 				],
 			],
 			$b['autoload'],
 		);
 		$this->assertEquals(
 			[
-				'psr-4' => ['Syntatis\\Tests\\' => '../tests/phpunit'],
+				'psr-4' => ['Syntatis\\Tests\\' => '../../tests/phpunit'],
 			],
 			$b['autoload-dev'],
 		);
@@ -230,7 +229,6 @@ class PHPScoperFilesystemTest extends TestCase
 		$this->assertDirectoryDoesNotExist($filesystem->getBuildPath());
 	}
 
-	/** @group test-path */
 	public function testRemoveAll(): void
 	{
 		$filesystem = new PHPScoperFilesystem($this->codex);
