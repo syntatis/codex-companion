@@ -275,4 +275,39 @@ class PHPScoperIncTest extends TestCase
 
 		$this->assertContains($patcher, $instance->getAll()['patchers']);
 	}
+
+	public function testOutputDir(): void
+	{
+		$instance = new PHPScoperInc(self::getTemporaryPath());
+
+		$this->assertSame('dist/autoload', $instance->getAll()['output-dir']);
+	}
+
+	public function testOutputDirCustom(): void
+	{
+		self::createTemporaryFile(
+			'/composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/", "src/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"output-dir": "dist/foobar",
+							"exclude-namespaces": ["Whoops", "Symfony\\Component\\Console\\"]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+		$instance = new PHPScoperInc(self::getTemporaryPath());
+
+		$this->assertSame('dist/foobar', $instance->getAll()['output-dir']);
+	}
 }

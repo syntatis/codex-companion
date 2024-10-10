@@ -81,7 +81,7 @@ class PHPScoperFilesystemTest extends TestCase
 			'require' => ['php' => '>=7.4'],
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => 'foo-autoload'],
+					'scoper' => ['output-dir' => 'foo-autoload'],
 				],
 			],
 		], JSON_UNESCAPED_SLASHES));
@@ -162,7 +162,7 @@ class PHPScoperFilesystemTest extends TestCase
 			'require' => ['php' => '>=7.4'],
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => 'foo-autoload'],
+					'scoper' => ['output-dir' => 'foo-autoload'],
 				],
 			],
 		], JSON_UNESCAPED_SLASHES));
@@ -193,7 +193,7 @@ class PHPScoperFilesystemTest extends TestCase
 			'extra' => [
 				'codex' => [
 					'scoper' => [
-						'output-path' => 'foo-autoload',
+						'output-dir' => 'foo-autoload',
 						'install-dev' => ['symfony/var-dumper'],
 					],
 				],

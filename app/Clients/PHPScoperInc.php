@@ -6,9 +6,9 @@ namespace Syntatis\Codex\Companion\Clients;
 
 use Adbar\Dot;
 use SplFileInfo;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Utils\Val;
 
 use function array_map;
@@ -35,8 +35,6 @@ use const JSON_UNESCAPED_SLASHES;
 class PHPScoperInc
 {
 	private Codex $codex;
-
-	private PHPScoperFilesystem $scoper;
 
 	/** @var Dot<string,mixed> */
 	private Dot $data;
@@ -115,7 +113,17 @@ class PHPScoperInc
 	/** @return array<string,mixed> */
 	public function getAll(): array
 	{
-		$this->data->set('output-dir', $this->codex->getConfig('scoper.output-path'));
+		$outputDir = $this->codex->getConfig('scoper.output-dir');
+
+		if (is_string($outputDir) && ! Val::isBlank($outputDir)) {
+			$this->data->set(
+				'output-dir',
+				Path::makeRelative(
+					$outputDir,
+					$this->codex->getProjectPath(),
+				),
+			);
+		}
 
 		/**
 		 * These configurations contain defaults to make it works out of the box.

@@ -188,8 +188,8 @@ class CodexTest extends TestCase
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame(['scoper' => ['output-path' => self::getTemporaryPath('/dist/autoload')]], $codex->getConfig());
-		$this->assertSame(self::getTemporaryPath('/dist/autoload'), $codex->getConfig('scoper.output-path'));
+		$this->assertSame(['scoper' => ['output-dir' => self::getTemporaryPath('/dist/autoload')]], $codex->getConfig());
+		$this->assertSame(self::getTemporaryPath('/dist/autoload'), $codex->getConfig('scoper.output-dir'));
 	}
 
 	public function testGetConfigOutputPathInvalidValue(): void
@@ -197,7 +197,7 @@ class CodexTest extends TestCase
 		self::createTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => null],
+					'scoper' => ['output-dir' => null],
 				],
 			],
 		]));
@@ -213,14 +213,14 @@ class CodexTest extends TestCase
 		self::createTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => $path],
+					'scoper' => ['output-dir' => $path],
 				],
 			],
 		]));
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame(Path::makeAbsolute($path, self::getTemporaryPath()), $codex->getConfig('scoper.output-path'));
+		$this->assertSame(Path::makeAbsolute($path, self::getTemporaryPath()), $codex->getConfig('scoper.output-dir'));
 	}
 
 	public static function dataGetConfigOutputPathRelative(): iterable
@@ -236,14 +236,14 @@ class CodexTest extends TestCase
 		self::createTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => '/absolute-path'],
+					'scoper' => ['output-dir' => '/absolute-path'],
 				],
 			],
 		]));
 
 		$codex = new Codex(self::getTemporaryPath());
 
-		$this->assertSame('/absolute-path', $codex->getConfig('scoper.output-path'));
+		$this->assertSame('/absolute-path', $codex->getConfig('scoper.output-dir'));
 	}
 
 	public function testGetConfigInvalidKey(): void
@@ -251,7 +251,7 @@ class CodexTest extends TestCase
 		self::createTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
-					'scoper' => ['output-path' => 'dist-autoload'],
+					'scoper' => ['output-dir' => 'dist-autoload'],
 				],
 			],
 		]));

@@ -120,12 +120,12 @@ class Codex
 	{
 		/** @var Dot<string,mixed> $configs */
 		$configs = new Dot($options);
-		$outputPath = $configs->get('scoper.output-path');
+		$outputPath = $configs->get('scoper.output-dir');
 
 		/**
 		 * If the "install-path" is set, resolve the value with the project path,
 		 * which will ensure that the value returned will be the absolute path
-		 * when accessed through the "scoper.output-path" key. For example,
+		 * when accessed through the "scoper.output-dir" key. For example,
 		 * if the "install-path" is set to "dist-autoload", the resolved
 		 * value will be:
 		 *
@@ -136,7 +136,7 @@ class Codex
 		 * dist-autoload
 		 */
 		if (is_string($outputPath) && ! Val::isBlank($outputPath) && ! Path::isAbsolute($outputPath)) {
-			$configs->set('scoper.output-path', Path::canonicalize($this->getProjectPath('/' . trim($outputPath, '/'))));
+			$configs->set('scoper.output-dir', Path::canonicalize($this->getProjectPath('/' . trim($outputPath, '/'))));
 		}
 
 		return $configs;
@@ -146,13 +146,13 @@ class Codex
 	{
 		$options = new OptionsResolver();
 		$options->setDefault('scoper', function (OptionsResolver $resolver): void {
-			$resolver->setDefined(['install-dev', 'exclude-namespaces', 'prefix', 'output-path']);
+			$resolver->setDefined(['install-dev', 'exclude-namespaces', 'prefix', 'output-dir']);
 			$resolver->setAllowedTypes('prefix', 'string');
-			$resolver->setAllowedTypes('output-path', 'string');
+			$resolver->setAllowedTypes('output-dir', 'string');
 			$resolver->setAllowedTypes('exclude-namespaces', 'string[]');
 			$resolver->setAllowedTypes('install-dev', 'string[]');
 			$resolver->setDefaults([
-				'output-path' => $this->getProjectPath(self::DEFAULT_SCOPER_OUTPUT_PATH),
+				'output-dir' => $this->getProjectPath(self::DEFAULT_SCOPER_OUTPUT_PATH),
 			]);
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));

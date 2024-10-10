@@ -40,7 +40,7 @@ class PHPScoperFilesystem
 		$this->hash = md5((string) time());
 		$this->filesystem = new Filesystem();
 
-		$outputPath = $this->codex->getConfig('scoper.output-path');
+		$outputPath = $this->codex->getConfig('scoper.output-dir');
 
 		if (! is_string($outputPath)) {
 			return;
@@ -54,6 +54,19 @@ class PHPScoperFilesystem
 		return $this->hash;
 	}
 
+	/**
+	 * Retrieve the output directory path.
+	 *
+	 * This is the directory path where the prefixed files will be stored. It
+	 * may be determined from the "scoper.output-dir" set in Composer file,
+	 * but if it is not set, it will use the default the default value:
+	 *
+	 * `/dist/autoload`.
+	 *
+	 * @see Codex::DEFAULT_SCOPER_OUTPUT_PATH
+	 *
+	 * @return string The absolute path to the output directory.
+	 */
 	public function getOutputPath(?string $path = null): string
 	{
 		$outputPath = $this->outputPath;
@@ -65,6 +78,15 @@ class PHPScoperFilesystem
 		return $outputPath;
 	}
 
+	/**
+	 * Retrieve the temporary directory path.
+	 *
+	 * The build directory is a temporary directory used to store dependencies
+	 * before the scoping process. Once it is completed, the directory will
+	 * be removed.
+	 *
+	 * @return string The absolute path to the build directory.
+	 */
 	public function getBuildPath(?string $path = null): string
 	{
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
