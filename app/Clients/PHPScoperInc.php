@@ -45,7 +45,6 @@ class PHPScoperInc
 	public function __construct(string $projectPath, array $configs = [])
 	{
 		$this->codex = new Codex($projectPath);
-		$this->scoper = new PHPScoperFilesystem($this->codex);
 		$this->data = new Dot(array_merge(
 			[
 				'expose-global-constants' => true,
@@ -116,7 +115,7 @@ class PHPScoperInc
 	/** @return array<string,mixed> */
 	public function getAll(): array
 	{
-		$this->data->set('output-dir', $this->scoper->getOutputPath());
+		$this->data->set('output-dir', $this->codex->getConfig('scoper.output-path'));
 
 		/**
 		 * These configurations contain defaults to make it works out of the box.
