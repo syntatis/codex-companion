@@ -113,18 +113,6 @@ class PHPScoperInc
 	/** @return array<string,mixed> */
 	public function getAll(): array
 	{
-		$outputDir = $this->codex->getConfig('scoper.output-dir');
-
-		if (is_string($outputDir) && ! Val::isBlank($outputDir)) {
-			$this->data->set(
-				'output-dir',
-				Path::makeRelative(
-					$outputDir,
-					$this->codex->getProjectPath(),
-				),
-			);
-		}
-
 		/**
 		 * These configurations contain defaults to make it works out of the box.
 		 * Users may add to these configurations through the methods provided.

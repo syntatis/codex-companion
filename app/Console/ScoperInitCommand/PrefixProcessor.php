@@ -65,9 +65,10 @@ class PrefixProcessor implements Executable
 				)
 				->run(
 					sprintf(
-						'%s add-prefix --force --quiet --config=%s',
+						'%s add-prefix --force --quiet --config=%s --output-dir=%s',
 						$filesystem->getBinPath(),
 						$filesystem->getConfigPath(),
+						$filesystem->getOutputPath(),
 					),
 					$filesystem->getBuildPath(),
 				);
