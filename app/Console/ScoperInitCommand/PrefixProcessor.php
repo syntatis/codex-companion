@@ -46,12 +46,7 @@ class PrefixProcessor implements Executable
 		$filesystem->dumpComposerFile();
 
 		$process = (new ShellProcess($this->codex, $style))
-			->withMessage(
-				sprintf(
-					'Processing dependencies to be added with <comment>"%s"</comment> prefix...',
-					$prefix,
-				),
-			)
+			->withMessage('Processing dependencies to scope...')
 			->run(
 				sprintf(
 					'composer install --no-interaction --no-plugins --no-scripts --prefer-dist%s --working-dir=%s',
@@ -64,7 +59,7 @@ class PrefixProcessor implements Executable
 			$process = (new ShellProcess($this->codex, $style))
 				->withMessage(
 					sprintf(
-						'Prefixing the dependencies namespace with <comment>"%s"</comment>...',
+						'Prefixing dependencies namespace with <comment>"%s"</comment>...',
 						$prefix,
 					),
 				)
