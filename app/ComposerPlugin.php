@@ -57,6 +57,12 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 		);
 
 		ScoperInitCommand::executeOnComposer(
+			/**
+			 * Always create a new `Codex` instance to get the new information. It is
+			 * because some of the project properties such as the plugin name, the
+			 * plugin slug, the namespace, etc. may have been updated after the
+			 * project initialization from the previous command.
+			 */
 			$this->codex($event),
 			new ArrayInput(['--yes' => true]),
 			Factory::createOutput(),
