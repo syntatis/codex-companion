@@ -110,7 +110,7 @@ class PHPScoperInc
 	}
 
 	/** @return array<string,mixed> */
-	public function getAll(): array
+	public function get(): array
 	{
 		/**
 		 * These configurations contain defaults to make it works out of the box.

@@ -63,7 +63,7 @@ class Howdy implements Executable
 		}
 
 		try {
-			$userInputs = new UserInputs($projectProps->getAll());
+			$userInputs = new UserInputs($projectProps->get());
 			$userInputs->execute($style);
 
 			$projectFiles = new ProjectFiles($this->codex->getProjectPath());

@@ -67,7 +67,7 @@ class ProjectProps
 	}
 
 	/** @return array<string,string|null> */
-	public function getAll(): array
+	public function get(): array
 	{
 		return $this->props;
 	}

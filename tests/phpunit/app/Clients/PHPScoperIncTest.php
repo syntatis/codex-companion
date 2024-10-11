@@ -44,9 +44,9 @@ class PHPScoperIncTest extends TestCase
 	{
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 
-		$this->assertTrue($instance->getAll()['expose-global-constants']);
-		$this->assertTrue($instance->getAll()['expose-global-classes']);
-		$this->assertTrue($instance->getAll()['expose-global-functions']);
+		$this->assertTrue($instance->get()['expose-global-constants']);
+		$this->assertTrue($instance->get()['expose-global-classes']);
+		$this->assertTrue($instance->get()['expose-global-functions']);
 	}
 
 	public function testOverrideExposeGlobals(): void
@@ -56,9 +56,9 @@ class PHPScoperIncTest extends TestCase
 			'expose-global-classes' => false,
 		]);
 
-		$this->assertFalse($instance->getAll()['expose-global-constants']);
-		$this->assertFalse($instance->getAll()['expose-global-classes']);
-		$this->assertTrue($instance->getAll()['expose-global-functions']);
+		$this->assertFalse($instance->get()['expose-global-constants']);
+		$this->assertFalse($instance->get()['expose-global-classes']);
+		$this->assertTrue($instance->get()['expose-global-functions']);
 	}
 
 	public function testPrefixNotSet(): void
@@ -79,7 +79,7 @@ class PHPScoperIncTest extends TestCase
 
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 
-		$this->assertNull($instance->getAll()['prefix']);
+		$this->assertNull($instance->get()['prefix']);
 	}
 
 	public function testPrefix(): void
@@ -106,7 +106,7 @@ class PHPScoperIncTest extends TestCase
 		);
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 
-		$this->assertSame('PVA\\Vendor', $instance->getAll()['prefix']);
+		$this->assertSame('PVA\\Vendor', $instance->get()['prefix']);
 	}
 
 	public function testOverridePrefix(): void
@@ -133,7 +133,7 @@ class PHPScoperIncTest extends TestCase
 		);
 		$instance = new PHPScoperInc(self::getTemporaryPath(), ['prefix' => 'FOO\\Bar']);
 
-		$this->assertSame('PVA\\Vendor', $instance->getAll()['prefix']);
+		$this->assertSame('PVA\\Vendor', $instance->get()['prefix']);
 	}
 
 	public function testExcludeNamespaces(): void
@@ -160,7 +160,7 @@ class PHPScoperIncTest extends TestCase
 		);
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 
-		$this->assertContains('PluginName', $instance->getAll()['exclude-namespaces']);
+		$this->assertContains('PluginName', $instance->get()['exclude-namespaces']);
 	}
 
 	public function testAdditionalExcludeNamespaces(): void
@@ -188,9 +188,9 @@ class PHPScoperIncTest extends TestCase
 		);
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 
-		$this->assertContains('PluginName', $instance->getAll()['exclude-namespaces']);
-		$this->assertContains('Whoops', $instance->getAll()['exclude-namespaces']);
-		$this->assertContains('Symfony\\Component\\Console', $instance->getAll()['exclude-namespaces']);
+		$this->assertContains('PluginName', $instance->get()['exclude-namespaces']);
+		$this->assertContains('Whoops', $instance->get()['exclude-namespaces']);
+		$this->assertContains('Symfony\\Component\\Console', $instance->get()['exclude-namespaces']);
 	}
 
 	public function testExcludeFiles(): void
@@ -221,10 +221,10 @@ class PHPScoperIncTest extends TestCase
 			self::getTemporaryPath('/vendor/foo.html.php'),
 		]);
 
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.css'), $instance->getAll()['exclude-files']);
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.html'), $instance->getAll()['exclude-files']);
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.js'), $instance->getAll()['exclude-files']);
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.html.php'), $instance->getAll()['exclude-files']);
+		$this->assertContains(self::getTemporaryPath('/vendor/foo.css'), $instance->get()['exclude-files']);
+		$this->assertContains(self::getTemporaryPath('/vendor/foo.html'), $instance->get()['exclude-files']);
+		$this->assertContains(self::getTemporaryPath('/vendor/foo.js'), $instance->get()['exclude-files']);
+		$this->assertContains(self::getTemporaryPath('/vendor/foo.html.php'), $instance->get()['exclude-files']);
 	}
 
 	public function testAddFinder(): void
@@ -248,7 +248,7 @@ class PHPScoperIncTest extends TestCase
 		$finder = Finder::create();
 		$instance = $instance->addFinder($finder);
 
-		$this->assertContains($finder, $instance->getAll()['finders']);
+		$this->assertContains($finder, $instance->get()['finders']);
 	}
 
 	public function testAddPatcher(): void
@@ -273,6 +273,6 @@ class PHPScoperIncTest extends TestCase
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 		$instance = $instance->addPatcher($patcher);
 
-		$this->assertContains($patcher, $instance->getAll()['patchers']);
+		$this->assertContains($patcher, $instance->get()['patchers']);
 	}
 }

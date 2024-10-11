@@ -53,7 +53,7 @@ class InitializeFilesTest extends TestCase
 
 		$codex = new Codex(self::getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
-		$userInputs = new UserInputs($projectProps->getAll());
+		$userInputs = new UserInputs($projectProps->get());
 
 		/** @var StyleInterface&MockObject $style */
 		$style = $this->getMockBuilder(SymfonyStyle::class)
