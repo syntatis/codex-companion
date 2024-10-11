@@ -10,8 +10,12 @@ use Syntatis\Codex\Companion\Codex;
 
 trait RunOnComposerEvent
 {
-	public static function executeOnComposer(Codex $codex, InputInterface $input, OutputInterface $output): void
+	public static function executeOnComposer(?Codex $codex, InputInterface $input, OutputInterface $output): void
 	{
+		if (! $codex instanceof Codex) {
+			return;
+		}
+
 		$command = new self($codex);
 
 		/**

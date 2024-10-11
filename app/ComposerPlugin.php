@@ -50,23 +50,16 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 
 	public function onPostCreateProject(Event $event): void
 	{
-		$codex = $this->codex($event);
-
-		if ($codex === null) {
-			return;
-		}
-
-		$output = Factory::createOutput();
-
 		ProjectInitCommand::executeOnComposer(
-			$codex,
+			$this->codex($event),
 			new ArrayInput([]),
-			$output,
+			Factory::createOutput(),
 		);
+
 		ScoperInitCommand::executeOnComposer(
-			$codex,
+			$this->codex($event),
 			new ArrayInput(['--yes' => true]),
-			$output,
+			Factory::createOutput(),
 		);
 	}
 
