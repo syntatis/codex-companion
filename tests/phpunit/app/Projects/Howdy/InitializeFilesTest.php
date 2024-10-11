@@ -393,6 +393,16 @@ class InitializeFilesTest extends TestCase
 				],
 				'/file.css' => [
 					'origin' => <<<'CONTENT'
+					const $pluginNameContainer = document.querySelector( '#plugin-name-settings' );
+					const $pluginNameWrappres = document.querySelector( '.plugin-name' );
+					CONTENT,
+					'expect' => <<<'CONTENT'
+					const $awesomePluginNameContainer = document.querySelector( '#awesome-plugin-name-settings' );
+					const $awesomePluginNameWrappres = document.querySelector( '.awesome-plugin-name' );
+					CONTENT,
+				],
+				'/file.js' => [
+					'origin' => <<<'CONTENT'
 					.plugin-name-foo {
 						color: red;
 					}

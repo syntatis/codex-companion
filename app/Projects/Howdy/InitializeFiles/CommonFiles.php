@@ -147,7 +147,7 @@ class CommonFiles implements Dumpable, EditableFile
 
 				case 'wp_plugin_slug':
 				case 'kebabcase':
-					return '/(?<=[\s|\"|\'|\.])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])/';
+					return '/(?<=[\s|\"|\'|\.|\#])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])/';
 
 				case 'camelcase':
 					return '/(?<=[\s|__|\$|\"|\'|\.])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\w])/';
