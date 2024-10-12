@@ -9,13 +9,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputPrompts;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputs;
 use Syntatis\Codex\Companion\Exceptions\MissingRequiredInfo;
 use Syntatis\Tests\WithTemporaryFiles;
 
 use function str_repeat;
 
-class UserInputsTest extends TestCase
+class UserInputPromptsTest extends TestCase
 {
 	use WithTemporaryFiles;
 
@@ -43,31 +44,46 @@ class UserInputsTest extends TestCase
 	 */
 	public function testWithoutAllProps(): void
 	{
+		/** @var StyleInterface&MockObject $style */
+		$style = $this->getMockBuilder(SymfonyStyle::class)
+			->disableOriginalConstructor()
+			->getMock();
+
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/php_vendor_prefix\, php_namespace\, wp_plugin_name\, wp_plugin_slug$/');
 
-		$userInputs = new UserInputs([]);
+		$userInputs = new UserInputs([], $style);
 	}
 
 	/** @testdox should not include the "php_vendor_prefix" in the missing prop */
 	public function testWithVendorPrefixProp(): void
 	{
+		/** @var StyleInterface&MockObject $style */
+		$style = $this->getMockBuilder(SymfonyStyle::class)
+			->disableOriginalConstructor()
+			->getMock();
+
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/php_namespace\, wp_plugin_name\, wp_plugin_slug$/');
 
-		new UserInputs(['php_vendor_prefix' => 'Foo\Vendor']);
+		new UserInputs(['php_vendor_prefix' => 'Foo\Vendor'], $style);
 	}
 
 	/** @testdox should not include the "php_namespace" in the missing prop */
 	public function testWithNamespace(): void
 	{
+		/** @var StyleInterface&MockObject $style */
+		$style = $this->getMockBuilder(SymfonyStyle::class)
+			->disableOriginalConstructor()
+			->getMock();
+
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/wp_plugin_name\, wp_plugin_slug$/');
 
 		new UserInputs([
 			'php_vendor_prefix' => 'Foo\Vendor',
 			'php_namespace' => 'Foo',
-		]);
+		], $style);
 	}
 
 	/**
@@ -81,25 +97,35 @@ class UserInputsTest extends TestCase
 	 */
 	public function testWithPluginSlug(): void
 	{
+		/** @var StyleInterface&MockObject $style */
+		$style = $this->getMockBuilder(SymfonyStyle::class)
+			->disableOriginalConstructor()
+			->getMock();
+
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/wp_plugin_name$/');
 
-		new UserInputs([
+		new UserInputPrompts([
 			'php_vendor_prefix' => 'Foo\Vendor',
 			'php_namespace' => 'Foo',
 			'wp_plugin_slug' => 'plugin-name',
-		]);
+		], $style);
 	}
 
 	/** @testdox should not throw an exception of `MissingRequiredInfo` */
 	public function testWithAllProps(): void
 	{
-		$userInputs = new UserInputs([
+		/** @var StyleInterface&MockObject $style */
+		$style = $this->getMockBuilder(SymfonyStyle::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'Foo\Vendor',
 			'php_namespace' => 'Foo',
 			'wp_plugin_name' => 'Foo Plugin',
 			'wp_plugin_slug' => 'foo-plugin',
-		]);
+		], $style);
 
 		$this->assertSame(
 			[
@@ -124,13 +150,18 @@ class UserInputsTest extends TestCase
 	 */
 	public function testWithDescription(): void
 	{
-		$userInputs = new UserInputs([
+		/** @var StyleInterface&MockObject $style */
+		$style = $this->getMockBuilder(SymfonyStyle::class)
+			->disableOriginalConstructor()
+			->getMock();
+
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'This is a description.',
-		]);
+		], $style);
 
 		$this->assertSame(
 			[
@@ -167,7 +198,7 @@ class UserInputsTest extends TestCase
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
-		]);
+		], $style);
 		$userInputs->execute($style);
 
 		$this->assertSame(
@@ -205,7 +236,7 @@ class UserInputsTest extends TestCase
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'The plugin short description.',
-		]);
+		], $style);
 		$userInputs->execute($style);
 
 		$this->assertSame(
@@ -254,7 +285,7 @@ class UserInputsTest extends TestCase
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'The plugin short description.',
-		]);
+		], $style);
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);
@@ -306,7 +337,7 @@ class UserInputsTest extends TestCase
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'The plugin short description.',
-		]);
+		], $style);
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);
@@ -372,7 +403,7 @@ class UserInputsTest extends TestCase
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'The plugin short description.',
-		]);
+		], $style);
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);
@@ -446,7 +477,7 @@ class UserInputsTest extends TestCase
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'The plugin short description.',
-		]);
+		], $style);
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);

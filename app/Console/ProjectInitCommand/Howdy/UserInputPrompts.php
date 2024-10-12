@@ -25,7 +25,7 @@ use function is_string;
 use const ARRAY_FILTER_USE_BOTH;
 
 /** @phpstan-import-type ValidatedItems from InitializeFiles */
-class UserInputs implements Executable
+class UserInputPrompts implements Executable
 {
 	private StyleInterface $style;
 
@@ -35,8 +35,11 @@ class UserInputs implements Executable
 	/** @phpstan-var ValidatedItems */
 	private array $props;
 
-	/** @param array<string,string|null> $props The list of properties from the "howdy" project. */
-	public function __construct(array $props)
+	/**
+	 * @param array<string,string|null> $props The list of properties from the "howdy" project.
+	 * @param StyleInterface            $style Output for the console to interact with the user.
+	 */
+	public function __construct(array $props, StyleInterface $style)
 	{
 		$missing = [];
 
@@ -45,6 +48,7 @@ class UserInputs implements Executable
 		}
 
 		$this->props = $props;
+		$this->style = $style;
 	}
 
 	/**
@@ -80,7 +84,6 @@ class UserInputs implements Executable
 
 	public function execute(StyleInterface $style): int
 	{
-		$this->style = $style;
 		$this->style->text([
 			'To get started with your new WordPress plugin project, please provide the',
 			'Plugin slug. The Plugin slug should be in all-lowercase and use hyphens',

@@ -7,7 +7,7 @@ namespace Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputs;
+use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputPrompts;
 use Syntatis\Codex\Companion\Contracts\Executable;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles;
 use Syntatis\Codex\Companion\Projects\Howdy\ProjectFiles;
@@ -63,7 +63,7 @@ class Howdy implements Executable
 		}
 
 		try {
-			$userInputs = new UserInputs($projectProps->get());
+			$userInputs = new UserInputPrompts($projectProps->get(), $style);
 			$userInputs->execute($style);
 
 			$projectFiles = new ProjectFiles($this->codex->getProjectPath());
