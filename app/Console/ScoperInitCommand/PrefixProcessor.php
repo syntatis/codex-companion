@@ -59,7 +59,7 @@ class PrefixProcessor implements Executable
 			$process = (new ShellProcess($this->codex, $style))
 				->withMessage(
 					sprintf(
-						'Prefixing dependencies namespace with <comment>"%s"</comment>...',
+						'Prefixing dependencies namespace with <comment>%s</comment>...',
 						$prefix,
 					),
 				)

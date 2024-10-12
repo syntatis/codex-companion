@@ -57,7 +57,7 @@ class ScoperInitCommand extends BaseCommand
 		// If the required package is not installed, install it first.
 		if (! (new PHPScoperRequirement($process->getCurrent()->getOutput()))->isMet()) {
 			$process = (new ShellProcess($this->codex, $style))
-				->withMessage(sprintf('Installing <comment>"%s"</comment>...', 'humbug/php-scoper'))
+				->withMessage(sprintf('Installing <info>%s</info>...', 'humbug/php-scoper'))
 				->run('composer bin php-scoper require -W humbug/php-scoper');
 
 			if ($process->isFailed()) {
