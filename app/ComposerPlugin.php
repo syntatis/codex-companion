@@ -39,11 +39,8 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 			'post-create-project-cmd' => [
 				['onPostCreateProject', 1],
 			],
-			'post-install-cmd' => [
-				['onPostInstall', 1],
-			],
-			'post-update-cmd' => [
-				['onPostUpdate', 1],
+			'post-autoload-dump' => [
+				['onPostAutoloadDump', 1],
 			],
 		];
 	}
@@ -69,7 +66,7 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 		);
 	}
 
-	public function onPostInstall(Event $event): void
+	public function onPostAutoloadDump(Event $event): void
 	{
 		if (($GLOBALS['argv'][1] ?? null) === 'create-project') {
 			return;
@@ -88,11 +85,6 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 			new ArrayInput(['--yes' => true]),
 			$output,
 		);
-	}
-
-	public function onPostUpdate(Event $event): void
-	{
-		$this->onPostInstall($event);
 	}
 
 	private function codex(Event $event): ?Codex
