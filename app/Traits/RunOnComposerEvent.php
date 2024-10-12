@@ -6,17 +6,12 @@ namespace Syntatis\Codex\Companion\Traits;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Syntatis\Codex\Companion\Codex;
 
 trait RunOnComposerEvent
 {
-	public static function executeOnComposer(?Codex $codex, InputInterface $input, OutputInterface $output): void
+	public static function executeOnComposer(string $projectpath, InputInterface $input, OutputInterface $output): void
 	{
-		if (! $codex instanceof Codex) {
-			return;
-		}
-
-		$command = new self($codex);
+		$command = new self($projectpath);
 
 		/**
 		 * Pass the command definition to the input instance to avoid the following

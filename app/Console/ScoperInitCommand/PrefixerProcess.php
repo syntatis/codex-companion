@@ -14,7 +14,7 @@ use Syntatis\Utils\Val;
 
 use function sprintf;
 
-class PrefixProcessor implements Executable
+class PrefixerProcess implements Executable
 {
 	protected Codex $codex;
 
@@ -45,7 +45,7 @@ class PrefixProcessor implements Executable
 		$filesystem->removeAll();
 		$filesystem->dumpComposerFile();
 
-		$process = (new ShellProcess($this->codex, $style))
+		$proc = (new ShellProcess($this->codex, $style))
 			->withMessage('Processing dependencies to scope...')
 			->run(
 				sprintf(
@@ -55,8 +55,8 @@ class PrefixProcessor implements Executable
 				),
 			);
 
-		if ($process->isSuccessful()) {
-			$process = (new ShellProcess($this->codex, $style))
+		if ($proc->isSuccessful()) {
+			$proc = (new ShellProcess($this->codex, $style))
 				->withMessage(
 					sprintf(
 						'Prefixing dependencies namespace with <comment>%s</comment>...',
@@ -74,8 +74,8 @@ class PrefixProcessor implements Executable
 				);
 		}
 
-		if ($process->isSuccessful()) {
-			$process = (new ShellProcess($this->codex, $style))
+		if ($proc->isSuccessful()) {
+			$proc = $proc
 				->withSuccessMessage('Dependencies namespace has been prefixed successfully')
 				->run(
 					sprintf(
@@ -88,6 +88,6 @@ class PrefixProcessor implements Executable
 
 		$filesystem->removeBuildPath();
 
-		return $process->getExitCode();
+		return $proc->getExitCode();
 	}
 }

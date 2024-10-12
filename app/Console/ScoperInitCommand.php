@@ -8,8 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Console\Helpers\ShellProcess;
-use Syntatis\Codex\Companion\Console\ScoperInitCommand\PrefixProcessor;
+use Syntatis\Codex\Companion\Console\ScoperInitCommand\PrefixerProcess;
 use Syntatis\Codex\Companion\Helpers\PHPScoperRequirement;
 use Syntatis\Codex\Companion\Projects\Howdy\ProjectProps;
 use Syntatis\Codex\Companion\Traits\RunOnComposerEvent;
@@ -31,15 +32,16 @@ class ScoperInitCommand extends BaseCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
+		$codex = new Codex($this->projectPath);
 		$style = new SymfonyStyle($input, $output);
 
-		if (! ((bool) $input->getOption('yes') || $this->getConfirmation($style))) {
+		if (! ((bool) $input->getOption('yes') || $this->getConfirmation($codex, $style))) {
 			$style->warning('The command has been aborted.');
 
 			return 0;
 		}
 
-		$process = (new ShellProcess($this->codex, $style))
+		$proc = (new ShellProcess($codex, $style))
 			->withErrorMessage('Failed to scope the dependencies namespace')
 			->run('composer bin php-scoper show -N');
 
@@ -50,31 +52,31 @@ class ScoperInitCommand extends BaseCommand
 		 *
 		 * @see https://getcomposer.org/doc/03-cli.md#show-info
 		 */
-		if ($process->isFailed()) {
-			return $process->getExitCode();
+		if ($proc->isFailed()) {
+			return $proc->getExitCode();
 		}
 
 		// If the required package is not installed, install it first.
-		if (! (new PHPScoperRequirement($process->getCurrent()->getOutput()))->isMet()) {
-			$process = (new ShellProcess($this->codex, $style))
-				->withMessage(sprintf('Installing <info>%s</info>...', 'humbug/php-scoper'))
+		if (! (new PHPScoperRequirement($proc->getCurrent()->getOutput()))->isMet()) {
+			$proc = (new ShellProcess($codex, $style))
+				->withMessage('Installing <info>humbug/php-scoper</info>...')
 				->run('composer bin php-scoper require -W humbug/php-scoper');
 
-			if ($process->isFailed()) {
-				return $process->getExitCode();
+			if ($proc->isFailed()) {
+				return $proc->getExitCode();
 			}
 		}
 
-		$prefixProcessor = new PrefixProcessor($this->codex);
-		$prefixProcessor->setDevMode(! (bool) $input->getOption('no-dev'));
+		$prefixer = new PrefixerProcess($codex);
+		$prefixer->setDevMode(! (bool) $input->getOption('no-dev'));
 
-		return $prefixProcessor->execute($style);
+		return $prefixer->execute($style);
 	}
 
-	private function getConfirmation(StyleInterface $style): bool
+	private function getConfirmation(Codex $codex, StyleInterface $style): bool
 	{
-		$prefix = $this->codex->getProjectName() === 'syntatis/howdy' ?
-			(new ProjectProps($this->codex))->getVendorPrefix() :
+		$prefix = $codex->getProjectName() === 'syntatis/howdy' ?
+			(new ProjectProps($codex))->getVendorPrefix() :
 			null;
 
 		$style->note(

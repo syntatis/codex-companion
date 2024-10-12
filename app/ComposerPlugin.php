@@ -15,7 +15,6 @@ use Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
 use function dirname;
-use function is_dir;
 
 /** @codeCoverageIgnore */
 class ComposerPlugin implements PluginInterface, EventSubscriberInterface
@@ -47,8 +46,14 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 
 	public function onPostCreateProject(Event $event): void
 	{
+		// There is a descrepancy in the return type in Composer older versions,
+		// but safely assume that it will always be a string.
+		// @phpstan-disable-next-line
+		/** @var string $vendorDir */
+		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+
 		ProjectInitCommand::executeOnComposer(
-			$this->codex($event),
+			dirname($vendorDir),
 			new ArrayInput([]),
 			Factory::createOutput(),
 		);
@@ -60,7 +65,7 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 			 * plugin slug, the namespace, etc. may have been updated after the
 			 * project initialization from the previous command.
 			 */
-			$this->codex($event),
+			dirname($vendorDir),
 			new ArrayInput(['--yes' => true]),
 			Factory::createOutput(),
 		);
@@ -72,33 +77,17 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 			return;
 		}
 
-		$codex = $this->codex($event);
-
-		if ($codex === null) {
-			return;
-		}
-
-		$output = Factory::createOutput();
-
-		ScoperInitCommand::executeOnComposer(
-			$codex,
-			new ArrayInput(['--yes' => true]),
-			$output,
-		);
-	}
-
-	private function codex(Event $event): ?Codex
-	{
 		// There is a descrepancy in the return type in Composer older versions,
 		// but safely assume that it will always be a string.
 		// @phpstan-disable-next-line
 		/** @var string $vendorDir */
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
+		$output = Factory::createOutput();
 
-		if (! is_dir($vendorDir)) {
-			return null;
-		}
-
-		return new Codex(dirname($vendorDir));
+		ScoperInitCommand::executeOnComposer(
+			dirname($vendorDir),
+			new ArrayInput(['--yes' => true]),
+			Factory::createOutput(),
+		);
 	}
 }
