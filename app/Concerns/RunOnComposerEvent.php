@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Codex\Companion\Traits;
+namespace Syntatis\Codex\Companion\Concerns;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

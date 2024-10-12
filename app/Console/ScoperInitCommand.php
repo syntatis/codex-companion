@@ -6,21 +6,23 @@ namespace Syntatis\Codex\Companion\Console;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Console\Helpers\ShellProcess;
+use Syntatis\Codex\Companion\Concerns\RunOnComposerEvent;
+use Syntatis\Codex\Companion\Concerns\RunProcess;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand\PrefixerProcess;
 use Syntatis\Codex\Companion\Helpers\PHPScoperRequirement;
-use Syntatis\Codex\Companion\Projects\Howdy\ProjectProps;
-use Syntatis\Codex\Companion\Traits\RunOnComposerEvent;
 use Syntatis\Utils\Val;
 
+use function is_string;
 use function sprintf;
 
 class ScoperInitCommand extends BaseCommand
 {
 	use RunOnComposerEvent;
+	use RunProcess;
+
+	protected Codex $codex;
 
 	protected function configure(): void
 	{
@@ -32,16 +34,16 @@ class ScoperInitCommand extends BaseCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$codex = new Codex($this->projectPath);
-		$style = new SymfonyStyle($input, $output);
+		$this->style = new SymfonyStyle($input, $output);
+		$this->codex = new Codex($this->projectPath);
 
-		if (! ((bool) $input->getOption('yes') || self::getConfirmation($codex, $style))) {
-			$style->warning('The command has been aborted.');
+		if (! ((bool) $input->getOption('yes') || $this->getConfirmation())) {
+			$this->style->warning('The command has been aborted.');
 
 			return 0;
 		}
 
-		$proc = (new ShellProcess($style, $codex->getProjectPath()))
+		$proc = $this->process($this->codex->getProjectPath())
 			->withErrorMessage('Failed to scope the dependencies namespace')
 			->run('composer bin php-scoper show -N');
 
@@ -58,7 +60,7 @@ class ScoperInitCommand extends BaseCommand
 
 		// If the required package is not installed, install it first.
 		if (! (new PHPScoperRequirement($proc->getCurrent()->getOutput()))->isMet()) {
-			$proc = (new ShellProcess($style, $codex->getProjectPath()))
+			$proc = $this->process($this->codex->getProjectPath())
 				->withMessage('Installing <info>humbug/php-scoper</info>...')
 				->run('composer bin php-scoper require -W humbug/php-scoper');
 
@@ -67,24 +69,23 @@ class ScoperInitCommand extends BaseCommand
 			}
 		}
 
-		$prefixer = new PrefixerProcess($codex);
-		$prefixer->setDevMode(! (bool) $input->getOption('no-dev'));
-
-		return $prefixer->execute($style);
+		return (new PrefixerProcess($this->codex))
+			->setDevMode(! (bool) $input->getOption('no-dev'))
+			->execute($this->style);
 	}
 
-	private static function getConfirmation(Codex $codex, StyleInterface $style): bool
+	private function getConfirmation(): bool
 	{
-		$prefix = $codex->getProjectName() === 'syntatis/howdy' ?
-			(new ProjectProps($codex))->getVendorPrefix() :
+		$prefix = $this->codex->getProjectName() === 'syntatis/howdy' ?
+			$this->codex->getConfig('scoper.prefix') :
 			null;
 
-		$style->note(
-			Val::isBlank($prefix) ?
+		$this->style->note(
+			! is_string($prefix) || Val::isBlank($prefix) ?
 			'This command will prefix the dependencies namespace' :
 			sprintf('This command will prefix the dependencies namespace with "%s".', $prefix),
 		);
 
-		return $style->confirm('Do you want to proceed?', true);
+		return $this->style->confirm('Do you want to proceed?', true);
 	}
 }
