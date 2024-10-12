@@ -7,11 +7,13 @@ namespace Syntatis\Codex\Companion\Concerns;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function dirname;
+
 trait RunOnComposerEvent
 {
-	public static function executeOnComposer(string $projectpath, InputInterface $input, OutputInterface $output): void
+	public static function executeOnComposer(string $vendorDir, InputInterface $input, OutputInterface $output): void
 	{
-		$command = new self($projectpath);
+		$command = new self(dirname($vendorDir));
 
 		/**
 		 * Pass the command definition to the input instance to avoid the following
