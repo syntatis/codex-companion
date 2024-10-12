@@ -34,11 +34,11 @@ class ScoperInitCommand extends BaseCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$this->style = new SymfonyStyle($input, $output);
+		$this->output = new SymfonyStyle($input, $output);
 		$this->codex = new Codex($this->projectPath);
 
 		if (! ((bool) $input->getOption('yes') || $this->getConfirmation())) {
-			$this->style->warning('The command has been aborted.');
+			$this->output->warning('The command has been aborted.');
 
 			return 0;
 		}
@@ -69,7 +69,7 @@ class ScoperInitCommand extends BaseCommand
 			}
 		}
 
-		return (new PrefixerProcess($this->codex, $this->style))
+		return (new PrefixerProcess($this->codex, $this->output))
 			->setDevMode(! (bool) $input->getOption('no-dev'))
 			->execute();
 	}
@@ -80,12 +80,12 @@ class ScoperInitCommand extends BaseCommand
 			$this->codex->getConfig('scoper.prefix') :
 			null;
 
-		$this->style->note(
+		$this->output->note(
 			! is_string($prefix) || Val::isBlank($prefix) ?
 			'This command will prefix the dependencies namespace' :
 			sprintf('This command will prefix the dependencies namespace with "%s".', $prefix),
 		);
 
-		return $this->style->confirm('Do you want to proceed?', true);
+		return $this->output->confirm('Do you want to proceed?', true);
 	}
 }
