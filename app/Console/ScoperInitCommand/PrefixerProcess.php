@@ -45,7 +45,7 @@ class PrefixerProcess implements Executable
 		$filesystem->removeAll();
 		$filesystem->dumpComposerFile();
 
-		$proc = (new ShellProcess($this->codex, $style))
+		$proc = (new ShellProcess($style, $this->codex->getProjectPath()))
 			->withMessage('Processing dependencies to scope...')
 			->run(
 				sprintf(
@@ -56,7 +56,7 @@ class PrefixerProcess implements Executable
 			);
 
 		if ($proc->isSuccessful()) {
-			$proc = (new ShellProcess($this->codex, $style))
+			$proc = (new ShellProcess($style, $filesystem->getBuildPath()))
 				->withMessage(
 					sprintf(
 						'Prefixing dependencies namespace with <comment>%s</comment>...',
@@ -70,19 +70,17 @@ class PrefixerProcess implements Executable
 						$filesystem->getConfigPath(),
 						$filesystem->getOutputPath(),
 					),
-					$filesystem->getBuildPath(),
 				);
 		}
 
 		if ($proc->isSuccessful()) {
-			$proc = $proc
+			$proc = (new ShellProcess($style, $this->codex->getProjectPath()))
 				->withSuccessMessage('Dependencies namespace has been prefixed successfully')
 				->run(
 					sprintf(
 						'composer dump -d %s',
 						$filesystem->getOutputPath(),
 					),
-					$this->codex->getProjectPath(),
 				);
 		}
 

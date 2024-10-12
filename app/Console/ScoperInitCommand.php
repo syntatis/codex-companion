@@ -35,13 +35,13 @@ class ScoperInitCommand extends BaseCommand
 		$codex = new Codex($this->projectPath);
 		$style = new SymfonyStyle($input, $output);
 
-		if (! ((bool) $input->getOption('yes') || $this->getConfirmation($codex, $style))) {
+		if (! ((bool) $input->getOption('yes') || self::getConfirmation($codex, $style))) {
 			$style->warning('The command has been aborted.');
 
 			return 0;
 		}
 
-		$proc = (new ShellProcess($codex, $style))
+		$proc = (new ShellProcess($style, $codex->getProjectPath()))
 			->withErrorMessage('Failed to scope the dependencies namespace')
 			->run('composer bin php-scoper show -N');
 
@@ -58,7 +58,7 @@ class ScoperInitCommand extends BaseCommand
 
 		// If the required package is not installed, install it first.
 		if (! (new PHPScoperRequirement($proc->getCurrent()->getOutput()))->isMet()) {
-			$proc = (new ShellProcess($codex, $style))
+			$proc = (new ShellProcess($style, $codex->getProjectPath()))
 				->withMessage('Installing <info>humbug/php-scoper</info>...')
 				->run('composer bin php-scoper require -W humbug/php-scoper');
 
@@ -73,7 +73,7 @@ class ScoperInitCommand extends BaseCommand
 		return $prefixer->execute($style);
 	}
 
-	private function getConfirmation(Codex $codex, StyleInterface $style): bool
+	private static function getConfirmation(Codex $codex, StyleInterface $style): bool
 	{
 		$prefix = $codex->getProjectName() === 'syntatis/howdy' ?
 			(new ProjectProps($codex))->getVendorPrefix() :

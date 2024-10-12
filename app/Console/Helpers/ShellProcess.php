@@ -6,7 +6,6 @@ namespace Syntatis\Codex\Companion\Console\Helpers;
 
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Process\Process;
-use Syntatis\Codex\Companion\Codex;
 use Syntatis\Utils\Val;
 
 use function explode;
@@ -14,7 +13,7 @@ use function trim;
 
 class ShellProcess
 {
-	private Codex $codex;
+	private ?string $cwd = null;
 
 	private StyleInterface $style;
 
@@ -27,10 +26,10 @@ class ShellProcess
 	/** @var array<int,string> */
 	private array $messages = [];
 
-	public function __construct(Codex $codex, StyleInterface $style)
+	public function __construct(StyleInterface $style, ?string $cwd = null)
 	{
-		$this->codex = $codex;
 		$this->style = $style;
+		$this->cwd = $cwd;
 	}
 
 	/** @phpstan-param non-empty-string $message */
@@ -61,10 +60,10 @@ class ShellProcess
 	}
 
 	/** @phpstan-param non-empty-string $command */
-	public function run(string $command, ?string $cwd = null): self
+	public function run(string $command): self
 	{
 		$self = clone $this;
-		$self->process = $this->create($command, $cwd);
+		$self->process = self::create($command, $this->cwd);
 
 		if (! Val::isBlank($self->preMessage)) {
 			$self->style->text($self->preMessage);
@@ -118,8 +117,8 @@ class ShellProcess
 		return ! $this->process->isSuccessful();
 	}
 
-	private function create(string $command, ?string $cwd = null): Process
+	private static function create(string $command, ?string $cwd = null): Process
 	{
-		return new Process(explode(' ', $command), $cwd ?? $this->codex->getProjectPath());
+		return new Process(explode(' ', $command), $cwd);
 	}
 }
