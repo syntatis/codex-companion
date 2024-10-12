@@ -10,7 +10,7 @@ use SplFileInfo;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputs;
+use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputPrompts;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles;
 use Syntatis\Codex\Companion\Projects\Howdy\ProjectProps;
 use Syntatis\Tests\WithTemporaryFiles;
@@ -51,10 +51,6 @@ class InitializeFilesTest extends TestCase
 			self::createTemporaryFile($filename, $content['origin']);
 		}
 
-		$codex = new Codex(self::getTemporaryPath());
-		$projectProps = new ProjectProps($codex);
-		$userInputs = new UserInputs($projectProps->get());
-
 		/** @var StyleInterface&MockObject $style */
 		$style = $this->getMockBuilder(SymfonyStyle::class)
 			->disableOriginalConstructor()
@@ -65,7 +61,10 @@ class InitializeFilesTest extends TestCase
 				return $callback($inputs[$param]);
 			}));
 
+		$codex = new Codex(self::getTemporaryPath());
+		$userInputs = new UserInputPrompts((new ProjectProps($codex))->get(), $style);
 		$userInputs->execute($style);
+
 		$instance = new InitializeFiles(
 			$userInputs->getProjectProps(),
 			$userInputs->getInputs(),

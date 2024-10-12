@@ -63,7 +63,7 @@
         "sort-packages": true
     },
     "extra": {
-        "class": "Syntatis\\Codex\\Companion\\ComposerPlugin"
+        "class": "Syntatis\\Codex\\Companion\\Composer\\Plugin"
     },
     "scripts": {
         "phpcs": "phpcs",

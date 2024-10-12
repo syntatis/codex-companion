@@ -7,7 +7,7 @@ namespace Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputs;
+use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputPrompts;
 use Syntatis\Codex\Companion\Contracts\Executable;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles;
 use Syntatis\Codex\Companion\Projects\Howdy\ProjectFiles;
@@ -25,12 +25,15 @@ class Howdy implements Executable
 {
 	private Codex $codex;
 
-	public function __construct(Codex $codex)
+	private StyleInterface $style;
+
+	public function __construct(Codex $codex, StyleInterface $style)
 	{
 		$this->codex = $codex;
+		$this->style = $style;
 	}
 
-	public function execute(StyleInterface $style): int
+	public function execute(): int
 	{
 		$projectProps = new ProjectProps($this->codex);
 
@@ -41,7 +44,7 @@ class Howdy implements Executable
 		$pluginFile = Path::normalize((string) $projectProps->getPluginFile());
 
 		if (! file_exists($pluginFile)) {
-			$style->error('Unable to find the plugin main file.');
+			$this->style->error('Unable to find the plugin main file.');
 
 			return 1;
 		}
@@ -57,14 +60,14 @@ class Howdy implements Executable
 		 * not fully determine, what are the changes made to the file.
 		 */
 		if ($pluginFile !== $this->codex->getProjectPath('/plugin-name.php')) {
-			$style->warning('Project is already initialized.');
+			$this->style->warning('Project is already initialized.');
 
 			return 0;
 		}
 
 		try {
-			$userInputs = new UserInputs($projectProps->get());
-			$userInputs->execute($style);
+			$userInputs = new UserInputPrompts($projectProps->get(), $this->style);
+			$userInputs->execute();
 
 			$projectFiles = new ProjectFiles($this->codex->getProjectPath());
 			$fileCount = count($projectFiles);
@@ -74,21 +77,21 @@ class Howdy implements Executable
 					$userInputs->getProjectProps(),
 					$userInputs->getInputs(),
 				);
-				$style->progressStart($fileCount);
+				$this->style->progressStart($fileCount);
 
 				foreach ($projectFiles as $key => $value) {
 					$initializeFiles->file($value->getFileInfo());
-					$style->progressAdvance();
+					$this->style->progressAdvance();
 				}
 
-				$style->progressFinish();
+				$this->style->progressFinish();
 			}
 
-			$style->success('Project initialized.');
+			$this->style->success('Project initialized.');
 
 			return 0;
 		} catch (Throwable $th) {
-			$style->error($th->getMessage());
+			$this->style->error($th->getMessage());
 
 			return 1;
 		}

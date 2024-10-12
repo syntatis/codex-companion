@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion;
 
 use Adbar\Dot;
-use InvalidArgumentException;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Syntatis\Codex\Companion\Helpers\ComposerCollection;
 use Syntatis\Utils\Arr;
-use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
 use function in_array;
@@ -104,10 +102,6 @@ class Codex
 	 */
 	public function getComposer(string $key)
 	{
-		if ($key === 'extra.codex' || Str::startsWith('extra.codex', $key)) {
-			throw new InvalidArgumentException('Accessing "extra.codex" directly is not allowed');
-		}
-
 		return $this->composer->get($key);
 	}
 

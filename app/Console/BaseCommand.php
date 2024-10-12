@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion\Console;
 
 use Symfony\Component\Console\Command\Command;
-use Syntatis\Codex\Companion\Codex;
 
 abstract class BaseCommand extends Command
 {
-	protected Codex $codex;
+	protected string $projectPath;
 
-	public function __construct(Codex $codex)
+	public function __construct(string $projectPath)
 	{
 		parent::__construct();
 
-		$this->codex = $codex;
+		$this->projectPath = $projectPath;
 	}
 }

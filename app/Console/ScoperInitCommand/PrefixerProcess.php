@@ -6,37 +6,44 @@ namespace Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
 use Symfony\Component\Console\Style\StyleInterface;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Console\Helpers\ShellProcess;
+use Syntatis\Codex\Companion\Concerns\RunProcess;
 use Syntatis\Codex\Companion\Contracts\Executable;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
-use Syntatis\Codex\Companion\Projects\Howdy\ProjectProps;
 use Syntatis\Utils\Val;
 
+use function file_exists;
+use function is_string;
 use function sprintf;
 
-class PrefixProcessor implements Executable
+class PrefixerProcess implements Executable
 {
+	use RunProcess;
+
 	protected Codex $codex;
+
+	protected StyleInterface $style;
 
 	private bool $devMode = true;
 
-	public function __construct(Codex $codex)
+	public function __construct(Codex $codex, StyleInterface $style)
 	{
 		$this->codex = $codex;
+		$this->style = $style;
 	}
 
-	public function setDevMode(bool $mode): void
+	public function setDevMode(bool $mode): self
 	{
 		$this->devMode = $mode;
+
+		return $this;
 	}
 
-	public function execute(StyleInterface $style): int
+	public function execute(): int
 	{
-		$projectProps = new ProjectProps($this->codex);
-		$prefix = $projectProps->getVendorPrefix();
+		$prefix = $this->codex->getConfig('scoper.prefix');
 
-		if (Val::isBlank($prefix)) {
-			$style->warning('Vendor prefix is not set in the configuration file.');
+		if (! is_string($prefix) || Val::isBlank($prefix)) {
+			$this->style->warning('Vendor prefix is not set in the configuration file.');
 
 			return 0;
 		}
@@ -45,7 +52,7 @@ class PrefixProcessor implements Executable
 		$filesystem->removeAll();
 		$filesystem->dumpComposerFile();
 
-		$process = (new ShellProcess($this->codex, $style))
+		$proc = $this->process($this->codex->getProjectPath())
 			->withMessage('Processing dependencies to scope...')
 			->run(
 				sprintf(
@@ -55,8 +62,14 @@ class PrefixProcessor implements Executable
 				),
 			);
 
-		if ($process->isSuccessful()) {
-			$process = (new ShellProcess($this->codex, $style))
+		if ($proc->isSuccessful()) {
+			if (! file_exists($filesystem->getBinPath())) {
+				$this->style->error('Unable to locate the PHP-Scoper binary.');
+
+				return 1;
+			}
+
+			$proc = $this->process($filesystem->getBuildPath())
 				->withMessage(
 					sprintf(
 						'Prefixing dependencies namespace with <comment>%s</comment>...',
@@ -70,24 +83,17 @@ class PrefixProcessor implements Executable
 						$filesystem->getConfigPath(),
 						$filesystem->getOutputPath(),
 					),
-					$filesystem->getBuildPath(),
 				);
 		}
 
-		if ($process->isSuccessful()) {
-			$process = (new ShellProcess($this->codex, $style))
+		if ($proc->isSuccessful()) {
+			$proc = $this->process($filesystem->getOutputPath())
 				->withSuccessMessage('Dependencies namespace has been prefixed successfully')
-				->run(
-					sprintf(
-						'composer dump -d %s',
-						$filesystem->getOutputPath(),
-					),
-					$this->codex->getProjectPath(),
-				);
+				->run('composer dump');
 		}
 
 		$filesystem->removeBuildPath();
 
-		return $process->getExitCode();
+		return $proc->getExitCode();
 	}
 }
