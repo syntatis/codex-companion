@@ -27,7 +27,11 @@ class PrefixerProcess implements Executable
 
 	private bool $devMode = true;
 
-	public function __construct(Codex $codex, StyleInterface&OutputInterface $output)
+	/**
+	 * // phpcs:ignore
+	 * @param StyleInterface&OutputInterface $output
+	 */
+	public function __construct(Codex $codex, $output)
 	{
 		$this->codex = $codex;
 		$this->output = $output;
