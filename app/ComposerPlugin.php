@@ -34,10 +34,10 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 	{
 		return [
 			'post-create-project-cmd' => [
-				['onPostCreateProject', 1],
+				['onPostCreateProject'],
 			],
 			'post-autoload-dump' => [
-				['onPostAutoloadDump', 1],
+				['onPostAutoloadDump'],
 			],
 		];
 	}
