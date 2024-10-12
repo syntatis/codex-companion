@@ -11,6 +11,7 @@ use Syntatis\Codex\Companion\Contracts\Executable;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Utils\Val;
 
+use function file_exists;
 use function is_string;
 use function sprintf;
 
@@ -62,6 +63,12 @@ class PrefixerProcess implements Executable
 			);
 
 		if ($proc->isSuccessful()) {
+			if (! file_exists($filesystem->getBinPath())) {
+				$this->style->error('Unable to locate the PHP-Scoper binary.');
+
+				return 1;
+			}
+
 			$proc = $this->process($filesystem->getBuildPath())
 				->withMessage(
 					sprintf(
@@ -80,14 +87,9 @@ class PrefixerProcess implements Executable
 		}
 
 		if ($proc->isSuccessful()) {
-			$proc = $this->process($this->codex->getProjectPath())
+			$proc = $this->process($filesystem->getOutputPath())
 				->withSuccessMessage('Dependencies namespace has been prefixed successfully')
-				->run(
-					sprintf(
-						'composer dump -d %s',
-						$filesystem->getOutputPath(),
-					),
-				);
+				->run('composer dump');
 		}
 
 		$filesystem->removeBuildPath();

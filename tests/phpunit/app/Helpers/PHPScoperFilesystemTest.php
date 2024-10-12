@@ -107,14 +107,6 @@ class PHPScoperFilesystemTest extends TestCase
 		);
 	}
 
-	public function testGetScoperBin(): void
-	{
-		$this->assertSame(
-			self::getTemporaryPath('/vendor/bin/php-scoper'),
-			(new PHPScoperFilesystem($this->codex))->getBinPath(),
-		);
-	}
-
 	public function testGetScoperConfig(): void
 	{
 		$this->assertSame(
@@ -245,5 +237,78 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$this->assertFileDoesNotExist($filesystem->getBuildPath('/composer.json'));
 		$this->assertFileDoesNotExist($temporaryFile);
+	}
+
+	public function testGetScoperBin(): void
+	{
+		self::createTemporaryFile(
+			'/vendor/bin/php-scoper',
+			<<<'CONTENT'
+			#!/usr/bin/env php
+			namespace Humbug\PhpScoper;
+			CONTENT,
+		);
+
+		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+
+		$this->assertSame(
+			self::getTemporaryPath('/vendor/bin/php-scoper'),
+			$filesystem->getBinPath(),
+		);
+	}
+
+	/** @testdox should fallback to the origin path if the bin is not forwarded */
+	public function testGetScoperBinNotForwarded(): void
+	{
+		self::createTemporaryFile(
+			'/vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
+			<<<'CONTENT'
+			#!/usr/bin/env php
+			namespace Humbug\PhpScoper;
+			CONTENT,
+		);
+
+		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+
+		$this->assertSame(
+			self::getTemporaryPath('/vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
+			$filesystem->getBinPath(),
+		);
+	}
+
+	/** @testdox should respects the "target-directory" configuration */
+	public function testGetScoperBinCustomTargetDir(): void
+	{
+		self::createTemporaryFile(
+			'/vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
+			<<<'CONTENT'
+			#!/usr/bin/env php
+			namespace Humbug\PhpScoper;
+			CONTENT,
+		);
+
+		self::createTemporaryFile(
+			'/composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'autoload' => [
+						'psr-4' => ['Syntatis\\' => 'src/'],
+					],
+					'extra' => [
+						'bamarni-bin' => ['target-directory' => 'vendor-cli' ],
+					],
+				],
+				JSON_UNESCAPED_SLASHES,
+			),
+		);
+
+		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+
+		$this->assertSame(
+			self::getTemporaryPath('/vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
+			$filesystem->getBinPath(),
+		);
 	}
 }
