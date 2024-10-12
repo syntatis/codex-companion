@@ -11,7 +11,7 @@ use function dirname;
 
 trait RunOnComposerEvent
 {
-	public static function executeOnComposer(string $vendorDir, InputInterface $input, OutputInterface $output): void
+	public static function executeOnComposer(string $vendorDir, InputInterface $input, OutputInterface $output): int
 	{
 		$command = new self(dirname($vendorDir));
 
@@ -22,6 +22,7 @@ trait RunOnComposerEvent
 		 * "The "--yes" option does not exist.".
 		 */
 		$input->bind($command->getDefinition());
-		$command->execute($input, $output);
+
+		return $command->execute($input, $output);
 	}
 }

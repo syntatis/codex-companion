@@ -10,6 +10,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Concerns\RunOnComposerEvent;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy;
+use Syntatis\Utils\Str;
+use Syntatis\Utils\Val;
 
 class ProjectInitCommand extends BaseCommand
 {
@@ -27,14 +29,18 @@ class ProjectInitCommand extends BaseCommand
 		$style = new SymfonyStyle($input, $output);
 		$projectName = $codex->getProjectName();
 
-		switch ($projectName) {
-			case 'syntatis/howdy':
-				return (new Howdy($codex, $style))->execute();
+		if (Val::isBlank($projectName)) {
+			$style->warning('Project name not found.');
 
-			default:
-				$style->warning('Unsupported project: "' . $projectName . '".');
-
-				return 0;
+			return 0;
 		}
+
+		if ($projectName === 'syntatis/howdy' || Str::startsWith($projectName, 'syntatis/howdy-')) {
+			return (new Howdy($codex, $style))->execute();
+		}
+
+		$style->warning('Unsupported project: "' . $projectName . '".');
+
+		return 0;
 	}
 }

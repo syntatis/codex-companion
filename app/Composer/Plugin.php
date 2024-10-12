@@ -42,12 +42,15 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 	public function onPostCreateProject(Event $event): void
 	{
 		$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-
-		ProjectInitCommand::executeOnComposer(
+		$exitCode = ProjectInitCommand::executeOnComposer(
 			$vendorDir,
 			new ArrayInput([]),
 			Factory::createOutput(),
 		);
+
+		if ($exitCode !== 0) {
+			return;
+		}
 
 		self::runScoper($vendorDir);
 	}
