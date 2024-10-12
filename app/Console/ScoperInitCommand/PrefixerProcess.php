@@ -27,11 +27,7 @@ class PrefixerProcess implements Executable
 
 	private bool $devMode = true;
 
-	/**
-	 * // phpcs:ignore
-	 * @param StyleInterface&OutputInterface $output
-	 */
-	public function __construct(Codex $codex, $output)
+	public function __construct(Codex $codex, StyleInterface&OutputInterface $output)
 	{
 		$this->codex = $codex;
 		$this->output = $output;
@@ -89,9 +85,6 @@ class PrefixerProcess implements Executable
 						$filesystem->getConfigPath(),
 						$filesystem->getOutputPath(),
 					),
-					function ($type, $buffer): void {
-						$this->output->write($buffer);
-					},
 				);
 		}
 
