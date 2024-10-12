@@ -6,7 +6,6 @@ namespace Syntatis\Tests\Console;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Syntatis\Tests\WithTemporaryFiles;
 
@@ -82,7 +81,7 @@ class ProjectInitCommandTest extends TestCase
 	{
 		self::$filesystem->remove(self::getTemporaryPath('/plugin-name.php'));
 
-		$command = new ProjectInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ProjectInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -97,7 +96,7 @@ class ProjectInitCommandTest extends TestCase
 			self::getTemporaryPath('/awesome-plugin-name.php'),
 		);
 
-		$command = new ProjectInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ProjectInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -121,7 +120,7 @@ class ProjectInitCommandTest extends TestCase
 			CONTENT,
 		);
 
-		$command = new ProjectInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ProjectInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -132,7 +131,7 @@ class ProjectInitCommandTest extends TestCase
 	/** @dataProvider dataInputPluginSlug */
 	public function testInputPluginSlug(string $input, string $display): void
 	{
-		$command = new ProjectInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ProjectInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->setInputs([$input]);
 		$tester->execute([]);
@@ -152,7 +151,7 @@ class ProjectInitCommandTest extends TestCase
 	/** @dataProvider dataInputPluginSlugInvalid */
 	public function testInputPluginSlugInvalid(string $input): void
 	{
-		$command = new ProjectInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ProjectInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->setInputs([$input]);
 		$tester->execute([]);

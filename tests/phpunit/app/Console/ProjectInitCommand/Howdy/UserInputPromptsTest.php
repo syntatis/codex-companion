@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputPrompts;
-use Syntatis\Codex\Companion\Console\ProjectInitCommand\Howdy\UserInputs;
 use Syntatis\Codex\Companion\Exceptions\MissingRequiredInfo;
 use Syntatis\Tests\WithTemporaryFiles;
 
@@ -52,7 +51,7 @@ class UserInputPromptsTest extends TestCase
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/php_vendor_prefix\, php_namespace\, wp_plugin_name\, wp_plugin_slug$/');
 
-		$userInputs = new UserInputs([], $style);
+		$userInputs = new UserInputPrompts([], $style);
 	}
 
 	/** @testdox should not include the "php_vendor_prefix" in the missing prop */
@@ -66,7 +65,7 @@ class UserInputPromptsTest extends TestCase
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/php_namespace\, wp_plugin_name\, wp_plugin_slug$/');
 
-		new UserInputs(['php_vendor_prefix' => 'Foo\Vendor'], $style);
+		new UserInputPrompts(['php_vendor_prefix' => 'Foo\Vendor'], $style);
 	}
 
 	/** @testdox should not include the "php_namespace" in the missing prop */
@@ -80,7 +79,7 @@ class UserInputPromptsTest extends TestCase
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/wp_plugin_name\, wp_plugin_slug$/');
 
-		new UserInputs([
+		new UserInputPrompts([
 			'php_vendor_prefix' => 'Foo\Vendor',
 			'php_namespace' => 'Foo',
 		], $style);
@@ -193,7 +192,7 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
@@ -230,7 +229,7 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
@@ -279,7 +278,7 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
@@ -331,7 +330,7 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
@@ -397,7 +396,7 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
@@ -471,7 +470,7 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
@@ -544,13 +543,13 @@ class UserInputPromptsTest extends TestCase
 				}
 			}));
 
-		$userInputs = new UserInputs([
+		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
 			'php_namespace' => 'PluginName',
 			'wp_plugin_name' => 'Plugin Name',
 			'wp_plugin_slug' => 'plugin-name',
 			'wp_plugin_description' => 'The plugin short description.',
-		]);
+		], $style);
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage($message);

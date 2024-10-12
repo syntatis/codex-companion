@@ -69,9 +69,9 @@ class ScoperInitCommand extends BaseCommand
 			}
 		}
 
-		return (new PrefixerProcess($this->codex))
+		return (new PrefixerProcess($this->codex, $this->style))
 			->setDevMode(! (bool) $input->getOption('no-dev'))
-			->execute($this->style);
+			->execute();
 	}
 
 	private function getConfirmation(): bool

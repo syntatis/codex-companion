@@ -6,7 +6,6 @@ namespace Syntatis\Tests\Console;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 use Syntatis\Tests\WithTemporaryFiles;
 
@@ -43,7 +42,7 @@ class ScoperInitCommandTest extends TestCase
 
 	public function testConfirm(): void
 	{
-		$command = new ScoperInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ScoperInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -53,7 +52,7 @@ class ScoperInitCommandTest extends TestCase
 
 	public function testConfirmNo(): void
 	{
-		$command = new ScoperInitCommand(new Codex(self::getTemporaryPath()));
+		$command = new ScoperInitCommand(self::getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->setInputs(['no']);
 		$tester->execute([]);

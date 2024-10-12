@@ -29,7 +29,7 @@ class ProjectInitCommand extends BaseCommand
 
 		switch ($projectName) {
 			case 'syntatis/howdy':
-				return (new Howdy($codex))->execute($style);
+				return (new Howdy($codex, $style))->execute();
 
 			default:
 				$style->warning('Unsupported project: "' . $projectName . '".');

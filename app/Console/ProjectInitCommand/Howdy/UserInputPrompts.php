@@ -82,7 +82,7 @@ class UserInputPrompts implements Executable
 		return count($missing) <= 0;
 	}
 
-	public function execute(StyleInterface $style): int
+	public function execute(): int
 	{
 		$this->style->text([
 			'To get started with your new WordPress plugin project, please provide the',

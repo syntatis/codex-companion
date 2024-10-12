@@ -20,11 +20,14 @@ class PrefixerProcess implements Executable
 
 	protected Codex $codex;
 
+	protected StyleInterface $style;
+
 	private bool $devMode = true;
 
-	public function __construct(Codex $codex)
+	public function __construct(Codex $codex, StyleInterface $style)
 	{
 		$this->codex = $codex;
+		$this->style = $style;
 	}
 
 	public function setDevMode(bool $mode): self
@@ -34,10 +37,8 @@ class PrefixerProcess implements Executable
 		return $this;
 	}
 
-	public function execute(StyleInterface $style): int
+	public function execute(): int
 	{
-		$this->style = $style;
-
 		$prefix = $this->codex->getConfig('scoper.prefix');
 
 		if (! is_string($prefix) || Val::isBlank($prefix)) {
