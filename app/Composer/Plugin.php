@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Codex\Companion;
+namespace Syntatis\Codex\Companion\Composer;
 
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -10,12 +10,13 @@ use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
+use Composer\Script\ScriptEvents;
 use Symfony\Component\Console\Input\ArrayInput;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
 /** @codeCoverageIgnore */
-class ComposerPlugin implements PluginInterface, EventSubscriberInterface
+class Plugin implements PluginInterface, EventSubscriberInterface
 {
 	public function activate(Composer $composer, IOInterface $io): void
 	{
@@ -33,12 +34,8 @@ class ComposerPlugin implements PluginInterface, EventSubscriberInterface
 	public static function getSubscribedEvents(): array
 	{
 		return [
-			'post-create-project-cmd' => [
-				['onPostCreateProject'],
-			],
-			'post-autoload-dump' => [
-				['onPostAutoloadDump'],
-			],
+			ScriptEvents::POST_CREATE_PROJECT_CMD => 'onPostCreateProject',
+			ScriptEvents::POST_AUTOLOAD_DUMP => 'onPostAutoloadDump',
 		];
 	}
 
