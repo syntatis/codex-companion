@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Concerns\RunProcess;
@@ -21,14 +22,19 @@ class PrefixerProcess implements Executable
 
 	protected Codex $codex;
 
-	protected StyleInterface $style;
+	/** @var StyleInterface&OutputInterface */
+	protected $output;
 
 	private bool $devMode = true;
 
-	public function __construct(Codex $codex, StyleInterface $style)
+	/**
+	 * // phpcs:ignore
+	 * @param StyleInterface&OutputInterface $output
+	 */
+	public function __construct(Codex $codex, $output)
 	{
 		$this->codex = $codex;
-		$this->style = $style;
+		$this->output = $output;
 	}
 
 	public function setDevMode(bool $mode): self
@@ -43,7 +49,7 @@ class PrefixerProcess implements Executable
 		$prefix = $this->codex->getConfig('scoper.prefix');
 
 		if (! is_string($prefix) || Val::isBlank($prefix)) {
-			$this->style->warning('Vendor prefix is not set in the configuration file.');
+			$this->output->warning('Vendor prefix is not set in the configuration file.');
 
 			return 0;
 		}
@@ -64,7 +70,7 @@ class PrefixerProcess implements Executable
 
 		if ($proc->isSuccessful()) {
 			if (! file_exists($filesystem->getBinPath())) {
-				$this->style->error('Unable to locate the PHP-Scoper binary.');
+				$this->output->error('Unable to locate the PHP-Scoper binary.');
 
 				return 1;
 			}
@@ -78,7 +84,7 @@ class PrefixerProcess implements Executable
 				)
 				->run(
 					sprintf(
-						'%s add-prefix --force --quiet --config=%s --output-dir=%s',
+						'%s add-prefix --force --config=%s --output-dir=%s',
 						$filesystem->getBinPath(),
 						$filesystem->getConfigPath(),
 						$filesystem->getOutputPath(),

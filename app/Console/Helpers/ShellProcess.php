@@ -60,7 +60,7 @@ class ShellProcess
 	}
 
 	/** @phpstan-param non-empty-string $command */
-	public function run(string $command): self
+	public function run(string $command, ?callable $callback = null): self
 	{
 		$self = clone $this;
 		$self->process = self::create($command, $this->cwd);
@@ -69,7 +69,7 @@ class ShellProcess
 			$self->style->text($self->preMessage);
 		}
 
-		$self->exitCode = $self->process->run();
+		$self->exitCode = $self->process->run($callback);
 
 		$output = trim($self->process->getOutput());
 		$errorOutput = trim($self->process->getErrorOutput());
