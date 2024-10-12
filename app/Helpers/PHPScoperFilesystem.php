@@ -68,7 +68,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return string The absolute path to the output directory.
 	 */
-	public function getOutputPath(string|null $path = null): string
+	public function getOutputPath(?string $path = null): string
 	{
 		$outputPath = $this->outputPath;
 
@@ -88,7 +88,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return string The absolute path to the build directory.
 	 */
-	public function getBuildPath(string|null $path = null): string
+	public function getBuildPath(?string $path = null): string
 	{
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
