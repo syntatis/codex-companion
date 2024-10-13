@@ -14,23 +14,9 @@ class ProjectFilesTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function setUp(): void
-	{
-		parent::setUp();
-
-		self::setUpTemporaryPath();
-	}
-
-	public function tearDown(): void
-	{
-		parent::tearDown();
-
-		self::tearDownTemporaryPath();
-	}
-
 	public function testIteratedFiles(): void
 	{
-		self::createTempFiles([
+		$this->dumpTemporaryFiles([
 			'composer.json',
 			'src/index.js',
 			'foo.php',
@@ -50,32 +36,33 @@ class ProjectFilesTest extends TestCase
 			'vendor/autoload.php',
 		]);
 
-		$projectFiles = new ProjectFiles(self::$tempDir);
+		$files = new ProjectFiles($this->getTemporaryPath());
 
-		self::assertSame(6, count($projectFiles));
-		foreach ($projectFiles as $projectFile) {
-			self::assertNotContains(
-				$projectFile->getRealPath(),
+		$this->assertSame(6, count($files));
+
+		foreach ($files as $file) {
+			$this->assertNotContains(
+				$file->getRealPath(),
 				[
-					self::$tempDir . '/.editorconfig',
-					self::$tempDir . '/.eslintrc.json',
-					self::$tempDir . '/.gitignore',
-					self::$tempDir . '/LICENSE',
-					self::$tempDir . '/composer.lock',
-					self::$tempDir . '/dist-autoload/autoload.php',
-					self::$tempDir . '/dist/index.js',
-					self::$tempDir . '/node_modules/react/main.js',
-					self::$tempDir . '/package-lock.json',
-					self::$tempDir . '/vendor/autoload.php',
+					$this->getTemporaryPath('/.editorconfig'),
+					$this->getTemporaryPath('/.eslintrc.json'),
+					$this->getTemporaryPath('/.gitignore'),
+					$this->getTemporaryPath('/LICENSE'),
+					$this->getTemporaryPath('/composer.lock'),
+					$this->getTemporaryPath('/dist-autoload/autoload.php'),
+					$this->getTemporaryPath('/dist/index.js'),
+					$this->getTemporaryPath('/node_modules/react/main.js'),
+					$this->getTemporaryPath('/package-lock.json'),
+					$this->getTemporaryPath('/vendor/autoload.php'),
 				],
 			);
 		}
 	}
 
-	private static function createTempFiles(array $files): void
+	private function dumpTemporaryFiles(array $files): void
 	{
 		foreach ($files as $file) {
-			self::$filesystem->dumpFile(self::$tempDir . '/' . $file, '');
+			$this->dumpTemporaryFile($this->getTemporaryPath('/' . $file), '');
 		}
 	}
 }

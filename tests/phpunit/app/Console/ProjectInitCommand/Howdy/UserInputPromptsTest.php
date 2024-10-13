@@ -19,20 +19,6 @@ class UserInputPromptsTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function setUp(): void
-	{
-		parent::setUp();
-
-		self::setUpTemporaryPath();
-	}
-
-	public function tearDown(): void
-	{
-		parent::tearDown();
-
-		self::tearDownTemporaryPath();
-	}
-
 	/**
 	 * When the required props are not available, either because the files are
 	 * missing, or the string required cannot be found or parsed within the

@@ -17,8 +17,8 @@ class ProjectInitCommandTest extends TestCase
 	{
 		parent::setUp();
 
-		self::setUpTemporaryPath();
-		self::dumpTemporaryFile(
+		$this->setUpTemporaryPath();
+		$this->dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -38,7 +38,7 @@ class ProjectInitCommandTest extends TestCase
 			}
 			CONTENT,
 		);
-		self::dumpTemporaryFile(
+		$this->dumpTemporaryFile(
 			'/plugin-name.php',
 			<<<'CONTENT'
 			/**
@@ -62,7 +62,7 @@ class ProjectInitCommandTest extends TestCase
 			 */
 			CONTENT,
 		);
-		self::dumpTemporaryFile(
+		$this->dumpTemporaryFile(
 			'/scoper.inc.php',
 			<<<'CONTENT'
 			<?php return ["prefix" => "PluginName\\Vendor"];
@@ -70,18 +70,11 @@ class ProjectInitCommandTest extends TestCase
 		);
 	}
 
-	public function tearDown(): void
-	{
-		self::tearDownTemporaryPath();
-
-		parent::tearDown();
-	}
-
 	public function testMissingPluginMainFile(): void
 	{
-		self::$filesystem->remove(self::getTemporaryPath('/plugin-name.php'));
+		$this->filesystem->remove($this->getTemporaryPath('/plugin-name.php'));
 
-		$command = new ProjectInitCommand(self::getTemporaryPath());
+		$command = new ProjectInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -91,12 +84,12 @@ class ProjectInitCommandTest extends TestCase
 
 	public function testHasNonDefaultPluginMainFile(): void
 	{
-		self::$filesystem->rename(
-			self::getTemporaryPath('/plugin-name.php'),
-			self::getTemporaryPath('/awesome-plugin-name.php'),
+		$this->filesystem->rename(
+			$this->getTemporaryPath('/plugin-name.php'),
+			$this->getTemporaryPath('/awesome-plugin-name.php'),
 		);
 
-		$command = new ProjectInitCommand(self::getTemporaryPath());
+		$command = new ProjectInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -106,7 +99,7 @@ class ProjectInitCommandTest extends TestCase
 
 	public function testMissingScoperConfigFile(): void
 	{
-		self::dumpTemporaryFile(
+		$this->dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -120,7 +113,7 @@ class ProjectInitCommandTest extends TestCase
 			CONTENT,
 		);
 
-		$command = new ProjectInitCommand(self::getTemporaryPath());
+		$command = new ProjectInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -131,7 +124,7 @@ class ProjectInitCommandTest extends TestCase
 	/** @dataProvider dataInputPluginSlug */
 	public function testInputPluginSlug(string $input, string $display): void
 	{
-		$command = new ProjectInitCommand(self::getTemporaryPath());
+		$command = new ProjectInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->setInputs([$input]);
 		$tester->execute([]);
@@ -151,7 +144,7 @@ class ProjectInitCommandTest extends TestCase
 	/** @dataProvider dataInputPluginSlugInvalid */
 	public function testInputPluginSlugInvalid(string $input): void
 	{
-		$command = new ProjectInitCommand(self::getTemporaryPath());
+		$command = new ProjectInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->setInputs([$input]);
 		$tester->execute([]);

@@ -24,20 +24,6 @@ class InitializeFilesTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function setUp(): void
-	{
-		parent::setUp();
-
-		self::setUpTemporaryPath();
-	}
-
-	public function tearDown(): void
-	{
-		self::tearDownTemporaryPath();
-
-		parent::tearDown();
-	}
-
 	/** @dataProvider dataAll */
 	public function testAll(array $files, array $inputs): void
 	{
@@ -48,7 +34,7 @@ class InitializeFilesTest extends TestCase
 		 */
 
 		foreach ($files as $filename => $content) {
-			self::dumpTemporaryFile($filename, $content['origin']);
+			$this->dumpTemporaryFile($filename, $content['origin']);
 		}
 
 		/** @var StyleInterface&MockObject $style */
@@ -61,7 +47,7 @@ class InitializeFilesTest extends TestCase
 				return $callback($inputs[$param]);
 			}));
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$userInputs = new UserInputPrompts((new ProjectProps($codex))->get(), $style);
 		$userInputs->execute($style);
 
@@ -77,7 +63,7 @@ class InitializeFilesTest extends TestCase
 		 */
 
 		foreach ($files as $filename => $content) {
-			$instance->file(new SplFileInfo(self::getTemporaryPath($filename)));
+			$instance->file(new SplFileInfo($this->getTemporaryPath($filename)));
 		}
 
 		/**
@@ -89,15 +75,15 @@ class InitializeFilesTest extends TestCase
 		foreach ($files as $filename => $content) {
 			switch ($filename) {
 				case '/plugin-name.php':
-					$editedContent = file_get_contents(self::getTemporaryPath('/' . $inputs['Plugin slug'] . '.php'));
+					$editedContent = file_get_contents($this->getTemporaryPath('/' . $inputs['Plugin slug'] . '.php'));
 					break;
 
 				case '/plugin-name.pot':
-					$editedContent = file_get_contents(self::getTemporaryPath('/' . $inputs['Plugin slug'] . '.pot'));
+					$editedContent = file_get_contents($this->getTemporaryPath('/' . $inputs['Plugin slug'] . '.pot'));
 					break;
 
 				default:
-					$editedContent = file_get_contents(self::getTemporaryPath($filename));
+					$editedContent = file_get_contents($this->getTemporaryPath($filename));
 					break;
 			}
 

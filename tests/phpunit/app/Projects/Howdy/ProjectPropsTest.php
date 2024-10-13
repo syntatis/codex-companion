@@ -15,19 +15,12 @@ class ProjectPropsTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 
-		self::setUpTemporaryPath();
-		self::dumpTemporaryFile('/composer.json', json_encode(['name' => 'project/name']));
-	}
-
-	public function tearDown(): void
-	{
-		parent::tearDown();
-
-		self::tearDownTemporaryPath();
+		$this->setUpTemporaryPath();
+		$this->dumpTemporaryFile('/composer.json', json_encode(['name' => 'project/name']));
 	}
 
 	/**
@@ -38,10 +31,10 @@ class ProjectPropsTest extends TestCase
 	public function testGetSlug(array $files, $expect): void
 	{
 		foreach ($files as $filename => $content) {
-			self::dumpTemporaryFile($filename, $content);
+			$this->dumpTemporaryFile($filename, $content);
 		}
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
 
 		$this->assertSame($expect, $projectProps->getPluginSlug());
@@ -119,10 +112,10 @@ class ProjectPropsTest extends TestCase
 	public function testGetName(array $files, $expect): void
 	{
 		foreach ($files as $filename => $content) {
-			self::dumpTemporaryFile($filename, $content);
+			$this->dumpTemporaryFile($filename, $content);
 		}
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
 
 		$this->assertSame($expect, $projectProps->getPluginName());
@@ -200,10 +193,10 @@ class ProjectPropsTest extends TestCase
 	public function testGetDescription(array $files, $expect): void
 	{
 		foreach ($files as $filename => $content) {
-			self::dumpTemporaryFile($filename, $content);
+			$this->dumpTemporaryFile($filename, $content);
 		}
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
 
 		$this->assertSame($expect, $projectProps->getPluginDescription());
@@ -251,9 +244,9 @@ class ProjectPropsTest extends TestCase
 	public function testGetNamespace(array $data, ?string $expect): void
 	{
 		// This will override the default composer.json file created in `setUp`.
-		self::dumpTemporaryFile('/composer.json', json_encode($data));
+		$this->dumpTemporaryFile('/composer.json', json_encode($data));
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
 
 		$this->assertSame($expect, $projectProps->getNamespace());
@@ -331,9 +324,9 @@ class ProjectPropsTest extends TestCase
 	 */
 	public function testGetVendorPrefix(array $content, $expect): void
 	{
-		self::dumpTemporaryFile('/composer.json', json_encode($content));
+		$this->dumpTemporaryFile('/composer.json', json_encode($content));
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
 
 		$this->assertSame($expect, $projectProps->getVendorPrefix());

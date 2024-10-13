@@ -12,33 +12,47 @@ use function md5;
 
 trait WithTemporaryFiles
 {
-	private static string $tempDir;
+	private string $tempDir;
 
-	private static Filesystem $filesystem;
+	private Filesystem $filesystem;
 
-	protected static function setUpTemporaryPath(): void
+	protected function setUp(): void
 	{
-		self::$tempDir = Path::normalize(dirname(__DIR__, 2) . '/tmp/phpunit-' . md5(static::class));
-		self::$filesystem = new Filesystem();
-		self::$filesystem->mkdir(self::$tempDir);
+		parent::setUp();
+
+		$this->setUpTemporaryPath();
 	}
 
-	public static function getTemporaryPath(?string $path = null): string
+	protected function tearDown(): void
+	{
+		$this->tearDownTemporaryPath();
+
+		parent::tearDown();
+	}
+
+	protected function setUpTemporaryPath(): void
+	{
+		$this->tempDir = Path::normalize(dirname(__DIR__, 2) . '/tmp/phpunit-' . md5(static::class));
+		$this->filesystem = new Filesystem();
+		$this->filesystem->mkdir($this->tempDir);
+	}
+
+	public function getTemporaryPath(?string $path = null): string
 	{
 		if ($path) {
-			return Path::normalize(self::$tempDir . $path);
+			return Path::normalize($this->tempDir . $path);
 		}
 
-		return Path::normalize(self::$tempDir);
+		return Path::normalize($this->tempDir);
 	}
 
-	public static function dumpTemporaryFile(string $path, string $content): void
+	public function dumpTemporaryFile(string $path, string $content): void
 	{
-		self::$filesystem->dumpFile(self::getTemporaryPath($path), $content);
+		$this->filesystem->dumpFile($this->getTemporaryPath($path), $content);
 	}
 
-	protected static function tearDownTemporaryPath(): void
+	protected function tearDownTemporaryPath(): void
 	{
-		self::$filesystem->remove(self::$tempDir);
+		$this->filesystem->remove($this->tempDir);
 	}
 }

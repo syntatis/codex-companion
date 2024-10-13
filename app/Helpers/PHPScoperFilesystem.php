@@ -194,6 +194,8 @@ class PHPScoperFilesystem
 	/** @return array<string,array<string,string|array<string>>>|null */
 	private function getAutoload(string $key): ?array
 	{
+
+
 		$mapper = function ($paths) {
 			if (is_string($paths)) {
 				return Path::makeRelative(

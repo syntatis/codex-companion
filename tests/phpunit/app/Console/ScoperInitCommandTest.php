@@ -17,8 +17,8 @@ class ScoperInitCommandTest extends TestCase
 	{
 		parent::setUp();
 
-		self::setUpTemporaryPath();
-		self::dumpTemporaryFile(
+		$this->setUpTemporaryPath();
+		$this->dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -33,16 +33,9 @@ class ScoperInitCommandTest extends TestCase
 		);
 	}
 
-	public function tearDown(): void
-	{
-		self::tearDownTemporaryPath();
-
-		parent::tearDown();
-	}
-
 	public function testConfirm(): void
 	{
-		$command = new ScoperInitCommand(self::getTemporaryPath());
+		$command = new ScoperInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->execute([]);
 
@@ -52,7 +45,7 @@ class ScoperInitCommandTest extends TestCase
 
 	public function testConfirmNo(): void
 	{
-		$command = new ScoperInitCommand(self::getTemporaryPath());
+		$command = new ScoperInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
 		$tester->setInputs(['no']);
 		$tester->execute([]);
