@@ -20,7 +20,7 @@ class ProjectPropsTest extends TestCase
 		parent::setUp();
 
 		$this->setUpTemporaryPath();
-		$this->dumpTemporaryFile('/composer.json', json_encode(['name' => 'project/name']));
+		$this->dumpTemporaryFile('composer.json', json_encode(['name' => 'project/name']));
 	}
 
 	/**
@@ -44,7 +44,7 @@ class ProjectPropsTest extends TestCase
 	{
 		yield 'single file' => [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -55,7 +55,7 @@ class ProjectPropsTest extends TestCase
 
 		yield 'multiple files' => [
 			'files' => [
-				'/bar.php' => <<<'CONTENT'
+				'bar.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Bar Plugin
 				 * Plugin URI: https://example.org
@@ -63,7 +63,7 @@ class ProjectPropsTest extends TestCase
 				 */
 				CONTENT,
 				// Empty.
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 */
 				CONTENT,
@@ -73,7 +73,7 @@ class ProjectPropsTest extends TestCase
 
 		yield 'not kebabcase' => [
 			'files' => [
-				'/foo_bar.php' => <<<'CONTENT'
+				'foo_bar.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Foo Bar Plugin
 				 */
@@ -84,12 +84,12 @@ class ProjectPropsTest extends TestCase
 
 		yield 'possibly duplicated main file' => [
 			'files' => [
-				'/foo1.php' => <<<'CONTENT'
+				'foo1.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Foo 1 Plugin
 				 */
 				CONTENT,
-				'/foo2.php' => <<<'CONTENT'
+				'foo2.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Foo 2 Plugin
 				 */
@@ -125,7 +125,7 @@ class ProjectPropsTest extends TestCase
 	{
 		yield 'default' => [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -136,7 +136,7 @@ class ProjectPropsTest extends TestCase
 
 		yield 'edited' => [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Awesome Plugin
 				 */
@@ -147,7 +147,7 @@ class ProjectPropsTest extends TestCase
 
 		yield 'has spaces' => [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name:        Foo Plugin
 				 */
@@ -158,7 +158,7 @@ class ProjectPropsTest extends TestCase
 
 		yield 'possibly duplicated header' => [
 			'files' => [
-				'/foo-bar.php' => <<<'CONTENT'
+				'foo-bar.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name:        Foo Plugin
 				 * Plugin Name:        Bar Plugin
@@ -170,12 +170,12 @@ class ProjectPropsTest extends TestCase
 
 		yield 'possibly duplicated main file' => [
 			'files' => [
-				'/foo1.php' => <<<'CONTENT'
+				'foo1.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Foo1 Plugin
 				 */
 				CONTENT,
-				'/foo2.php' => <<<'CONTENT'
+				'foo2.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Foo2 Plugin
 				 */
@@ -206,7 +206,7 @@ class ProjectPropsTest extends TestCase
 	{
 		yield [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 * Description: The plugin short description.
@@ -218,7 +218,7 @@ class ProjectPropsTest extends TestCase
 
 		yield [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 * Description: Awesome plugin.
@@ -230,7 +230,7 @@ class ProjectPropsTest extends TestCase
 
 		yield [
 			'files' => [
-				'/foo.php' => <<<'CONTENT'
+				'foo.php' => <<<'CONTENT'
 				/**
 				 * Description: Awesome plugin.
 				 */
@@ -244,7 +244,7 @@ class ProjectPropsTest extends TestCase
 	public function testGetNamespace(array $data, ?string $expect): void
 	{
 		// This will override the default composer.json file created in `setUp`.
-		$this->dumpTemporaryFile('/composer.json', json_encode($data));
+		$this->dumpTemporaryFile('composer.json', json_encode($data));
 
 		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
@@ -324,7 +324,7 @@ class ProjectPropsTest extends TestCase
 	 */
 	public function testGetVendorPrefix(array $content, $expect): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode($content));
+		$this->dumpTemporaryFile('composer.json', json_encode($content));
 
 		$codex = new Codex($this->getTemporaryPath());
 		$projectProps = new ProjectProps($codex);

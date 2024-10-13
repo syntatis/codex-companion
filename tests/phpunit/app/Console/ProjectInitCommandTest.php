@@ -19,7 +19,7 @@ class ProjectInitCommandTest extends TestCase
 
 		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -39,7 +39,7 @@ class ProjectInitCommandTest extends TestCase
 			CONTENT,
 		);
 		$this->dumpTemporaryFile(
-			'/plugin-name.php',
+			'plugin-name.php',
 			<<<'CONTENT'
 			/**
 			 * Plugin bootstrap file.
@@ -63,7 +63,7 @@ class ProjectInitCommandTest extends TestCase
 			CONTENT,
 		);
 		$this->dumpTemporaryFile(
-			'/scoper.inc.php',
+			'scoper.inc.php',
 			<<<'CONTENT'
 			<?php return ["prefix" => "PluginName\\Vendor"];
 			CONTENT,
@@ -72,7 +72,7 @@ class ProjectInitCommandTest extends TestCase
 
 	public function testMissingPluginMainFile(): void
 	{
-		$this->filesystem->remove($this->getTemporaryPath('/plugin-name.php'));
+		$this->filesystem->remove($this->getTemporaryPath('plugin-name.php'));
 
 		$command = new ProjectInitCommand($this->getTemporaryPath());
 		$tester = new CommandTester($command);
@@ -85,8 +85,8 @@ class ProjectInitCommandTest extends TestCase
 	public function testHasNonDefaultPluginMainFile(): void
 	{
 		$this->filesystem->rename(
-			$this->getTemporaryPath('/plugin-name.php'),
-			$this->getTemporaryPath('/awesome-plugin-name.php'),
+			$this->getTemporaryPath('plugin-name.php'),
+			$this->getTemporaryPath('awesome-plugin-name.php'),
 		);
 
 		$command = new ProjectInitCommand($this->getTemporaryPath());
@@ -100,7 +100,7 @@ class ProjectInitCommandTest extends TestCase
 	public function testMissingScoperConfigFile(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",

@@ -17,23 +17,25 @@ class ProjectFilesTest extends TestCase
 	public function testIteratedFiles(): void
 	{
 		$this->dumpTemporaryFiles([
+			// Should be included
 			'composer.json',
 			'src/index.js',
 			'foo.php',
 			'bar/hello-world.php',
 			'package.json',
 			'phpcs.xml.dist',
+
 			// Should be ignored
 			'.editorconfig',
 			'.eslintrc.json',
 			'.gitignore',
 			'LICENSE',
 			'composer.lock',
-			'dist-autoload/autoload.php',
-			'dist/index.js',
 			'node_modules/react/main.js',
 			'package-lock.json',
 			'vendor/autoload.php',
+			'dist-autoload/autoload.php',
+			'dist/index.js',
 		]);
 
 		$files = new ProjectFiles($this->getTemporaryPath());
@@ -44,16 +46,16 @@ class ProjectFilesTest extends TestCase
 			$this->assertNotContains(
 				$file->getRealPath(),
 				[
-					$this->getTemporaryPath('/.editorconfig'),
-					$this->getTemporaryPath('/.eslintrc.json'),
-					$this->getTemporaryPath('/.gitignore'),
-					$this->getTemporaryPath('/LICENSE'),
-					$this->getTemporaryPath('/composer.lock'),
-					$this->getTemporaryPath('/dist-autoload/autoload.php'),
-					$this->getTemporaryPath('/dist/index.js'),
-					$this->getTemporaryPath('/node_modules/react/main.js'),
-					$this->getTemporaryPath('/package-lock.json'),
-					$this->getTemporaryPath('/vendor/autoload.php'),
+					$this->getTemporaryPath('.editorconfig'),
+					$this->getTemporaryPath('.eslintrc.json'),
+					$this->getTemporaryPath('.gitignore'),
+					$this->getTemporaryPath('LICENSE'),
+					$this->getTemporaryPath('composer.lock'),
+					$this->getTemporaryPath('dist-autoload/autoload.php'),
+					$this->getTemporaryPath('dist/index.js'),
+					$this->getTemporaryPath('node_modules/react/main.js'),
+					$this->getTemporaryPath('package-lock.json'),
+					$this->getTemporaryPath('vendor/autoload.php'),
 				],
 			);
 		}
@@ -62,7 +64,7 @@ class ProjectFilesTest extends TestCase
 	private function dumpTemporaryFiles(array $files): void
 	{
 		foreach ($files as $file) {
-			$this->dumpTemporaryFile($this->getTemporaryPath('/' . $file), '');
+			$this->dumpTemporaryFile($file, '');
 		}
 	}
 }

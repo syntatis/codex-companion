@@ -28,7 +28,7 @@ class CodexTest extends TestCase
 
 	public function testEmptyComposerFile(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', '');
+		$this->dumpTemporaryFile('composer.json', '');
 
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Invalid composer.json content');
@@ -36,7 +36,6 @@ class CodexTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 	}
 
-	/** @group test-here */
 	public function testGetProjectPath(): void
 	{
 		$content = json_encode([
@@ -47,7 +46,7 @@ class CodexTest extends TestCase
 			],
 		]);
 
-		$this->dumpTemporaryFile('/composer.json', $content);
+		$this->dumpTemporaryFile('composer.json', $content);
 
 		$codex = new Codex($this->getTemporaryPath());
 
@@ -65,10 +64,7 @@ class CodexTest extends TestCase
 		$this->assertStringEndsNotWith('./foo', $codex->getProjectPath('./foo'));
 	}
 
-	/**
-	 * @dataProvider dataGetProjectPathInvalid
-	 * @group test-here
-	 */
+	/** @dataProvider dataGetProjectPathInvalid */
 	public function testGetProjectPathInvalid(string $path): void
 	{
 		$content = json_encode([
@@ -79,7 +75,7 @@ class CodexTest extends TestCase
 			],
 		]);
 
-		$this->dumpTemporaryFile('/composer.json', $content);
+		$this->dumpTemporaryFile('composer.json', $content);
 
 		$codex = new Codex($this->getTemporaryPath());
 
@@ -108,7 +104,7 @@ class CodexTest extends TestCase
 			],
 		]);
 
-		$this->dumpTemporaryFile('/composer.json', $content);
+		$this->dumpTemporaryFile('composer.json', $content);
 
 		$codex = new Codex($this->getTemporaryPath());
 
@@ -119,7 +115,7 @@ class CodexTest extends TestCase
 	public function testGetRequire(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			json_encode([
 				'require' => [
 					'php' => '>=7.4',
@@ -138,7 +134,7 @@ class CodexTest extends TestCase
 
 	public function testGetRequireNotSet(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([]));
+		$this->dumpTemporaryFile('composer.json', json_encode([]));
 
 		$codex = new Codex($this->getTemporaryPath());
 
@@ -147,7 +143,7 @@ class CodexTest extends TestCase
 
 	public function testGetRequireEmpty(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode(['require' => []]));
+		$this->dumpTemporaryFile('composer.json', json_encode(['require' => []]));
 
 		$codex = new Codex($this->getTemporaryPath());
 
@@ -157,7 +153,7 @@ class CodexTest extends TestCase
 	public function testGetRequireDev(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			json_encode([
 				'require' => [
 					'php' => '>=7.4',
@@ -178,7 +174,7 @@ class CodexTest extends TestCase
 	public function testGetRequireDevEmpty(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			json_encode([
 				'require' => [
 					'php' => '>=7.4',
@@ -196,7 +192,7 @@ class CodexTest extends TestCase
 	public function testGetRequireDevNotSet(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			json_encode([
 				'require' => [
 					'php' => '>=7.4',
@@ -213,7 +209,7 @@ class CodexTest extends TestCase
 	public function testGetAutoloadDev(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			json_encode([
 				'autoload-dev' => [
 					'psr-4' => ['Tests\\' => 'tests/'],
@@ -231,7 +227,7 @@ class CodexTest extends TestCase
 
 	public function testGetAutoloadDevNotSet(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'autoload' => [
 				'psr-4' => ['Codex\\' => 'app/'],
 			],
@@ -244,17 +240,16 @@ class CodexTest extends TestCase
 
 	public function testGetAutoloadDevEmpty(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode(['autoload-dev' => []]));
+		$this->dumpTemporaryFile('composer.json', json_encode(['autoload-dev' => []]));
 
 		$codex = new Codex($this->getTemporaryPath());
 
 		$this->assertSame([], $codex->getComposer('autoload-dev'));
 	}
 
-	/** @group test-here */
 	public function testGetConfigOutputPathDefault(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => [],
@@ -265,14 +260,14 @@ class CodexTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 
 		$this->assertSame(
-			$this->getTemporaryPath('/dist/autoload'),
+			$this->getTemporaryPath('dist/autoload'),
 			$codex->getConfig('scoper.output-dir'),
 		);
 	}
 
 	public function testGetConfigOutputPathInvalidValue(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => null],
@@ -288,7 +283,7 @@ class CodexTest extends TestCase
 	/** @dataProvider dataGetConfigOutputPathRelative */
 	public function testGetConfigOutputPathRelative(string $path): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => $path],
@@ -313,7 +308,7 @@ class CodexTest extends TestCase
 
 	public function testGetConfigOutputPathAbsolute(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => '/absolute-path'],
@@ -328,7 +323,7 @@ class CodexTest extends TestCase
 
 	public function testGetConfigInvalidKey(): void
 	{
-		$this->dumpTemporaryFile('/composer.json', json_encode([
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => 'dist-autoload'],

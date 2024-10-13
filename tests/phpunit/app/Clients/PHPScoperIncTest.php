@@ -19,7 +19,7 @@ class PHPScoperIncTest extends TestCase
 
 		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -31,7 +31,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$this->filesystem->mkdir($this->getTemporaryPath('/vendor'));
+		$this->filesystem->mkdir($this->getTemporaryPath('vendor'));
 	}
 
 	public function testExposeGlobals(): void
@@ -61,7 +61,7 @@ class PHPScoperIncTest extends TestCase
 	public function testPrefixNotSet(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -82,7 +82,7 @@ class PHPScoperIncTest extends TestCase
 	public function testPrefix(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -109,7 +109,7 @@ class PHPScoperIncTest extends TestCase
 	public function testOverridePrefix(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -136,7 +136,7 @@ class PHPScoperIncTest extends TestCase
 	public function testExcludeNamespaces(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -163,7 +163,7 @@ class PHPScoperIncTest extends TestCase
 	public function testAdditionalExcludeNamespaces(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -193,7 +193,7 @@ class PHPScoperIncTest extends TestCase
 	public function testExcludeFiles(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -205,29 +205,29 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$this->dumpTemporaryFile('/vendor/foo.css', '');
-		$this->dumpTemporaryFile('/vendor/foo.html', '');
-		$this->dumpTemporaryFile('/vendor/foo.js', '');
-		$this->dumpTemporaryFile('/vendor/foo.html.php', '');
+		$this->dumpTemporaryFile('vendor/foo.css', '');
+		$this->dumpTemporaryFile('vendor/foo.html', '');
+		$this->dumpTemporaryFile('vendor/foo.js', '');
+		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
 		$instance = new PHPScoperInc($this->getTemporaryPath());
 		$instance = $instance->excludeFiles([
-			$this->getTemporaryPath('/vendor/foo.css'),
-			$this->getTemporaryPath('/vendor/foo.html'),
-			$this->getTemporaryPath('/vendor/foo.js'),
-			$this->getTemporaryPath('/vendor/foo.html.php'),
+			$this->getTemporaryPath('vendor/foo.css'),
+			$this->getTemporaryPath('vendor/foo.html'),
+			$this->getTemporaryPath('vendor/foo.js'),
+			$this->getTemporaryPath('vendor/foo.html.php'),
 		]);
 
-		$this->assertContains($this->getTemporaryPath('/vendor/foo.css'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('/vendor/foo.html'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('/vendor/foo.js'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('/vendor/foo.html.php'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
 	}
 
 	public function testAddFinder(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -251,7 +251,7 @@ class PHPScoperIncTest extends TestCase
 	public function testAddPatcher(): void
 	{
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",

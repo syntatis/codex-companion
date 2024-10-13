@@ -19,7 +19,7 @@ class ScoperInitCommandTest extends TestCase
 
 		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
-			'/composer.json',
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",

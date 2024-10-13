@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Helpers;
 
+use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
+use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
 use function array_filter;
@@ -18,7 +20,9 @@ use function is_string;
 use function json_encode;
 use function md5;
 use function rtrim;
+use function sprintf;
 use function time;
+use function trim;
 
 use const ARRAY_FILTER_USE_BOTH;
 use const JSON_PRETTY_PRINT;
@@ -92,11 +96,17 @@ class PHPScoperFilesystem
 	{
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
-		if ($path !== null) {
-			$buildPath .= $path;
+		if (! Val::isBlank($path)) {
+			if (Path::isAbsolute($path) || Str::startsWith($path, '..')) {
+				throw new InvalidArgumentException(
+					sprintf('The path appended must be a relative path, "%s" given.', $path),
+				);
+			}
+
+			$buildPath .= '/' . trim($path, '\\/.');
 		}
 
-		return $buildPath;
+		return Path::normalize($buildPath);
 	}
 
 	public function getBinPath(): string
@@ -137,7 +147,7 @@ class PHPScoperFilesystem
 		);
 
 		$this->filesystem->dumpFile(
-			$this->getBuildPath('/composer.json'),
+			$this->getBuildPath('composer.json'),
 			json_encode(
 				$data,
 				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,

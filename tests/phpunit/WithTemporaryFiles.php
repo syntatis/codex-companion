@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Syntatis\Tests;
 
+use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
+use Syntatis\Utils\Val;
 
 use function dirname;
+use function is_string;
 use function md5;
+use function trim;
 
 trait WithTemporaryFiles
 {
@@ -39,15 +43,25 @@ trait WithTemporaryFiles
 
 	public function getTemporaryPath(?string $path = null): string
 	{
-		if ($path) {
-			return Path::normalize($this->tempDir . $path);
+		if (Val::isBlank($path)) {
+			return $this->tempDir;
 		}
 
-		return Path::normalize($this->tempDir);
+		if (is_string($path) && Path::isAbsolute($path)) {
+			throw new InvalidArgumentException('Path must be relative');
+		}
+
+		$path = trim($path, '\\/.');
+
+		return Path::normalize($this->tempDir . '/' . $path);
 	}
 
 	public function dumpTemporaryFile(string $path, string $content): void
 	{
+		if (Path::isAbsolute($path)) {
+			throw new InvalidArgumentException('Path must be relative');
+		}
+
 		$this->filesystem->dumpFile($this->getTemporaryPath($path), $content);
 	}
 
