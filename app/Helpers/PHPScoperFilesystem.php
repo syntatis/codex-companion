@@ -22,7 +22,6 @@ use function md5;
 use function rtrim;
 use function sprintf;
 use function time;
-use function trim;
 
 use const ARRAY_FILTER_USE_BOTH;
 use const JSON_PRETTY_PRINT;
@@ -83,7 +82,7 @@ class PHPScoperFilesystem
 				);
 			}
 
-			$outputPath .= '/' . trim($path, '\\/.');
+			$outputPath .= '/' . $path;
 
 			return Path::canonicalize($outputPath);
 		}
