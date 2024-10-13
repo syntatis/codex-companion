@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Syntatis\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Filesystem\Path;
@@ -33,6 +34,44 @@ class CodexTest extends TestCase
 		$this->expectExceptionMessage('Invalid composer.json content');
 
 		$codex = new Codex($this->getTemporaryPath());
+	}
+
+	/** @group test-here */
+	public function testGetProjectPath(): void
+	{
+		$content = json_encode([
+			'name' => 'syntatis/howdy',
+			'require' => [
+				'php' => '>=7.4',
+				'ext-json' => '*',
+			],
+		]);
+
+		$this->dumpTemporaryFile('/composer.json', $content);
+
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->assertSame($this->getTemporaryPath(), $codex->getProjectPath());
+		$this->assertSame($this->getTemporaryPath('/foo'), $codex->getProjectPath('/foo'));
+
+		// Slashes are normalized.
+		$this->assertStringEndsWith('/foo', $codex->getProjectPath('foo'));
+		$this->assertStringEndsWith('/foo', $codex->getProjectPath('foo/'));
+		$this->assertStringEndsWith('/foo', $codex->getProjectPath('\foo'));
+
+		// Double slashes are normalized to a single slash.
+		$this->assertStringEndsWith('/foo', $codex->getProjectPath('//foo'));
+		$this->assertStringEndsNotWith('//foo', $codex->getProjectPath('//foo'));
+		$this->assertStringEndsWith('/foo', $codex->getProjectPath('foo//'));
+		$this->assertStringEndsNotWith('foo//', $codex->getProjectPath('foo//'));
+
+		// Handles relative paths.
+		$this->assertStringEndsWith('/foo', $codex->getProjectPath('./foo'));
+		$this->assertStringEndsNotWith('./foo', $codex->getProjectPath('./foo'));
+
+		// Handles relative paths outside of the project path.
+		$this->expectException(InvalidArgumentException::class);
+		$codex->getProjectPath('../foo');
 	}
 
 	public function testGetName(): void

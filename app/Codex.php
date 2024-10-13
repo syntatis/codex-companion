@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion;
 
 use Adbar\Dot;
+use InvalidArgumentException;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Syntatis\Codex\Companion\Helpers\ComposerCollection;
 use Syntatis\Utils\Arr;
+use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
 use function in_array;
@@ -49,7 +51,12 @@ class Codex
 		$projectPath = $this->projectPath ?? '';
 
 		if (! Val::isBlank($path)) {
-			$projectPath = $this->projectPath . $path;
+			if (Str::startsWith($path, '..')) {
+				throw new InvalidArgumentException('The path should be relative to the project path');
+			}
+
+			$path = trim($path, '\\/.');
+			$projectPath = Path::normalize($this->projectPath . '/' . $path);
 		}
 
 		return Path::normalize($projectPath);
