@@ -52,26 +52,50 @@ class CodexTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 
 		$this->assertSame($this->getTemporaryPath(), $codex->getProjectPath());
-		$this->assertSame($this->getTemporaryPath('/foo'), $codex->getProjectPath('/foo'));
 
 		// Slashes are normalized.
 		$this->assertStringEndsWith('/foo', $codex->getProjectPath('foo'));
 		$this->assertStringEndsWith('/foo', $codex->getProjectPath('foo/'));
-		$this->assertStringEndsWith('/foo', $codex->getProjectPath('\foo'));
 
 		// Double slashes are normalized to a single slash.
-		$this->assertStringEndsWith('/foo', $codex->getProjectPath('//foo'));
-		$this->assertStringEndsNotWith('//foo', $codex->getProjectPath('//foo'));
 		$this->assertStringEndsWith('/foo', $codex->getProjectPath('foo//'));
-		$this->assertStringEndsNotWith('foo//', $codex->getProjectPath('foo//'));
 
 		// Handles relative paths.
 		$this->assertStringEndsWith('/foo', $codex->getProjectPath('./foo'));
 		$this->assertStringEndsNotWith('./foo', $codex->getProjectPath('./foo'));
+	}
 
-		// Handles relative paths outside of the project path.
+	/**
+	 * @dataProvider dataGetProjectPathInvalid
+	 * @group test-here
+	 */
+	public function testGetProjectPathInvalid(string $path): void
+	{
+		$content = json_encode([
+			'name' => 'syntatis/howdy',
+			'require' => [
+				'php' => '>=7.4',
+				'ext-json' => '*',
+			],
+		]);
+
+		$this->dumpTemporaryFile('/composer.json', $content);
+
+		$codex = new Codex($this->getTemporaryPath());
+
+		// Handles absolute and relative paths outside of the project path.
 		$this->expectException(InvalidArgumentException::class);
-		$codex->getProjectPath('../foo');
+		$this->expectExceptionMessageMatches('/The path ".+" is invalid. The path must be relative to the project path./');
+
+		$codex->getProjectPath($path);
+	}
+
+	public function dataGetProjectPathInvalid(): iterable
+	{
+		yield ['/foo'];
+		yield ['\foo'];
+		yield ['//foo'];
+		yield ['../foo'];
 	}
 
 	public function testGetName(): void
@@ -227,6 +251,7 @@ class CodexTest extends TestCase
 		$this->assertSame([], $codex->getComposer('autoload-dev'));
 	}
 
+	/** @group test-here */
 	public function testGetConfigOutputPathDefault(): void
 	{
 		$this->dumpTemporaryFile('/composer.json', json_encode([
@@ -239,14 +264,6 @@ class CodexTest extends TestCase
 
 		$codex = new Codex($this->getTemporaryPath());
 
-		$this->assertSame(
-			[
-				'scoper' => [
-					'output-dir' => $this->getTemporaryPath('/dist/autoload'),
-				],
-			],
-			$codex->getConfig(),
-		);
 		$this->assertSame(
 			$this->getTemporaryPath('/dist/autoload'),
 			$codex->getConfig('scoper.output-dir'),
@@ -290,7 +307,6 @@ class CodexTest extends TestCase
 	public static function dataGetConfigOutputPathRelative(): iterable
 	{
 		yield './relative-path' => ['./relative-path'];
-		yield '../relative-path' => ['../relative-path'];
 		yield 'relative-path/' => ['relative-path/'];
 		yield 'relative-path' => ['relative-path'];
 	}
@@ -305,12 +321,9 @@ class CodexTest extends TestCase
 			],
 		]));
 
-		$codex = new Codex($this->getTemporaryPath());
+		$this->expectException(InvalidArgumentException::class);
 
-		$this->assertSame(
-			'/absolute-path',
-			$codex->getConfig('scoper.output-dir'),
-		);
+		new Codex($this->getTemporaryPath());
 	}
 
 	public function testGetConfigInvalidKey(): void

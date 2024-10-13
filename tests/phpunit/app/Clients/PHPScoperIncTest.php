@@ -31,6 +31,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
+		$this->filesystem->mkdir($this->getTemporaryPath('/vendor'));
 	}
 
 	public function testExposeGlobals(): void
@@ -44,10 +45,13 @@ class PHPScoperIncTest extends TestCase
 
 	public function testOverrideExposeGlobals(): void
 	{
-		$instance = new PHPScoperInc($this->getTemporaryPath(), [
-			'expose-global-constants' => false,
-			'expose-global-classes' => false,
-		]);
+		$instance = new PHPScoperInc(
+			$this->getTemporaryPath(),
+			[
+				'expose-global-constants' => false,
+				'expose-global-classes' => false,
+			],
+		);
 
 		$this->assertFalse($instance->get()['expose-global-constants']);
 		$this->assertFalse($instance->get()['expose-global-classes']);

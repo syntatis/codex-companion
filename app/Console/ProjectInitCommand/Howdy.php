@@ -59,7 +59,7 @@ class Howdy implements Executable
 		 * It is too risky to proceed, if the file is already changed as we could
 		 * not fully determine, what are the changes made to the file.
 		 */
-		if ($pluginFile !== $this->codex->getProjectPath('/plugin-name.php')) {
+		if ($pluginFile !== $this->codex->getProjectPath('plugin-name.php')) {
 			$this->style->warning('Project is already initialized.');
 
 			return 0;

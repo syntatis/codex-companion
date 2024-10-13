@@ -122,7 +122,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
 
-		$a = json_decode(file_get_contents($codex->getProjectPath('/composer.json')), true);
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
 		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
 
 		$this->assertEquals($a['require'], $b['require']);
@@ -181,7 +181,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
 
-		$a = json_decode(file_get_contents($codex->getProjectPath('/composer.json')), true);
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
 		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
 
 		$this->assertEquals($a['require'], $b['require']);
@@ -229,7 +229,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$filesystem->dumpComposerFile();
 
-		$a = json_decode(file_get_contents($codex->getProjectPath('/composer.json')), true);
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
 		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
 
 		$this->assertArrayNotHasKey('autoload', $a);
@@ -266,7 +266,7 @@ class PHPScoperFilesystemTest extends TestCase
 		$filesystem = new PHPScoperFilesystem($codex);
 		$filesystem->dumpComposerFile();
 
-		$a = json_decode(file_get_contents($codex->getProjectPath('/composer.json')), true);
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
 		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
 
 		// a.

@@ -17,8 +17,8 @@ use function is_array;
 use function is_string;
 use function json_encode;
 use function md5;
+use function rtrim;
 use function time;
-use function trim;
 
 use const ARRAY_FILTER_USE_BOTH;
 use const JSON_PRETTY_PRINT;
@@ -101,7 +101,7 @@ class PHPScoperFilesystem
 
 	public function getBinPath(): string
 	{
-		$path = $this->codex->getProjectPath('/vendor/bin/php-scoper');
+		$path = $this->codex->getProjectPath('vendor/bin/php-scoper');
 
 		if (file_exists($path)) {
 			return $path;
@@ -114,14 +114,14 @@ class PHPScoperFilesystem
 		 */
 		$targetDir = $this->codex->getComposer('extra.bamarni-bin.target-directory');
 		$targetDir = is_string($targetDir) ? $targetDir : 'vendor-bin';
-		$path = '/' . trim($targetDir, '/') . '/php-scoper/vendor/humbug/php-scoper/bin/php-scoper';
+		$path = rtrim($targetDir, '/') . '/php-scoper/vendor/humbug/php-scoper/bin/php-scoper';
 
 		return $this->codex->getProjectPath($path);
 	}
 
 	public function getConfigPath(): string
 	{
-		return $this->codex->getProjectPath('/scoper.inc.php');
+		return $this->codex->getProjectPath('scoper.inc.php');
 	}
 
 	public function dumpComposerFile(): void
@@ -194,12 +194,10 @@ class PHPScoperFilesystem
 	/** @return array<string,array<string,string|array<string>>>|null */
 	private function getAutoload(string $key): ?array
 	{
-
-
 		$mapper = function ($paths) {
 			if (is_string($paths)) {
 				return Path::makeRelative(
-					$this->codex->getProjectPath('/' . trim($paths, '/')),
+					$this->codex->getProjectPath(rtrim($paths, '/')),
 					$this->getBuildPath(),
 				);
 			}
@@ -207,7 +205,7 @@ class PHPScoperFilesystem
 			if (is_array($paths)) {
 				return array_map(function (string $path) {
 					return Path::makeRelative(
-						$this->codex->getProjectPath('/' . trim($path, '/')),
+						$this->codex->getProjectPath(rtrim($path, '/')),
 						$this->getBuildPath(),
 					);
 				}, $paths);

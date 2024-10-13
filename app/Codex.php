@@ -17,6 +17,7 @@ use Syntatis\Utils\Val;
 use function in_array;
 use function is_array;
 use function is_string;
+use function sprintf;
 use function trim;
 
 class Codex
@@ -26,7 +27,7 @@ class Codex
 	 */
 	private const ROOT_NAMESPACE_DIR = 'app/';
 
-	private const DEFAULT_SCOPER_OUTPUT_PATH = '/dist/autoload';
+	private const DEFAULT_SCOPER_OUTPUT_PATH = 'dist/autoload';
 
 	private ComposerCollection $composer;
 
@@ -51,8 +52,10 @@ class Codex
 		$projectPath = $this->projectPath ?? '';
 
 		if (! Val::isBlank($path)) {
-			if (Str::startsWith($path, '..')) {
-				throw new InvalidArgumentException('The path should be relative to the project path');
+			if (Str::startsWith($path, '..') || Path::isAbsolute($path)) {
+				throw new InvalidArgumentException(
+					sprintf('The path "%s" is invalid. The path must be relative to the project path.', $path),
+				);
 			}
 
 			$path = trim($path, '\\/.');
@@ -136,8 +139,8 @@ class Codex
 		 *
 		 * dist-autoload
 		 */
-		if (is_string($outputPath) && ! Val::isBlank($outputPath) && ! Path::isAbsolute($outputPath)) {
-			$configs->set('scoper.output-dir', Path::canonicalize($this->getProjectPath('/' . trim($outputPath, '/'))));
+		if (is_string($outputPath) && ! Val::isBlank($outputPath)) {
+			$configs->set('scoper.output-dir', Path::canonicalize($this->getProjectPath($outputPath)));
 		}
 
 		return $configs;
@@ -146,14 +149,14 @@ class Codex
 	private function resolveConfigs(): void
 	{
 		$options = new OptionsResolver();
-		$options->setDefault('scoper', function (OptionsResolver $resolver): void {
+		$options->setDefault('scoper', static function (OptionsResolver $resolver): void {
 			$resolver->setDefined(['install-dev', 'exclude-namespaces', 'prefix', 'output-dir']);
 			$resolver->setAllowedTypes('prefix', 'string');
 			$resolver->setAllowedTypes('output-dir', 'string');
 			$resolver->setAllowedTypes('exclude-namespaces', 'string[]');
 			$resolver->setAllowedTypes('install-dev', 'string[]');
 			$resolver->setDefaults([
-				'output-dir' => $this->getProjectPath(self::DEFAULT_SCOPER_OUTPUT_PATH),
+				'output-dir' => self::DEFAULT_SCOPER_OUTPUT_PATH,
 			]);
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
