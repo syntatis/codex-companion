@@ -76,8 +76,14 @@ class PHPScoperFilesystem
 	{
 		$outputPath = $this->outputPath;
 
-		if ($path !== null) {
-			$outputPath .= $path;
+		if (! Val::isBlank($path)) {
+			if (Path::isAbsolute($path) || Str::startsWith($path, '..')) {
+				throw new InvalidArgumentException(
+					sprintf('The path appended must be a relative path, "%s" given.', $path),
+				);
+			}
+
+			$outputPath .= '/' . trim($path, '\\/.');
 		}
 
 		return $outputPath;

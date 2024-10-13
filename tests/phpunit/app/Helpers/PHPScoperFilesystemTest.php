@@ -6,6 +6,7 @@ namespace Syntatis\Tests\Helpers;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Tests\WithTemporaryFiles;
@@ -97,7 +98,47 @@ class PHPScoperFilesystemTest extends TestCase
 		yield ['..foo'];
 	}
 
-	public function testGetOutputPath(): void
+	/** @dataProvider dataGetOutputPath */
+	public function testGetOutputPath(string $path, string $expect): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->assertSame(
+			$this->getTemporaryPath('dist/autoload/' . $expect),
+			(new PHPScoperFilesystem($codex))->getOutputPath($path),
+		);
+	}
+
+	public function dataGetOutputPath(): iterable
+	{
+		yield ['foo', 'foo'];
+		yield ['./foo', 'foo'];
+		yield ['foo/', 'foo'];
+		yield ['foo//', 'foo'];
+		yield ['foo///', 'foo'];
+	}
+
+	/** @dataProvider dataGetOutputPathInvalid */
+	public function testGetOutputPathInvalid(string $path): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->expectException(InvalidArgumentException::class);
+
+		(new PHPScoperFilesystem($codex))->getOutputPath($path);
+	}
+
+	public function dataGetOutputPathInvalid(): iterable
+	{
+		yield ['/foo'];
+		yield ['//foo'];
+		yield ['\foo'];
+		yield ['../foo'];
+		yield ['..foo'];
+	}
+
+	/** @group test-here */
+	public function testGetOutputPathDefault(): void
 	{
 		$codex = new Codex($this->getTemporaryPath());
 
@@ -105,11 +146,12 @@ class PHPScoperFilesystemTest extends TestCase
 			$this->getTemporaryPath('dist/autoload'),
 			(new PHPScoperFilesystem($codex))->getOutputPath(),
 		);
+	}
 
-		$this->assertSame(
-			$this->getTemporaryPath('dist/autoload/foo'),
-			(new PHPScoperFilesystem($codex))->getOutputPath('/foo'),
-		);
+	/** @group test-here */
+	public function testGetOutputPathCustom(): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
 
 		$this->dumpTemporaryFile('composer.json', json_encode([
 			'name' => 'syntatis/howdy',
@@ -427,5 +469,64 @@ class PHPScoperFilesystemTest extends TestCase
 			$this->getTemporaryPath('vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
 			$filesystem->getBinPath(),
 		);
+	}
+
+	public function testDumpComposerWithEmptyInstallDev(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'extra' => [
+						'codex' => [
+							'scoper' => ['install-dev' => []],
+						],
+					],
+				],
+			),
+		);
+
+		$filesystem = new PHPScoperFilesystem(new Codex($this->getTemporaryPath()));
+		$filesystem->dumpComposerFile();
+
+		$content = json_decode(file_get_contents($filesystem->getBuildPath('composer.json')), true);
+
+		$this->assertFalse(isset($content['extra']['codex']['scoper']['install-dev']));
+	}
+
+	/**
+	 * @dataProvider dataDumpComposerWithInvalidInstallDev
+	 *
+	 * @param mixed $data Invalid data can be anything.
+	 */
+	public function testDumpComposerWithInvalidInstallDev($data): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'extra' => [
+						'codex' => [
+							'scoper' => ['install-dev' => $data],
+						],
+					],
+				],
+			),
+		);
+
+		$this->expectException(InvalidOptionsException::class);
+
+		new PHPScoperFilesystem(new Codex($this->getTemporaryPath()));
+	}
+
+	public function dataDumpComposerWithInvalidInstallDev(): iterable
+	{
+		yield 'as string' => ['phpunit/phpunit'];
+		yield 'as number' => [1];
+		yield 'as null' => [null];
 	}
 }
