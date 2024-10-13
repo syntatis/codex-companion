@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Syntatis\Tests\Helpers;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Tests\WithTemporaryFiles;
@@ -19,15 +21,12 @@ class PHPScoperFilesystemTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	private Codex $codex;
-
 	public function setUp(): void
 	{
 		parent::setUp();
 
-		self::setUpTemporaryPath();
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			json_encode(
 				[
 					'name' => 'syntatis/howdy',
@@ -45,38 +44,113 @@ class PHPScoperFilesystemTest extends TestCase
 				JSON_UNESCAPED_SLASHES,
 			),
 		);
-
-		$this->codex = new Codex(self::getTemporaryPath());
-	}
-
-	public function tearDown(): void
-	{
-		self::tearDownTemporaryPath();
-
-		parent::tearDown();
 	}
 
 	public function testGetHash(): void
 	{
+		$codex = new Codex($this->getTemporaryPath());
+
 		$this->assertMatchesRegularExpression(
 			'/^[a-fA-F0-9]{32}$/',
-			(new PHPScoperFilesystem($this->codex))->getHash(),
+			(new PHPScoperFilesystem($codex))->getHash(),
 		);
 	}
 
-	public function testGetOutputPath(): void
+	/** @dataProvider dataGetBuildPath */
+	public function testGetBuildPath(string $path, string $expect): void
 	{
-		$this->assertSame(
-			self::getTemporaryPath('/dist/autoload'),
-			(new PHPScoperFilesystem($this->codex))->getOutputPath(),
-		);
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
 		$this->assertSame(
-			self::getTemporaryPath('/dist/autoload/foo'),
-			(new PHPScoperFilesystem($this->codex))->getOutputPath('/foo'),
+			$this->getTemporaryPath('dist/autoload-build-' . $filesystem->getHash() . '/' . $expect),
+			$filesystem->getBuildPath($path),
 		);
+	}
 
-		self::createTemporaryFile('/composer.json', json_encode([
+	public static function dataGetBuildPath(): iterable
+	{
+		yield ['foo', 'foo'];
+		yield ['./foo', 'foo'];
+		yield ['foo/', 'foo'];
+		yield ['foo//', 'foo'];
+		yield ['foo///', 'foo'];
+	}
+
+	/** @dataProvider dataGetBuildPathInvalid */
+	public function testGetBuildPathInvalid(string $path): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		$filesystem->getBuildPath($path);
+	}
+
+	public static function dataGetBuildPathInvalid(): iterable
+	{
+		yield ['/foo'];
+		yield ['//foo'];
+		yield ['\foo'];
+		yield ['../foo'];
+		yield ['..foo'];
+	}
+
+	/** @dataProvider dataGetOutputPath */
+	public function testGetOutputPath(string $path, string $expect): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->assertSame(
+			$this->getTemporaryPath('dist/autoload/' . $expect),
+			(new PHPScoperFilesystem($codex))->getOutputPath($path),
+		);
+	}
+
+	public function dataGetOutputPath(): iterable
+	{
+		yield ['foo', 'foo'];
+		yield ['./foo', 'foo'];
+		yield ['foo/', 'foo'];
+		yield ['foo//', 'foo'];
+		yield ['foo///', 'foo'];
+	}
+
+	/** @dataProvider dataGetOutputPathInvalid */
+	public function testGetOutputPathInvalid(string $path): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->expectException(InvalidArgumentException::class);
+
+		(new PHPScoperFilesystem($codex))->getOutputPath($path);
+	}
+
+	public function dataGetOutputPathInvalid(): iterable
+	{
+		yield ['/foo'];
+		yield ['//foo'];
+		yield ['\foo'];
+		yield ['../foo'];
+		yield ['..foo'];
+	}
+
+	public function testGetOutputPathDefault(): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->assertSame(
+			$this->getTemporaryPath('dist/autoload'),
+			(new PHPScoperFilesystem($codex))->getOutputPath(),
+		);
+	}
+
+	public function testGetOutputPathCustom(): void
+	{
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->dumpTemporaryFile('composer.json', json_encode([
 			'name' => 'syntatis/howdy',
 			'require' => ['php' => '>=7.4'],
 			'extra' => [
@@ -87,49 +161,54 @@ class PHPScoperFilesystemTest extends TestCase
 		], JSON_UNESCAPED_SLASHES));
 
 		$this->assertSame(
-			self::getTemporaryPath('/foo-autoload'),
-			(new PHPScoperFilesystem(new Codex(self::getTemporaryPath())))->getOutputPath(),
+			$this->getTemporaryPath('foo-autoload'),
+			(new PHPScoperFilesystem(new Codex($this->getTemporaryPath())))->getOutputPath(),
 		);
 	}
 
 	public function testGetTemporaryPath(): void
 	{
-		$filesystem = new PHPScoperFilesystem($this->codex);
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
 		$this->assertSame(
-			self::getTemporaryPath('/dist/autoload-build-' . $filesystem->getHash()),
+			$this->getTemporaryPath('dist/autoload-build-' . $filesystem->getHash()),
 			$filesystem->getBuildPath(),
 		);
 
 		$this->assertSame(
-			self::getTemporaryPath('/dist/autoload-build-' . $filesystem->getHash() . '/foo'),
-			$filesystem->getBuildPath('/foo'),
+			$this->getTemporaryPath('dist/autoload-build-' . $filesystem->getHash() . '/foo'),
+			$filesystem->getBuildPath('foo'),
 		);
 	}
 
 	public function testGetScoperConfig(): void
 	{
+		$codex = new Codex($this->getTemporaryPath());
+
 		$this->assertSame(
-			self::getTemporaryPath('/scoper.inc.php'),
-			(new PHPScoperFilesystem($this->codex))->getConfigPath(),
+			$this->getTemporaryPath('scoper.inc.php'),
+			(new PHPScoperFilesystem($codex))->getConfigPath(),
 		);
 	}
 
 	public function testDumpComposer(): void
 	{
-		$filesystem = new PHPScoperFilesystem($this->codex);
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
-		$this->assertFileDoesNotExist($filesystem->getBuildPath('/composer.json'));
+		$this->assertFileDoesNotExist($filesystem->getBuildPath('composer.json'));
 
 		$filesystem->dumpComposerFile();
 
-		$a = json_decode(file_get_contents($this->codex->getProjectPath('/composer.json')), true);
-		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
+		$this->assertFileExists($filesystem->getBuildPath('composer.json'));
+
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
+		$b = json_decode(file_get_contents($filesystem->getBuildPath('composer.json')), true);
 
 		$this->assertEquals($a['require'], $b['require']);
 		$this->assertNotEmpty($a['require']);
 		$this->assertNotEmpty($b['require']);
-
 		$this->assertEquals(
 			[
 				'psr-4' => [
@@ -147,26 +226,92 @@ class PHPScoperFilesystemTest extends TestCase
 		);
 	}
 
-	public function testDumpComposerWithEmptyAutload(): void
+	public function testDumpComposerCustomScoperOutputDir(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
-			'name' => 'syntatis/howdy',
-			'require' => ['php' => '>=7.4'],
-			'extra' => [
-				'codex' => [
-					'scoper' => ['output-dir' => 'foo-autoload'],
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'autoload' => [
+						'psr-4' => [
+							'Syntatis\\' => 'src/',
+							'Syntatis\\Lib\\' => ['lib/', 'ext/'],
+						],
+					],
+					'autoload-dev' => [
+						'psr-4' => ['Syntatis\\Tests\\' => 'tests/phpunit'],
+					],
+					'extra' => [
+						'codex' => [
+							'scoper' => ['output-dir' => 'dist-autoload'],
+						],
+					],
 				],
-			],
-		], JSON_UNESCAPED_SLASHES));
+				JSON_UNESCAPED_SLASHES,
+			),
+		);
 
-		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
-		$this->assertFileDoesNotExist($filesystem->getBuildPath('/composer.json'));
+		$this->assertFileDoesNotExist($filesystem->getBuildPath('composer.json'));
 
 		$filesystem->dumpComposerFile();
 
-		$a = json_decode(file_get_contents($this->codex->getProjectPath('/composer.json')), true);
-		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
+		$this->assertFileExists($filesystem->getBuildPath('composer.json'));
+
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
+		$b = json_decode(file_get_contents($filesystem->getBuildPath('composer.json')), true);
+
+		$this->assertEquals($a['require'], $b['require']);
+		$this->assertNotEmpty($a['require']);
+		$this->assertNotEmpty($b['require']);
+		$this->assertEquals(
+			[
+				'psr-4' => [
+					'Syntatis\\' => '../src',
+					'Syntatis\\Lib\\' => ['../lib', '../ext'],
+				],
+			],
+			$b['autoload'],
+		);
+		$this->assertEquals(
+			[
+				'psr-4' => ['Syntatis\\Tests\\' => '../tests/phpunit'],
+			],
+			$b['autoload-dev'],
+		);
+	}
+
+	public function testDumpComposerWithEmptyAutload(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'extra' => [
+						'codex' => [
+							'scoper' => ['output-dir' => 'foo-autoload'],
+						],
+					],
+				],
+				JSON_UNESCAPED_SLASHES,
+			),
+		);
+
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
+
+		$this->assertFileDoesNotExist($filesystem->getBuildPath('composer.json'));
+
+		$filesystem->dumpComposerFile();
+
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
+		$b = json_decode(file_get_contents($filesystem->getBuildPath('composer.json')), true);
 
 		$this->assertArrayNotHasKey('autoload', $a);
 		$this->assertArrayNotHasKey('autoload', $b);
@@ -174,29 +319,36 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function testDumpComposerInstallDev(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
-			'name' => 'syntatis/howdy',
-			'require' => ['php' => '>=7.4'],
-			'require-dev' => [
-				'phpunit/phpunit' => '^9.5',
-				'phpstan/phpstan' => '^1.0',
-				'symfony/var-dumper' => '^5.3',
-			],
-			'extra' => [
-				'codex' => [
-					'scoper' => [
-						'output-dir' => 'foo-autoload',
-						'install-dev' => ['symfony/var-dumper'],
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'require-dev' => [
+						'phpunit/phpunit' => '^9.5',
+						'phpstan/phpstan' => '^1.0',
+						'symfony/var-dumper' => '^5.3',
+					],
+					'extra' => [
+						'codex' => [
+							'scoper' => [
+								'output-dir' => 'foo-autoload',
+								'install-dev' => ['symfony/var-dumper'],
+							],
+						],
 					],
 				],
-			],
-		], JSON_UNESCAPED_SLASHES));
+				JSON_UNESCAPED_SLASHES,
+			),
+		);
 
-		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 		$filesystem->dumpComposerFile();
 
-		$a = json_decode(file_get_contents($this->codex->getProjectPath('/composer.json')), true);
-		$b = json_decode(file_get_contents($filesystem->getBuildPath('/composer.json')), true);
+		$a = json_decode(file_get_contents($codex->getProjectPath('composer.json')), true);
+		$b = json_decode(file_get_contents($filesystem->getBuildPath('composer.json')), true);
 
 		// a.
 		$this->assertArrayHasKey('symfony/var-dumper', $a['require-dev']);
@@ -211,7 +363,8 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function testRemoveBuildPath(): void
 	{
-		$filesystem = new PHPScoperFilesystem($this->codex);
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 		$filesystem->dumpComposerFile();
 
 		$this->assertDirectoryExists($filesystem->getBuildPath());
@@ -223,36 +376,38 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function testRemoveAll(): void
 	{
-		$filesystem = new PHPScoperFilesystem($this->codex);
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 		$filesystem->dumpComposerFile();
 
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
 		self::$filesystem->dumpFile($temporaryFile, '{ "name": "syntatis/howdy" }');
 
-		$this->assertFileExists($filesystem->getBuildPath('/composer.json'));
+		$this->assertFileExists($filesystem->getBuildPath('composer.json'));
 		$this->assertFileExists($temporaryFile);
 
 		$filesystem->removeAll();
 
-		$this->assertFileDoesNotExist($filesystem->getBuildPath('/composer.json'));
+		$this->assertFileDoesNotExist($filesystem->getBuildPath('composer.json'));
 		$this->assertFileDoesNotExist($temporaryFile);
 	}
 
 	public function testGetScoperBin(): void
 	{
-		self::createTemporaryFile(
-			'/vendor/bin/php-scoper',
+		$this->dumpTemporaryFile(
+			'vendor/bin/php-scoper',
 			<<<'CONTENT'
 			#!/usr/bin/env php
 			namespace Humbug\PhpScoper;
 			CONTENT,
 		);
 
-		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
 		$this->assertSame(
-			self::getTemporaryPath('/vendor/bin/php-scoper'),
+			$this->getTemporaryPath('vendor/bin/php-scoper'),
 			$filesystem->getBinPath(),
 		);
 	}
@@ -260,18 +415,19 @@ class PHPScoperFilesystemTest extends TestCase
 	/** @testdox should fallback to the origin path if the bin is not forwarded */
 	public function testGetScoperBinNotForwarded(): void
 	{
-		self::createTemporaryFile(
-			'/vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
+		$this->dumpTemporaryFile(
+			'vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
 			<<<'CONTENT'
 			#!/usr/bin/env php
 			namespace Humbug\PhpScoper;
 			CONTENT,
 		);
 
-		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
 		$this->assertSame(
-			self::getTemporaryPath('/vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
+			$this->getTemporaryPath('vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
 			$filesystem->getBinPath(),
 		);
 	}
@@ -279,16 +435,15 @@ class PHPScoperFilesystemTest extends TestCase
 	/** @testdox should respects the "target-directory" configuration */
 	public function testGetScoperBinCustomTargetDir(): void
 	{
-		self::createTemporaryFile(
-			'/vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
+		$this->dumpTemporaryFile(
+			'vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
 			<<<'CONTENT'
 			#!/usr/bin/env php
 			namespace Humbug\PhpScoper;
 			CONTENT,
 		);
-
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			json_encode(
 				[
 					'name' => 'syntatis/howdy',
@@ -304,11 +459,74 @@ class PHPScoperFilesystemTest extends TestCase
 			),
 		);
 
-		$filesystem = new PHPScoperFilesystem(new Codex(self::getTemporaryPath()));
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
 
 		$this->assertSame(
-			self::getTemporaryPath('/vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
+			$this->getTemporaryPath('vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
 			$filesystem->getBinPath(),
 		);
+	}
+
+	/** @group test-here */
+	public function testDumpComposerWithEmptyInstallDev(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'require-dev' => ['symfony/var-dumper' => '^5.3'],
+					'extra' => [
+						'codex' => [
+							'scoper' => ['install-dev' => []],
+						],
+					],
+				],
+			),
+		);
+
+		$filesystem = new PHPScoperFilesystem(new Codex($this->getTemporaryPath()));
+		$filesystem->dumpComposerFile();
+
+		$content = json_decode(file_get_contents($filesystem->getBuildPath('composer.json')), true);
+
+		$this->assertFalse(isset($content['extra']['codex']['scoper']['install-dev']));
+	}
+
+	/**
+	 * @dataProvider dataDumpComposerWithInvalidInstallDev
+	 *
+	 * @param mixed $data Invalid data can be anything.
+	 */
+	public function testDumpComposerWithInvalidInstallDev($data): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			json_encode(
+				[
+					'name' => 'syntatis/howdy',
+					'require' => ['php' => '>=7.4'],
+					'require-dev' => ['symfony/var-dumper' => '^5.3'],
+					'extra' => [
+						'codex' => [
+							'scoper' => ['install-dev' => $data],
+						],
+					],
+				],
+			),
+		);
+
+		$this->expectException(InvalidOptionsException::class);
+
+		new PHPScoperFilesystem(new Codex($this->getTemporaryPath()));
+	}
+
+	public function dataDumpComposerWithInvalidInstallDev(): iterable
+	{
+		yield 'as string' => ['symfony/var-dumper'];
+		yield 'as number' => [1];
+		yield 'as null' => [null];
 	}
 }

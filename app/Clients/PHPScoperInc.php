@@ -162,12 +162,7 @@ class PHPScoperInc
 					Finder::create()
 						->files()
 						->in(['vendor'])
-						->name([
-							'*.html',
-							'*.js',
-							'*.css',
-							'*.html.php',
-						]),
+						->name(['*.html.php']),
 				),
 			),
 		);

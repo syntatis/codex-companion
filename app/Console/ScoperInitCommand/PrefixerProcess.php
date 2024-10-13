@@ -58,13 +58,12 @@ class PrefixerProcess implements Executable
 		$filesystem->removeAll();
 		$filesystem->dumpComposerFile();
 
-		$proc = $this->process($this->codex->getProjectPath())
+		$proc = $this->process($filesystem->getBuildPath())
 			->withMessage('Processing dependencies to scope...')
 			->run(
 				sprintf(
-					'composer install --no-interaction --no-plugins --no-scripts --prefer-dist%s --working-dir=%s',
+					'composer install --no-interaction --no-plugins --no-scripts --prefer-dist%s',
 					$this->devMode ? '' : ' --no-dev',
-					$filesystem->getBuildPath(),
 				),
 			);
 

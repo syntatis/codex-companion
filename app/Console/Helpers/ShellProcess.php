@@ -63,7 +63,7 @@ class ShellProcess
 	public function run(string $command, ?callable $callback = null): self
 	{
 		$self = clone $this;
-		$self->process = self::create($command, $this->cwd);
+		$self->process = new Process(explode(' ', $command), $this->cwd);
 
 		if (! Val::isBlank($self->preMessage)) {
 			$self->style->text($self->preMessage);
@@ -115,10 +115,5 @@ class ShellProcess
 	public function isFailed(): bool
 	{
 		return ! $this->process->isSuccessful();
-	}
-
-	private static function create(string $command, ?string $cwd = null): Process
-	{
-		return new Process(explode(' ', $command), $cwd);
 	}
 }

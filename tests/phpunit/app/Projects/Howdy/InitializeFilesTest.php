@@ -24,20 +24,6 @@ class InitializeFilesTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function setUp(): void
-	{
-		parent::setUp();
-
-		self::setUpTemporaryPath();
-	}
-
-	public function tearDown(): void
-	{
-		self::tearDownTemporaryPath();
-
-		parent::tearDown();
-	}
-
 	/** @dataProvider dataAll */
 	public function testAll(array $files, array $inputs): void
 	{
@@ -48,20 +34,17 @@ class InitializeFilesTest extends TestCase
 		 */
 
 		foreach ($files as $filename => $content) {
-			self::createTemporaryFile($filename, $content['origin']);
+			$this->dumpTemporaryFile($filename, $content['origin']);
 		}
 
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($inputs) {
 				return $callback($inputs[$param]);
 			}));
 
-		$codex = new Codex(self::getTemporaryPath());
+		$codex = new Codex($this->getTemporaryPath());
 		$userInputs = new UserInputPrompts((new ProjectProps($codex))->get(), $style);
 		$userInputs->execute($style);
 
@@ -77,7 +60,7 @@ class InitializeFilesTest extends TestCase
 		 */
 
 		foreach ($files as $filename => $content) {
-			$instance->file(new SplFileInfo(self::getTemporaryPath($filename)));
+			$instance->file(new SplFileInfo($this->getTemporaryPath($filename)));
 		}
 
 		/**
@@ -88,16 +71,16 @@ class InitializeFilesTest extends TestCase
 
 		foreach ($files as $filename => $content) {
 			switch ($filename) {
-				case '/plugin-name.php':
-					$editedContent = file_get_contents(self::getTemporaryPath('/' . $inputs['Plugin slug'] . '.php'));
+				case 'plugin-name.php':
+					$editedContent = file_get_contents($this->getTemporaryPath($inputs['Plugin slug'] . '.php'));
 					break;
 
-				case '/plugin-name.pot':
-					$editedContent = file_get_contents(self::getTemporaryPath('/' . $inputs['Plugin slug'] . '.pot'));
+				case 'plugin-name.pot':
+					$editedContent = file_get_contents($this->getTemporaryPath($inputs['Plugin slug'] . '.pot'));
 					break;
 
 				default:
-					$editedContent = file_get_contents(self::getTemporaryPath($filename));
+					$editedContent = file_get_contents($this->getTemporaryPath($filename));
 					break;
 			}
 
@@ -112,7 +95,7 @@ class InitializeFilesTest extends TestCase
 	{
 		yield [
 			'files' => [
-				'/composer.json' => [
+				'composer.json' => [
 					'origin' => <<<'CONTENT'
 					{
 						"name": "syntatis/howdy",
@@ -164,7 +147,7 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'/package.json' => [
+				'package.json' => [
 					'origin' => <<<'CONTENT'
 					{
 						"files": [
@@ -192,7 +175,7 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'/plugin-name.php' => [
+				'plugin-name.php' => [
 					'origin' => <<<'CONTENT'
 					/**
 					 * Plugin bootstrap file.
@@ -236,7 +219,7 @@ class InitializeFilesTest extends TestCase
 					 */
 					CONTENT,
 				],
-				'/foo.php' => [
+				'foo.php' => [
 					'origin' => <<<'CONTENT'
 					<?php
 					declare(strict_types=1);
@@ -260,7 +243,7 @@ class InitializeFilesTest extends TestCase
 					use \Awesome\PluginName\HelloWorld\Plugin;
 					CONTENT,
 				],
-				'/foo.js' => [
+				'foo.js' => [
 					'origin' => <<<'CONTENT'
 					<?php
 					window.__pluginName = "bar";
@@ -270,7 +253,7 @@ class InitializeFilesTest extends TestCase
 					window.__awesomePluginName = "bar";
 					CONTENT,
 				],
-				'/readme.txt' => [
+				'readme.txt' => [
 					'origin' => <<<'CONTENT'
 					=== Plugin Name ===
 
@@ -308,7 +291,7 @@ class InitializeFilesTest extends TestCase
 					The plugin long description.
 					CONTENT,
 				],
-				'/plugin-name.pot' => [
+				'plugin-name.pot' => [
 					'origin' => <<<'CONTENT'
 					# Copyright (C) 2024 Author Name
 					# This file is distributed under the GPL-2.0+.
@@ -366,7 +349,7 @@ class InitializeFilesTest extends TestCase
 					msgstr ""
 					CONTENT,
 				],
-				'/block.json' => [
+				'block.json' => [
 					'origin' => <<<'CONTENT'
 					{
 						"name": "plugin-name/static-block",
@@ -378,7 +361,7 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'/file.json' => [
+				'file.json' => [
 					'origin' => <<<'CONTENT'
 					{
 						"name": "pluginName/foo",
@@ -390,7 +373,7 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'/file.css' => [
+				'file.css' => [
 					'origin' => <<<'CONTENT'
 					const $pluginNameContainer = document.querySelector( '#plugin-name-settings' );
 					const $pluginNameWrappres = document.querySelector( '.plugin-name' );
@@ -400,7 +383,7 @@ class InitializeFilesTest extends TestCase
 					const $awesomePluginNameWrappres = document.querySelector( '.awesome-plugin-name' );
 					CONTENT,
 				],
-				'/file.js' => [
+				'file.js' => [
 					'origin' => <<<'CONTENT'
 					.plugin-name-foo {
 						color: red;
@@ -418,7 +401,7 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'/phpcs.xml' => [
+				'phpcs.xml' => [
 					'origin' => <<<'CONTENT'
 					<file>plugin-name.php</file>
 					<rule ref="WordPress.WP.I18n">
@@ -454,7 +437,7 @@ class InitializeFilesTest extends TestCase
 					</rule>
 					CONTENT,
 				],
-				'/component.jsx' => [
+				'component.jsx' => [
 					'origin' => <<<'CONTENT'
 					<label
 						htmlFor="plugin-name-settings-greeting"

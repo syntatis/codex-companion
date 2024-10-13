@@ -12,7 +12,7 @@ class WPPluginSlugTest extends TestCase
 	/** @dataProvider dataValidName */
 	public function testValidName(string $name, string $expect): void
 	{
-		self::assertSame($expect, (string) (new WPPluginSlug($name)));
+		$this->assertSame($expect, (string) (new WPPluginSlug($name)));
 	}
 
 	public static function dataValidName(): iterable

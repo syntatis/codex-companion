@@ -12,7 +12,7 @@ class PHPVendorPrefixTest extends TestCase
 	/** @dataProvider dataValidNamespace */
 	public function testValidNamespace(string $name): void
 	{
-		self::assertSame($name, (string) (new PHPVendorPrefix($name)));
+		$this->assertSame($name, (string) (new PHPVendorPrefix($name)));
 	}
 
 	public static function dataValidNamespace(): iterable

@@ -17,9 +17,8 @@ class PHPScoperIncTest extends TestCase
 	{
 		parent::setUp();
 
-		self::setUpTemporaryPath();
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -31,18 +30,12 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-	}
-
-	public function tearDown(): void
-	{
-		self::tearDownTemporaryPath();
-
-		parent::tearDown();
+		self::$filesystem->mkdir($this->getTemporaryPath('vendor'));
 	}
 
 	public function testExposeGlobals(): void
 	{
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertTrue($instance->get()['expose-global-constants']);
 		$this->assertTrue($instance->get()['expose-global-classes']);
@@ -51,10 +44,13 @@ class PHPScoperIncTest extends TestCase
 
 	public function testOverrideExposeGlobals(): void
 	{
-		$instance = new PHPScoperInc(self::getTemporaryPath(), [
-			'expose-global-constants' => false,
-			'expose-global-classes' => false,
-		]);
+		$instance = new PHPScoperInc(
+			$this->getTemporaryPath(),
+			[
+				'expose-global-constants' => false,
+				'expose-global-classes' => false,
+			],
+		);
 
 		$this->assertFalse($instance->get()['expose-global-constants']);
 		$this->assertFalse($instance->get()['expose-global-classes']);
@@ -63,8 +59,8 @@ class PHPScoperIncTest extends TestCase
 
 	public function testPrefixNotSet(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -77,15 +73,15 @@ class PHPScoperIncTest extends TestCase
 			CONTENT,
 		);
 
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertNull($instance->get()['prefix']);
 	}
 
 	public function testPrefix(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -104,15 +100,15 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertSame('PVA\\Vendor', $instance->get()['prefix']);
 	}
 
 	public function testOverridePrefix(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -131,15 +127,15 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new PHPScoperInc(self::getTemporaryPath(), ['prefix' => 'FOO\\Bar']);
+		$instance = new PHPScoperInc($this->getTemporaryPath(), ['prefix' => 'FOO\\Bar']);
 
 		$this->assertSame('PVA\\Vendor', $instance->get()['prefix']);
 	}
 
 	public function testExcludeNamespaces(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -158,15 +154,15 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertContains('PluginName', $instance->get()['exclude-namespaces']);
 	}
 
 	public function testAdditionalExcludeNamespaces(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -186,7 +182,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertContains('PluginName', $instance->get()['exclude-namespaces']);
 		$this->assertContains('Whoops', $instance->get()['exclude-namespaces']);
@@ -195,8 +191,8 @@ class PHPScoperIncTest extends TestCase
 
 	public function testExcludeFiles(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -208,29 +204,29 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		self::createTemporaryFile('/vendor/foo.css', '');
-		self::createTemporaryFile('/vendor/foo.html', '');
-		self::createTemporaryFile('/vendor/foo.js', '');
-		self::createTemporaryFile('/vendor/foo.html.php', '');
+		$this->dumpTemporaryFile('vendor/foo.css', '');
+		$this->dumpTemporaryFile('vendor/foo.html', '');
+		$this->dumpTemporaryFile('vendor/foo.js', '');
+		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 		$instance = $instance->excludeFiles([
-			self::getTemporaryPath('/vendor/foo.css'),
-			self::getTemporaryPath('/vendor/foo.html'),
-			self::getTemporaryPath('/vendor/foo.js'),
-			self::getTemporaryPath('/vendor/foo.html.php'),
+			$this->getTemporaryPath('vendor/foo.css'),
+			$this->getTemporaryPath('vendor/foo.html'),
+			$this->getTemporaryPath('vendor/foo.js'),
+			$this->getTemporaryPath('vendor/foo.html.php'),
 		]);
 
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.css'), $instance->get()['exclude-files']);
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.html'), $instance->get()['exclude-files']);
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.js'), $instance->get()['exclude-files']);
-		$this->assertContains(self::getTemporaryPath('/vendor/foo.html.php'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
 	}
 
 	public function testAddFinder(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -243,7 +239,7 @@ class PHPScoperIncTest extends TestCase
 			CONTENT,
 		);
 
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$finder = Finder::create();
 		$instance = $instance->addFinder($finder);
@@ -253,8 +249,8 @@ class PHPScoperIncTest extends TestCase
 
 	public function testAddPatcher(): void
 	{
-		self::createTemporaryFile(
-			'/composer.json',
+		$this->dumpTemporaryFile(
+			'composer.json',
 			<<<'CONTENT'
 			{
 				"name": "syntatis/howdy",
@@ -270,7 +266,7 @@ class PHPScoperIncTest extends TestCase
 		$patcher = static function () {
 			return 'patched';
 		};
-		$instance = new PHPScoperInc(self::getTemporaryPath());
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 		$instance = $instance->addPatcher($patcher);
 
 		$this->assertContains($patcher, $instance->get()['patchers']);

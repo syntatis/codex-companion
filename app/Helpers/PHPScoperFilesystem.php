@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Helpers;
 
+use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
+use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
 use function array_filter;
@@ -17,8 +19,9 @@ use function is_array;
 use function is_string;
 use function json_encode;
 use function md5;
+use function rtrim;
+use function sprintf;
 use function time;
-use function trim;
 
 use const ARRAY_FILTER_USE_BOTH;
 use const JSON_PRETTY_PRINT;
@@ -62,7 +65,7 @@ class PHPScoperFilesystem
 	 * may be determined from the "scoper.output-dir" set in Composer file,
 	 * but if it is not set, it will use the default the default value:
 	 *
-	 * `/dist/autoload`.
+	 * `dist/autoload`.
 	 *
 	 * @see Codex::DEFAULT_SCOPER_OUTPUT_PATH
 	 *
@@ -72,11 +75,19 @@ class PHPScoperFilesystem
 	{
 		$outputPath = $this->outputPath;
 
-		if ($path !== null) {
-			$outputPath .= $path;
+		if (! Val::isBlank($path)) {
+			if (Path::isAbsolute($path) || Str::startsWith($path, '..')) {
+				throw new InvalidArgumentException(
+					sprintf('The path appended must be a relative path, "%s" given.', $path),
+				);
+			}
+
+			$outputPath .= '/' . $path;
+
+			return Path::canonicalize($outputPath);
 		}
 
-		return $outputPath;
+		return Path::normalize($outputPath);
 	}
 
 	/**
@@ -92,16 +103,24 @@ class PHPScoperFilesystem
 	{
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
-		if ($path !== null) {
-			$buildPath .= $path;
+		if (! Val::isBlank($path)) {
+			if (Path::isAbsolute($path) || Str::startsWith($path, '..')) {
+				throw new InvalidArgumentException(
+					sprintf('The path appended must be a relative path, "%s" given.', $path),
+				);
+			}
+
+			$buildPath .= '/' . $path;
+
+			return Path::canonicalize($buildPath);
 		}
 
-		return $buildPath;
+		return Path::normalize($buildPath);
 	}
 
 	public function getBinPath(): string
 	{
-		$path = $this->codex->getProjectPath('/vendor/bin/php-scoper');
+		$path = $this->codex->getProjectPath('vendor/bin/php-scoper');
 
 		if (file_exists($path)) {
 			return $path;
@@ -114,14 +133,14 @@ class PHPScoperFilesystem
 		 */
 		$targetDir = $this->codex->getComposer('extra.bamarni-bin.target-directory');
 		$targetDir = is_string($targetDir) ? $targetDir : 'vendor-bin';
-		$path = '/' . trim($targetDir, '/') . '/php-scoper/vendor/humbug/php-scoper/bin/php-scoper';
+		$path = rtrim($targetDir, '/') . '/php-scoper/vendor/humbug/php-scoper/bin/php-scoper';
 
 		return $this->codex->getProjectPath($path);
 	}
 
 	public function getConfigPath(): string
 	{
-		return $this->codex->getProjectPath('/scoper.inc.php');
+		return $this->codex->getProjectPath('scoper.inc.php');
 	}
 
 	public function dumpComposerFile(): void
@@ -131,13 +150,13 @@ class PHPScoperFilesystem
 				'autoload' => $this->getAutoload('autoload'),
 				'autoload-dev' => $this->getAutoload('autoload-dev'),
 				'require' => $this->codex->getComposer('require'),
-				'require-dev' => $this->getInstallDev(),
+				'require-dev' => $this->getRequireDev(),
 			],
 			static fn ($value): bool => ! Val::isBlank($value),
 		);
 
 		$this->filesystem->dumpFile(
-			$this->getBuildPath('/composer.json'),
+			$this->getBuildPath('composer.json'),
 			json_encode(
 				$data,
 				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
@@ -170,7 +189,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return array<string>
 	 */
-	private function getInstallDev(): array
+	private function getRequireDev(): array
 	{
 		$requireDev = $this->codex->getComposer('require-dev');
 
@@ -178,15 +197,15 @@ class PHPScoperFilesystem
 			return [];
 		}
 
-		$includes = $this->codex->getConfig('scoper.install-dev');
+		$installDev = $this->codex->getConfig('scoper.install-dev');
 
-		if (! is_array($includes) || Val::isBlank($includes)) {
+		if (! is_array($installDev) || Val::isBlank($installDev)) {
 			return [];
 		}
 
 		return array_filter(
 			$requireDev,
-			static fn ($value, $key): bool => in_array($key, $includes, true),
+			static fn ($value, $key): bool => in_array($key, $installDev, true),
 			ARRAY_FILTER_USE_BOTH,
 		);
 	}
@@ -197,7 +216,7 @@ class PHPScoperFilesystem
 		$mapper = function ($paths) {
 			if (is_string($paths)) {
 				return Path::makeRelative(
-					$this->codex->getProjectPath('/' . trim($paths, '/')),
+					$this->codex->getProjectPath(rtrim($paths, '/')),
 					$this->getBuildPath(),
 				);
 			}
@@ -205,7 +224,7 @@ class PHPScoperFilesystem
 			if (is_array($paths)) {
 				return array_map(function (string $path) {
 					return Path::makeRelative(
-						$this->codex->getProjectPath('/' . trim($path, '/')),
+						$this->codex->getProjectPath(rtrim($path, '/')),
 						$this->getBuildPath(),
 					);
 				}, $paths);
