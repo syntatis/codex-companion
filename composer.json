@@ -42,7 +42,7 @@
         "syntatis/utils": "^2.0"
     },
     "require-dev": {
-        "composer/composer": "^2.0",
+        "composer/composer": "^2.8",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpstan/extension-installer": "^1.4",
