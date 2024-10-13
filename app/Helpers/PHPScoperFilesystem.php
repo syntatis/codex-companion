@@ -84,9 +84,11 @@ class PHPScoperFilesystem
 			}
 
 			$outputPath .= '/' . trim($path, '\\/.');
+
+			return Path::canonicalize($outputPath);
 		}
 
-		return $outputPath;
+		return Path::normalize($outputPath);
 	}
 
 	/**
@@ -109,7 +111,9 @@ class PHPScoperFilesystem
 				);
 			}
 
-			$buildPath .= '/' . trim($path, '\\/.');
+			$buildPath .= '/' . $path;
+
+			return Path::canonicalize($buildPath);
 		}
 
 		return Path::normalize($buildPath);
