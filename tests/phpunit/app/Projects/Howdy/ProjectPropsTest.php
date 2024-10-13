@@ -20,7 +20,7 @@ class ProjectPropsTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile('/composer.json', json_encode(['name' => 'project/name']));
+		self::dumpTemporaryFile('/composer.json', json_encode(['name' => 'project/name']));
 	}
 
 	public function tearDown(): void
@@ -38,7 +38,7 @@ class ProjectPropsTest extends TestCase
 	public function testGetSlug(array $files, $expect): void
 	{
 		foreach ($files as $filename => $content) {
-			self::createTemporaryFile($filename, $content);
+			self::dumpTemporaryFile($filename, $content);
 		}
 
 		$codex = new Codex(self::getTemporaryPath());
@@ -119,7 +119,7 @@ class ProjectPropsTest extends TestCase
 	public function testGetName(array $files, $expect): void
 	{
 		foreach ($files as $filename => $content) {
-			self::createTemporaryFile($filename, $content);
+			self::dumpTemporaryFile($filename, $content);
 		}
 
 		$codex = new Codex(self::getTemporaryPath());
@@ -200,7 +200,7 @@ class ProjectPropsTest extends TestCase
 	public function testGetDescription(array $files, $expect): void
 	{
 		foreach ($files as $filename => $content) {
-			self::createTemporaryFile($filename, $content);
+			self::dumpTemporaryFile($filename, $content);
 		}
 
 		$codex = new Codex(self::getTemporaryPath());
@@ -251,7 +251,7 @@ class ProjectPropsTest extends TestCase
 	public function testGetNamespace(array $data, ?string $expect): void
 	{
 		// This will override the default composer.json file created in `setUp`.
-		self::createTemporaryFile('/composer.json', json_encode($data));
+		self::dumpTemporaryFile('/composer.json', json_encode($data));
 
 		$codex = new Codex(self::getTemporaryPath());
 		$projectProps = new ProjectProps($codex);
@@ -331,7 +331,7 @@ class ProjectPropsTest extends TestCase
 	 */
 	public function testGetVendorPrefix(array $content, $expect): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode($content));
+		self::dumpTemporaryFile('/composer.json', json_encode($content));
 
 		$codex = new Codex(self::getTemporaryPath());
 		$projectProps = new ProjectProps($codex);

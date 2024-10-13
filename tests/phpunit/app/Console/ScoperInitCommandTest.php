@@ -18,7 +18,7 @@ class ScoperInitCommandTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{

@@ -41,7 +41,7 @@ class CodexTest extends TestCase
 
 	public function testEmptyComposerFile(): void
 	{
-		self::createTemporaryFile('/composer.json', '');
+		self::dumpTemporaryFile('/composer.json', '');
 
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Invalid composer.json content');
@@ -59,7 +59,7 @@ class CodexTest extends TestCase
 			],
 		]);
 
-		self::createTemporaryFile('/composer.json', $content);
+		self::dumpTemporaryFile('/composer.json', $content);
 
 		$codex = new Codex(self::getTemporaryPath());
 
@@ -69,7 +69,7 @@ class CodexTest extends TestCase
 
 	public function testGetRequire(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			json_encode([
 				'require' => [
@@ -87,14 +87,14 @@ class CodexTest extends TestCase
 
 	public function testGetRequireNotSet(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([]));
+		self::dumpTemporaryFile('/composer.json', json_encode([]));
 
 		$this->assertNull((new Codex(self::getTemporaryPath()))->getComposer('require'));
 	}
 
 	public function testGetRequireEmpty(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode(['require' => []]));
+		self::dumpTemporaryFile('/composer.json', json_encode(['require' => []]));
 
 		$codex = new Codex(self::getTemporaryPath());
 
@@ -103,7 +103,7 @@ class CodexTest extends TestCase
 
 	public function testGetRequireDev(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'require' => [
 				'php' => '>=7.4',
 				'ext-json' => '*',
@@ -119,7 +119,7 @@ class CodexTest extends TestCase
 
 	public function testGetRequireDevEmpty(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'require' => [
 				'php' => '>=7.4',
 				'ext-json' => '*',
@@ -132,7 +132,7 @@ class CodexTest extends TestCase
 
 	public function testGetRequireDevNotSet(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'require' => [
 				'php' => '>=7.4',
 				'ext-json' => '*',
@@ -144,7 +144,7 @@ class CodexTest extends TestCase
 
 	public function testGetAutoloadDev(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'autoload-dev' => [
 				'psr-4' => ['Tests\\' => 'tests/'],
 			],
@@ -158,7 +158,7 @@ class CodexTest extends TestCase
 
 	public function testGetAutoloadDevNotSet(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'autoload' => [
 				'psr-4' => ['Codex\\' => 'app/'],
 			],
@@ -169,7 +169,7 @@ class CodexTest extends TestCase
 
 	public function testGetAutoloadDevEmpty(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode(['autoload-dev' => []]));
+		self::dumpTemporaryFile('/composer.json', json_encode(['autoload-dev' => []]));
 
 		$codex = new Codex(self::getTemporaryPath());
 
@@ -178,7 +178,7 @@ class CodexTest extends TestCase
 
 	public function testGetConfigOutputPathDefault(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => [],
@@ -194,7 +194,7 @@ class CodexTest extends TestCase
 
 	public function testGetConfigOutputPathInvalidValue(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => null],
@@ -210,7 +210,7 @@ class CodexTest extends TestCase
 	/** @dataProvider dataGetConfigOutputPathRelative */
 	public function testGetConfigOutputPathRelative(string $path): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => $path],
@@ -233,7 +233,7 @@ class CodexTest extends TestCase
 
 	public function testGetConfigOutputPathAbsolute(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => '/absolute-path'],
@@ -248,7 +248,7 @@ class CodexTest extends TestCase
 
 	public function testGetConfigInvalidKey(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'extra' => [
 				'codex' => [
 					'scoper' => ['output-dir' => 'dist-autoload'],

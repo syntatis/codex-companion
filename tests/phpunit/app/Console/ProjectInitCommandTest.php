@@ -18,7 +18,7 @@ class ProjectInitCommandTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -38,7 +38,7 @@ class ProjectInitCommandTest extends TestCase
 			}
 			CONTENT,
 		);
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/plugin-name.php',
 			<<<'CONTENT'
 			/**
@@ -62,7 +62,7 @@ class ProjectInitCommandTest extends TestCase
 			 */
 			CONTENT,
 		);
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/scoper.inc.php',
 			<<<'CONTENT'
 			<?php return ["prefix" => "PluginName\\Vendor"];
@@ -106,7 +106,7 @@ class ProjectInitCommandTest extends TestCase
 
 	public function testMissingScoperConfigFile(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{

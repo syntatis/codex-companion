@@ -48,7 +48,7 @@ class InitializeFilesTest extends TestCase
 		 */
 
 		foreach ($files as $filename => $content) {
-			self::createTemporaryFile($filename, $content['origin']);
+			self::dumpTemporaryFile($filename, $content['origin']);
 		}
 
 		/** @var StyleInterface&MockObject $style */

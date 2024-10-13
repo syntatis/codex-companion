@@ -32,7 +32,7 @@ trait WithTemporaryFiles
 		return Path::normalize(self::$tempDir);
 	}
 
-	public static function createTemporaryFile(string $path, string $content): void
+	public static function dumpTemporaryFile(string $path, string $content): void
 	{
 		self::$filesystem->dumpFile(self::getTemporaryPath($path), $content);
 	}

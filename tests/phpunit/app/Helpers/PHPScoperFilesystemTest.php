@@ -26,7 +26,7 @@ class PHPScoperFilesystemTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			json_encode(
 				[
@@ -76,7 +76,7 @@ class PHPScoperFilesystemTest extends TestCase
 			(new PHPScoperFilesystem($this->codex))->getOutputPath('/foo'),
 		);
 
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'name' => 'syntatis/howdy',
 			'require' => ['php' => '>=7.4'],
 			'extra' => [
@@ -149,7 +149,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function testDumpComposerWithEmptyAutload(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'name' => 'syntatis/howdy',
 			'require' => ['php' => '>=7.4'],
 			'extra' => [
@@ -174,7 +174,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function testDumpComposerInstallDev(): void
 	{
-		self::createTemporaryFile('/composer.json', json_encode([
+		self::dumpTemporaryFile('/composer.json', json_encode([
 			'name' => 'syntatis/howdy',
 			'require' => ['php' => '>=7.4'],
 			'require-dev' => [
@@ -241,7 +241,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function testGetScoperBin(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/vendor/bin/php-scoper',
 			<<<'CONTENT'
 			#!/usr/bin/env php
@@ -260,7 +260,7 @@ class PHPScoperFilesystemTest extends TestCase
 	/** @testdox should fallback to the origin path if the bin is not forwarded */
 	public function testGetScoperBinNotForwarded(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
 			<<<'CONTENT'
 			#!/usr/bin/env php
@@ -279,7 +279,7 @@ class PHPScoperFilesystemTest extends TestCase
 	/** @testdox should respects the "target-directory" configuration */
 	public function testGetScoperBinCustomTargetDir(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
 			<<<'CONTENT'
 			#!/usr/bin/env php
@@ -287,7 +287,7 @@ class PHPScoperFilesystemTest extends TestCase
 			CONTENT,
 		);
 
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			json_encode(
 				[

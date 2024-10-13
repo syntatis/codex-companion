@@ -18,7 +18,7 @@ class PHPScoperIncTest extends TestCase
 		parent::setUp();
 
 		self::setUpTemporaryPath();
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -63,7 +63,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testPrefixNotSet(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -84,7 +84,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testPrefix(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -111,7 +111,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testOverridePrefix(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -138,7 +138,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testExcludeNamespaces(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -165,7 +165,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testAdditionalExcludeNamespaces(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -195,7 +195,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testExcludeFiles(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -208,10 +208,10 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		self::createTemporaryFile('/vendor/foo.css', '');
-		self::createTemporaryFile('/vendor/foo.html', '');
-		self::createTemporaryFile('/vendor/foo.js', '');
-		self::createTemporaryFile('/vendor/foo.html.php', '');
+		self::dumpTemporaryFile('/vendor/foo.css', '');
+		self::dumpTemporaryFile('/vendor/foo.html', '');
+		self::dumpTemporaryFile('/vendor/foo.js', '');
+		self::dumpTemporaryFile('/vendor/foo.html.php', '');
 
 		$instance = new PHPScoperInc(self::getTemporaryPath());
 		$instance = $instance->excludeFiles([
@@ -229,7 +229,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testAddFinder(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
@@ -253,7 +253,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function testAddPatcher(): void
 	{
-		self::createTemporaryFile(
+		self::dumpTemporaryFile(
 			'/composer.json',
 			<<<'CONTENT'
 			{
