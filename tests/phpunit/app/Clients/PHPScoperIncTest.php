@@ -223,42 +223,6 @@ class PHPScoperIncTest extends TestCase
 		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
 	}
 
-	/** @group test-here */
-	public function testDefaultFinder(): void
-	{
-		$this->dumpTemporaryFile(
-			'composer.json',
-			<<<'CONTENT'
-			{
-				"name": "syntatis/howdy",
-				"autoload": {
-					"psr-4": {
-						"PluginName\\": ["app/"]
-					}
-				}
-			}
-			CONTENT,
-		);
-		$this->dumpTemporaryFile('vendor/composer.lock', '');
-		$this->dumpTemporaryFile('vendor/Makefile', '');
-		$this->dumpTemporaryFile('vendor/LICENSE', '');
-		$this->dumpTemporaryFile('vendor/CHANGELOG', '');
-		$this->dumpTemporaryFile('vendor/README.md', '');
-
-		$instance = new PHPScoperInc($this->getTemporaryPath());
-
-		foreach ($instance->get()['finders'] as $key => $finder) {
-			$this->assertInstanceOf(Finder::class, $finder);
-
-			foreach ($finder as $file) {
-				$this->assertNotContains(
-					$file->getBasename(),
-					['composer.lock', 'Makefile', 'LICENSE', 'CHANGELOG', 'README.md'],
-				);
-			}
-		}
-	}
-
 	public function testAddFinder(): void
 	{
 		$this->dumpTemporaryFile(

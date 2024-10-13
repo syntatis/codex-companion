@@ -136,7 +136,7 @@ class PHPScoperInc
 		return [
 			Finder::create()
 				->files()
-				->in([$this->codex->getProjectPath('vendor')])
+				->in(['vendor'])
 				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
 				->notPath(['bamarni', 'bin'])
 				->exclude([
@@ -161,7 +161,7 @@ class PHPScoperInc
 				iterator_to_array(
 					Finder::create()
 						->files()
-						->in([$this->codex->getProjectPath('vendor')])
+						->in(['vendor'])
 						->name(['*.html.php']),
 				),
 			),
