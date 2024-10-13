@@ -6,7 +6,7 @@ namespace Syntatis\Tests\Console;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Syntatis\Codex\Companion\Console\ScoperInitCommand;
+use Syntatis\Codex\Companion\Console\Commander;
 use Syntatis\Tests\WithTemporaryFiles;
 
 class ScoperInitCommandTest extends TestCase
@@ -17,7 +17,6 @@ class ScoperInitCommandTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
 			'composer.json',
 			<<<'CONTENT'
@@ -35,8 +34,8 @@ class ScoperInitCommandTest extends TestCase
 
 	public function testConfirm(): void
 	{
-		$command = new ScoperInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('scoper:init'));
 		$tester->execute([]);
 
 		$this->assertStringContainsString('This command will prefix the dependencies namespace', $tester->getDisplay());
@@ -45,8 +44,8 @@ class ScoperInitCommandTest extends TestCase
 
 	public function testConfirmNo(): void
 	{
-		$command = new ScoperInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('scoper:init'));
 		$tester->setInputs(['no']);
 		$tester->execute([]);
 

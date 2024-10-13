@@ -17,7 +17,6 @@ class PHPScoperIncTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
 			'composer.json',
 			<<<'CONTENT'
@@ -31,7 +30,7 @@ class PHPScoperIncTest extends TestCase
 			}
 			CONTENT,
 		);
-		$this->filesystem->mkdir($this->getTemporaryPath('vendor'));
+		self::$filesystem->mkdir($this->getTemporaryPath('vendor'));
 	}
 
 	public function testExposeGlobals(): void

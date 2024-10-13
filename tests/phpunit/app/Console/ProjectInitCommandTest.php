@@ -6,7 +6,7 @@ namespace Syntatis\Tests\Console;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Syntatis\Codex\Companion\Console\ProjectInitCommand;
+use Syntatis\Codex\Companion\Console\Commander;
 use Syntatis\Tests\WithTemporaryFiles;
 
 class ProjectInitCommandTest extends TestCase
@@ -17,7 +17,6 @@ class ProjectInitCommandTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
 			'composer.json',
 			<<<'CONTENT'
@@ -72,10 +71,10 @@ class ProjectInitCommandTest extends TestCase
 
 	public function testMissingPluginMainFile(): void
 	{
-		$this->filesystem->remove($this->getTemporaryPath('plugin-name.php'));
+		self::$filesystem->remove($this->getTemporaryPath('plugin-name.php'));
 
-		$command = new ProjectInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('project:init'));
 		$tester->execute([]);
 
 		$this->assertStringContainsString('Unable to find the plugin main file.', $tester->getDisplay());
@@ -84,13 +83,13 @@ class ProjectInitCommandTest extends TestCase
 
 	public function testHasNonDefaultPluginMainFile(): void
 	{
-		$this->filesystem->rename(
+		self::$filesystem->rename(
 			$this->getTemporaryPath('plugin-name.php'),
 			$this->getTemporaryPath('awesome-plugin-name.php'),
 		);
 
-		$command = new ProjectInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('project:init'));
 		$tester->execute([]);
 
 		$this->assertStringContainsString('Project is already initialized.', $tester->getDisplay());
@@ -113,8 +112,8 @@ class ProjectInitCommandTest extends TestCase
 			CONTENT,
 		);
 
-		$command = new ProjectInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('project:init'));
 		$tester->execute([]);
 
 		$this->assertStringContainsString('[ERROR] Missing required info: php_vendor_prefix', $tester->getDisplay());
@@ -124,8 +123,8 @@ class ProjectInitCommandTest extends TestCase
 	/** @dataProvider dataInputPluginSlug */
 	public function testInputPluginSlug(string $input, string $display): void
 	{
-		$command = new ProjectInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('project:init'));
 		$tester->setInputs([$input]);
 		$tester->execute([]);
 
@@ -144,8 +143,8 @@ class ProjectInitCommandTest extends TestCase
 	/** @dataProvider dataInputPluginSlugInvalid */
 	public function testInputPluginSlugInvalid(string $input): void
 	{
-		$command = new ProjectInitCommand($this->getTemporaryPath());
-		$tester = new CommandTester($command);
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('project:init'));
 		$tester->setInputs([$input]);
 		$tester->execute([]);
 

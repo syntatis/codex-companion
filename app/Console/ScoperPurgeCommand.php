@@ -23,8 +23,12 @@ class ScoperPurgeCommand extends BaseCommand
 	{
 		$codex = new Codex($this->projectPath);
 		$style = new SymfonyStyle($input, $output);
-		$style->note('This command will delete all dependencies that have been scoped with a prefix.');
-		$style->confirm('Do you want to proceed?', false);
+		$style->note('This command will delete all scoped dependencies.');
+		$confirm = $style->confirm('Do you want to proceed?', false);
+
+		if (! $confirm) {
+			return 0;
+		}
 
 		try {
 			$scoperFilesystem = new PHPScoperFilesystem($codex);

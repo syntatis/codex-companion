@@ -19,7 +19,6 @@ class ProjectPropsTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile('composer.json', json_encode(['name' => 'project/name']));
 	}
 

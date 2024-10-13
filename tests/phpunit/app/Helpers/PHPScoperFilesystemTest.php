@@ -25,7 +25,6 @@ class PHPScoperFilesystemTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->setUpTemporaryPath();
 		$this->dumpTemporaryFile(
 			'composer.json',
 			json_encode(
@@ -383,7 +382,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$temporaryFile = $filesystem->getOutputPath('-build-' . $filesystem->getHash()) . '/composer.json';
 
-		$this->filesystem->dumpFile($temporaryFile, '{ "name": "syntatis/howdy" }');
+		self::$filesystem->dumpFile($temporaryFile, '{ "name": "syntatis/howdy" }');
 
 		$this->assertFileExists($filesystem->getBuildPath('composer.json'));
 		$this->assertFileExists($temporaryFile);
