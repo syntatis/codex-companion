@@ -35,7 +35,10 @@ class ProjectInitCommand extends BaseCommand
 			return 0;
 		}
 
-		if ($projectName === 'syntatis/howdy' || Str::startsWith($projectName, 'syntatis/howdy-')) {
+		if (
+			$projectName === 'syntatis/howdy' ||
+			Str::startsWith($projectName, 'syntatis/howdy-')
+		) {
 			return (new Howdy($codex, $style))->execute();
 		}
 
