@@ -30,9 +30,7 @@ class UserInputPromptsTest extends TestCase
 	public function testWithoutAllProps(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/php_vendor_prefix\, php_namespace\, wp_plugin_name\, wp_plugin_slug$/');
@@ -44,9 +42,7 @@ class UserInputPromptsTest extends TestCase
 	public function testWithVendorPrefixProp(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/php_namespace\, wp_plugin_name\, wp_plugin_slug$/');
@@ -58,9 +54,7 @@ class UserInputPromptsTest extends TestCase
 	public function testWithNamespace(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/wp_plugin_name\, wp_plugin_slug$/');
@@ -83,9 +77,7 @@ class UserInputPromptsTest extends TestCase
 	public function testWithPluginSlug(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 
 		$this->expectException(MissingRequiredInfo::class);
 		$this->expectExceptionMessageMatches('/wp_plugin_name$/');
@@ -101,9 +93,7 @@ class UserInputPromptsTest extends TestCase
 	public function testWithAllProps(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 
 		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'Foo\Vendor',
@@ -136,9 +126,7 @@ class UserInputPromptsTest extends TestCase
 	public function testWithDescription(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 
 		$userInputs = new UserInputPrompts([
 			'php_vendor_prefix' => 'PluginName\Vendor',
@@ -163,11 +151,8 @@ class UserInputPromptsTest extends TestCase
 	public function testGetInputsWithCustomSlug(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) {
 				switch ($param) {
 					case 'Plugin slug':
@@ -200,11 +185,8 @@ class UserInputPromptsTest extends TestCase
 	public function testGetInputsWithDescription(): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) {
 				switch ($param) {
 					case 'Plugin slug':
@@ -249,9 +231,7 @@ class UserInputPromptsTest extends TestCase
 	public function testPromptInvalidPluginSlug($userInput, string $message): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
+		$style = $this->createMock(SymfonyStyle::class);
 		$style
 			->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($userInput) {
@@ -298,11 +278,8 @@ class UserInputPromptsTest extends TestCase
 	public function testPromptInvalidPluginName($userInput, string $message): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($userInput) {
 				switch ($param) {
 					case 'Plugin slug':
@@ -361,11 +338,8 @@ class UserInputPromptsTest extends TestCase
 	public function testPromptInvalidNamespace($userInput, string $message): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($userInput) {
 				switch ($param) {
 					case 'Plugin slug':
@@ -437,11 +411,8 @@ class UserInputPromptsTest extends TestCase
 	public function testPromptInvalidVendorPrefix($userInput, string $message): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($userInput) {
 				switch ($param) {
 					case 'Plugin slug':
@@ -511,11 +482,8 @@ class UserInputPromptsTest extends TestCase
 	public function testPromptInvalidDescription($userInput, string $message): void
 	{
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($userInput) {
 				switch ($param) {
 					case 'Plugin slug':

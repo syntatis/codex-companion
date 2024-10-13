@@ -38,11 +38,8 @@ class InitializeFilesTest extends TestCase
 		}
 
 		/** @var StyleInterface&MockObject $style */
-		$style = $this->getMockBuilder(SymfonyStyle::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$style
-			->method('ask')
+		$style = $this->createMock(SymfonyStyle::class);
+		$style->method('ask')
 			->will(self::returnCallback(static function ($param, $default, $callback) use ($inputs) {
 				return $callback($inputs[$param]);
 			}));
