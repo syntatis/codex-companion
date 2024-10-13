@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Syntatis\Tests\Projects\Howdy;
 
 use PHPUnit\Framework\TestCase;
+use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Projects\Howdy\ProjectFiles;
 use Syntatis\Tests\WithTemporaryFiles;
 
@@ -15,7 +16,7 @@ class ProjectFilesTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function testIteratedFiles(): void
+	public function testIgnoredFiles(): void
 	{
 		$this->dumpTemporaryFile(
 			// Should be included.
@@ -40,12 +41,12 @@ class ProjectFilesTest extends TestCase
 			'package-lock.json',
 			'vendor/autoload.php',
 
-			// Scoper output dir should be ignored.
+			// Default Scoper output dir should be ignored.
 			'dist/autoload/autoload.php',
 			'dist/autoload/index.js',
 		]);
 
-		$files = new ProjectFiles($this->getTemporaryPath());
+		$files = new ProjectFiles(new Codex($this->getTemporaryPath()));
 
 		foreach ($files as $file) {
 			$this->assertNotContains(
@@ -66,6 +67,41 @@ class ProjectFilesTest extends TestCase
 		}
 
 		$this->assertSame(6, count($files));
+	}
+
+	public function testIgnoredFilesWithCustomScoperOutputDir(): void
+	{
+		$this->dumpTemporaryFile(
+			// Should be included.
+			'composer.json',
+			json_encode([
+				'name' => 'syntatis/howdy',
+				'extra' => ['codex' => ['scoper' => ['output-dir' => 'foo-dist']]],
+			]),
+		);
+		$this->dumpTemporaryFiles([
+			// This is no longer ignored, since the custom scoper output dir is set.
+			'dist/autoload/autoload.php',
+			'dist/autoload/index.js',
+
+			// Custom scoper output dir should be ignored.
+			'foo-dist/autoload.php',
+			'foo-dist/index.js',
+		]);
+
+		$files = new ProjectFiles(new Codex($this->getTemporaryPath()));
+
+		$this->assertSame(3, count($files));
+
+		foreach ($files as $file) {
+			$this->assertNotContains(
+				$file->getRealPath(),
+				[
+					$this->getTemporaryPath('foo-dist/autoload.php'),
+					$this->getTemporaryPath('foo-dist/index.js'),
+				],
+			);
+		}
 	}
 
 	private function dumpTemporaryFiles(array $files): void

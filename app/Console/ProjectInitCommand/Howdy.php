@@ -69,7 +69,7 @@ class Howdy implements Executable
 			$userInputs = new UserInputPrompts($projectProps->get(), $this->style);
 			$userInputs->execute();
 
-			$projectFiles = new ProjectFiles($this->codex->getProjectPath());
+			$projectFiles = new ProjectFiles($this->codex);
 			$fileCount = count($projectFiles);
 
 			if ($fileCount > 0) {

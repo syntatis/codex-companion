@@ -21,9 +21,8 @@ class ProjectFiles implements IteratorAggregate, Countable
 {
 	private Finder $finder;
 
-	public function __construct(string $projectDir)
+	public function __construct(Codex $codex)
 	{
-		$codex = new Codex($projectDir);
 		$projectDir = $codex->getProjectPath();
 		$outputDir = $codex->getConfig('scoper.output-dir');
 
@@ -31,7 +30,7 @@ class ProjectFiles implements IteratorAggregate, Countable
 			->files()
 			->in($projectDir)
 			->name('/(.*\.(php|json|js|jsx|ts|tsx|pot)|readme\.txt|phpcs\.xml(\.dist)?)$/')
-			->notPath('/vendor|node_modules|(?<!xml\.)dist(.*)?|.*\.config.js|.*\-lock\.json/');
+			->notPath('/vendor|node_modules|.*\.config.js|.*\-lock\.json/');
 
 		if (is_string($outputDir) && ! Val::isBlank($outputDir)) {
 			$outputDir = Path::makeRelative($outputDir, $projectDir);

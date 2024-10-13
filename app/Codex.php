@@ -140,7 +140,7 @@ class Codex
 		 * dist-autoload
 		 */
 		if (is_string($outputPath) && ! Val::isBlank($outputPath)) {
-			$configs->set('scoper.output-dir', Path::canonicalize($this->getProjectPath($outputPath)));
+			$configs = $configs->set('scoper.output-dir', Path::canonicalize($this->getProjectPath($outputPath)));
 		}
 
 		return $configs;
