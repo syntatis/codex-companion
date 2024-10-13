@@ -161,13 +161,8 @@ class PHPScoperInc
 				iterator_to_array(
 					Finder::create()
 						->files()
-						->in(['vendor'])
-						->name([
-							'*.html',
-							'*.js',
-							'*.css',
-							'*.html.php',
-						]),
+						->in([$this->codex->getProjectPath('vendor')])
+						->name(['*.html.php']),
 				),
 			),
 		);

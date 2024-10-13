@@ -137,7 +137,6 @@ class PHPScoperFilesystemTest extends TestCase
 		yield ['..foo'];
 	}
 
-	/** @group test-here */
 	public function testGetOutputPathDefault(): void
 	{
 		$codex = new Codex($this->getTemporaryPath());
@@ -148,7 +147,6 @@ class PHPScoperFilesystemTest extends TestCase
 		);
 	}
 
-	/** @group test-here */
 	public function testGetOutputPathCustom(): void
 	{
 		$codex = new Codex($this->getTemporaryPath());
@@ -471,6 +469,7 @@ class PHPScoperFilesystemTest extends TestCase
 		);
 	}
 
+	/** @group test-here */
 	public function testDumpComposerWithEmptyInstallDev(): void
 	{
 		$this->dumpTemporaryFile(
@@ -479,6 +478,7 @@ class PHPScoperFilesystemTest extends TestCase
 				[
 					'name' => 'syntatis/howdy',
 					'require' => ['php' => '>=7.4'],
+					'require-dev' => ['symfony/var-dumper' => '^5.3'],
 					'extra' => [
 						'codex' => [
 							'scoper' => ['install-dev' => []],
@@ -509,6 +509,7 @@ class PHPScoperFilesystemTest extends TestCase
 				[
 					'name' => 'syntatis/howdy',
 					'require' => ['php' => '>=7.4'],
+					'require-dev' => ['symfony/var-dumper' => '^5.3'],
 					'extra' => [
 						'codex' => [
 							'scoper' => ['install-dev' => $data],
@@ -525,7 +526,7 @@ class PHPScoperFilesystemTest extends TestCase
 
 	public function dataDumpComposerWithInvalidInstallDev(): iterable
 	{
-		yield 'as string' => ['phpunit/phpunit'];
+		yield 'as string' => ['symfony/var-dumper'];
 		yield 'as number' => [1];
 		yield 'as null' => [null];
 	}

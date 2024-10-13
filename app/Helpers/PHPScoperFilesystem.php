@@ -147,7 +147,7 @@ class PHPScoperFilesystem
 				'autoload' => $this->getAutoload('autoload'),
 				'autoload-dev' => $this->getAutoload('autoload-dev'),
 				'require' => $this->codex->getComposer('require'),
-				'require-dev' => $this->getInstallDev(),
+				'require-dev' => $this->getRequireDev(),
 			],
 			static fn ($value): bool => ! Val::isBlank($value),
 		);
@@ -186,7 +186,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return array<string>
 	 */
-	private function getInstallDev(): array
+	private function getRequireDev(): array
 	{
 		$requireDev = $this->codex->getComposer('require-dev');
 
@@ -194,15 +194,15 @@ class PHPScoperFilesystem
 			return [];
 		}
 
-		$includes = $this->codex->getConfig('scoper.install-dev');
+		$installDev = $this->codex->getConfig('scoper.install-dev');
 
-		if (! is_array($includes) || Val::isBlank($includes)) {
+		if (! is_array($installDev) || Val::isBlank($installDev)) {
 			return [];
 		}
 
 		return array_filter(
 			$requireDev,
-			static fn ($value, $key): bool => in_array($key, $includes, true),
+			static fn ($value, $key): bool => in_array($key, $installDev, true),
 			ARRAY_FILTER_USE_BOTH,
 		);
 	}
