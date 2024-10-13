@@ -51,9 +51,7 @@ trait WithTemporaryFiles
 			throw new InvalidArgumentException('Path must be relative');
 		}
 
-		$path = trim($path, '\\/.');
-
-		return Path::normalize($this->tempDir . '/' . $path);
+		return Path::canonicalize($this->tempDir . '/' . trim($path, '\\/'));
 	}
 
 	public function dumpTemporaryFile(string $path, string $content): void

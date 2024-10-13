@@ -9,6 +9,7 @@ use Syntatis\Codex\Companion\Projects\Howdy\ProjectFiles;
 use Syntatis\Tests\WithTemporaryFiles;
 
 use function count;
+use function json_encode;
 
 class ProjectFilesTest extends TestCase
 {
@@ -16,9 +17,13 @@ class ProjectFilesTest extends TestCase
 
 	public function testIteratedFiles(): void
 	{
-		$this->dumpTemporaryFiles([
-			// Should be included
+		$this->dumpTemporaryFile(
+			// Should be included.
 			'composer.json',
+			json_encode(['name' => 'syntatis/howdy']),
+		);
+		$this->dumpTemporaryFiles([
+			// Should be included.
 			'src/index.js',
 			'foo.php',
 			'bar/hello-world.php',
@@ -34,13 +39,13 @@ class ProjectFilesTest extends TestCase
 			'node_modules/react/main.js',
 			'package-lock.json',
 			'vendor/autoload.php',
-			'dist-autoload/autoload.php',
-			'dist/index.js',
+
+			// Scoper output dir should be ignored.
+			'dist/autoload/autoload.php',
+			'dist/autoload/index.js',
 		]);
 
 		$files = new ProjectFiles($this->getTemporaryPath());
-
-		$this->assertSame(6, count($files));
 
 		foreach ($files as $file) {
 			$this->assertNotContains(
@@ -59,6 +64,8 @@ class ProjectFilesTest extends TestCase
 				],
 			);
 		}
+
+		$this->assertSame(6, count($files));
 	}
 
 	private function dumpTemporaryFiles(array $files): void

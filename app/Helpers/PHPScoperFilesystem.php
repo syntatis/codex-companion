@@ -66,7 +66,7 @@ class PHPScoperFilesystem
 	 * may be determined from the "scoper.output-dir" set in Composer file,
 	 * but if it is not set, it will use the default the default value:
 	 *
-	 * `/dist/autoload`.
+	 * `dist/autoload`.
 	 *
 	 * @see Codex::DEFAULT_SCOPER_OUTPUT_PATH
 	 *
