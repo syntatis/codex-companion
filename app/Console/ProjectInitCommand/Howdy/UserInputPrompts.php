@@ -122,8 +122,6 @@ class UserInputPrompts implements Executable
 		 * Each of the values below are already validated when the users input their values.
 		 * Users are not allowed to provide empty values. Otherwise, the class will throw
 		 * them an error exception, and ask them to provide a valid value.
-		 *
-		 * @phpstan-var ValidatedItems
 		 */
 		$inputs = [
 			'php_vendor_prefix' => (string) $vendorPrefix,

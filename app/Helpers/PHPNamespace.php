@@ -14,6 +14,7 @@ use function strlen;
 
 class PHPNamespace implements Stringable
 {
+	/** @phpstan-var non-empty-string */
 	private string $namespace;
 
 	/** @param string $namespace The namespace to validate. */
@@ -22,6 +23,7 @@ class PHPNamespace implements Stringable
 		$this->namespace = $this->validate($namespace);
 	}
 
+	/** @phpstan-return non-empty-string */
 	private function validate(string $namespace): string
 	{
 		if (Val::isBlank($namespace)) {
@@ -41,6 +43,7 @@ class PHPNamespace implements Stringable
 		return $namespace;
 	}
 
+	/** @phpstan-return non-empty-string */
 	public function __toString(): string
 	{
 		return $this->namespace;
