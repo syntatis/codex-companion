@@ -52,6 +52,21 @@ class ScoperInitCommandTest extends TestCase
 					"psr-4": {
 						"PluginName\\": "app/"
 					}
+				}
+			}
+			CONTENT,
+			['--no-dev' => true], // Inputs.
+			'The packages listed in "install-dev" will be skipped.',
+		];
+
+		yield [
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": "app/"
+					}
 				},
 				"extra": {
 					"codex": {
@@ -73,6 +88,13 @@ class ScoperInitCommandTest extends TestCase
 				"autoload": {
 					"psr-4": {
 						"PluginName\\": "app/"
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "FOO\\"
+						}
 					}
 				}
 			}
