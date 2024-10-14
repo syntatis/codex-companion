@@ -86,32 +86,30 @@ class ScoperInitCommand extends BaseCommand
 
 	private function getConfirmationNote(): string
 	{
-		$noDev = (bool) $this->input->getOption('no-dev');
+		$devMode = ! (bool) $this->input->getOption('no-dev');
 		$prefix = $this->codex->getConfig('scoper.prefix');
 
 		if (! is_string($prefix) || Val::isBlank($prefix)) {
-			$message = 'This command will prefix the dependencies namespace.';
-
-			if ($noDev) {
-				return <<<MESSAGE
-				$message
+			if ($devMode) {
+				return <<<'MESSAGE'
+				This command will prefix the dependencies namespace.
 				The packages listed in "install-dev" will be skipped.
 				MESSAGE;
 			}
 
-			return $message;
+			return 'This command will prefix the dependencies namespace.';
 		}
 
-		if ($noDev) {
-			return sprintf(
-				'This command will prefix the dependencies namespace with "%s".',
-				$prefix,
-			);
+		if ($devMode) {
+			return <<<MESSAGE
+			This command will prefix the dependencies namespace with "$prefix".
+			The packages listed in "install-dev" will be skipped.
+			MESSAGE;
 		}
 
-		return <<<MESSAGE
-		This command will prefix the dependencies namespace with "$prefix".
-		The packages listed in "install-dev" will be skipped.
-		MESSAGE;
+		return sprintf(
+			'This command will prefix the dependencies namespace with "%s".',
+			$prefix,
+		);
 	}
 }
