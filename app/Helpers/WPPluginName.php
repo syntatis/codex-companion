@@ -12,6 +12,7 @@ use function strlen;
 
 class WPPluginName implements Stringable
 {
+	/** @phpstan-var non-empty-string */
 	private string $name;
 
 	public function __construct(string $name)
@@ -19,6 +20,7 @@ class WPPluginName implements Stringable
 		$this->name = $this->validate($name);
 	}
 
+	/** @phpstan-return non-empty-string */
 	private function validate(string $name): string
 	{
 		if (Val::isBlank($name)) {
@@ -32,6 +34,7 @@ class WPPluginName implements Stringable
 		return $name;
 	}
 
+	/** @phpstan-return non-empty-string */
 	public function __toString(): string
 	{
 		return $this->name;

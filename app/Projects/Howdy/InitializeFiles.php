@@ -25,7 +25,7 @@ use function array_merge;
  * 		php_namespace:non-empty-string,
  * 		wp_plugin_name:non-empty-string,
  * 		wp_plugin_slug:non-empty-string,
- * 		wp_plugin_description?:non-empty-string
+ * 		wp_plugin_description?:non-empty-string,
  * }
  * @phpstan-type SearchReplaceItems array{
  * 		php_vendor_prefix:non-empty-string,
@@ -33,9 +33,9 @@ use function array_merge;
  * 		wp_plugin_name:non-empty-string,
  * 		wp_plugin_slug:non-empty-string,
  * 		wp_plugin_description?:non-empty-string,
- *		camelcase:string,
- *		kebabcase:string,
- *		snakecase:string
+ *		camelcase:non-empty-string,
+ *		kebabcase:non-empty-string,
+ *		snakecase:non-empty-string
  * }
  */
 class InitializeFiles
