@@ -95,7 +95,10 @@ class ScoperInitCommand extends BaseCommand
 			$message = 'This command will prefix the dependencies namespace.';
 
 			if ($noDev) {
-				return $message . ' The packages listed in "install-dev" will be skipped.';
+				return <<<MESSAGE
+				$message
+				The packages listed in "install-dev" will be skipped.
+				MESSAGE;
 			}
 
 			return $message;
@@ -108,9 +111,9 @@ class ScoperInitCommand extends BaseCommand
 			);
 		}
 
-		return sprintf(
-			'This command will prefix the dependencies namespace with "%s". The packages listed in "install-dev" will be skipped.',
-			$prefix,
-		);
+		return <<<MESSAGE
+		This command will prefix the dependencies namespace with "$prefix".
+		The packages listed in "install-dev" will be skipped.
+		MESSAGE;
 	}
 }
