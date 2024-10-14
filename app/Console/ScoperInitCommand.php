@@ -24,6 +24,8 @@ class ScoperInitCommand extends BaseCommand
 
 	protected Codex $codex;
 
+	protected InputInterface $input;
+
 	protected function configure(): void
 	{
 		$this->setName('scoper:init');
@@ -34,6 +36,7 @@ class ScoperInitCommand extends BaseCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
+		$this->input = $input;
 		$this->output = new SymfonyStyle($input, $output);
 		$this->codex = new Codex($this->projectPath);
 
@@ -76,16 +79,38 @@ class ScoperInitCommand extends BaseCommand
 
 	private function getConfirmation(): bool
 	{
+		$this->output->note($this->getConfirmationNote());
+
+		return $this->output->confirm('Do you want to proceed?', true);
+	}
+
+	private function getConfirmationNote(): string
+	{
+		$noDev = (bool) $this->input->getOption('no-dev');
 		$prefix = $this->codex->getProjectName() === 'syntatis/howdy' ?
 			$this->codex->getConfig('scoper.prefix') :
 			null;
 
-		$this->output->note(
-			! is_string($prefix) || Val::isBlank($prefix) ?
-			'This command will prefix the dependencies namespace' :
-			sprintf('This command will prefix the dependencies namespace with "%s".', $prefix),
-		);
+		if (! is_string($prefix) || Val::isBlank($prefix)) {
+			$message = 'This command will prefix the dependencies namespace.';
 
-		return $this->output->confirm('Do you want to proceed?', true);
+			if ($noDev) {
+				return $message . ' The packages listed in "install-dev" will be skipped.';
+			}
+
+			return $message;
+		}
+
+		if ($noDev) {
+			return sprintf(
+				'This command will prefix the dependencies namespace with "%s".',
+				$prefix,
+			);
+		}
+
+		return sprintf(
+			'This command will prefix the dependencies namespace with "%s". The packages listed in "install-dev" will be skipped.',
+			$prefix,
+		);
 	}
 }
