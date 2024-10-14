@@ -1,7 +1,7 @@
 # 🪵 👨‍🏭 codex-companion
 
-> [!CAUTION]
-> This project is currently in active development. It is not recommended for production use *just yet*.
+> [!NOTE]
+> The project is now in beta and ready for testing. We'd love to hear your input, so feel free to report any issues or suggest enhancements.
 
 [![ci](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex-companion/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/syntatis/codex-companion/graph/badge.svg?token=VYW2MHLXYV)](https://codecov.io/gh/syntatis/codex-companion)
 
