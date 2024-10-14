@@ -87,9 +87,7 @@ class ScoperInitCommand extends BaseCommand
 	private function getConfirmationNote(): string
 	{
 		$noDev = (bool) $this->input->getOption('no-dev');
-		$prefix = $this->codex->getProjectName() === 'syntatis/howdy' ?
-			$this->codex->getConfig('scoper.prefix') :
-			null;
+		$prefix = $this->codex->getConfig('scoper.prefix');
 
 		if (! is_string($prefix) || Val::isBlank($prefix)) {
 			$message = 'This command will prefix the dependencies namespace.';
