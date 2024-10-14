@@ -13,10 +13,99 @@ class ScoperInitCommandTest extends TestCase
 {
 	use WithTemporaryFiles;
 
-	public function setUp(): void
+	/** @dataProvider dataConfirmMessage */
+	public function testConfirmMessage(string $composer, array $inputs, string $message): void
 	{
-		parent::setUp();
+		$this->dumpTemporaryFile('composer.json', $composer);
 
+		$command = new Commander($this->getTemporaryPath());
+		$tester = new CommandTester($command->get('scoper:init'));
+		$tester->setInputs($inputs);
+		$tester->execute([]);
+
+		$this->assertStringContainsString($message, $tester->getDisplay());
+		$this->assertStringContainsString('Do you want to proceed? (yes/no) [yes]:', $tester->getDisplay());
+	}
+
+	public static function dataConfirmMessage(): iterable
+	{
+		yield [
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": "app/"
+					}
+				}
+			}
+			CONTENT,
+			[], // Inputs.
+			'This command will prefix the dependencies namespace',
+		];
+
+		yield [
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": "app/"
+					}
+				}
+			}
+			CONTENT,
+			['--no-dev' => true], // Inputs.
+			'The packages listed in "install-dev" will be skipped.',
+		];
+
+		yield [
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": "app/"
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "FOO\\"
+						}
+					}
+				}
+			}
+			CONTENT,
+			[], // Inputs.
+			'This command will prefix the dependencies namespace with "FOO".',
+		];
+
+		yield [
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": "app/"
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "FOO\\"
+						}
+					}
+				}
+			}
+			CONTENT,
+			['--no-dev' => true], // Inputs.
+			'The packages listed in "install-dev" will be skipped.',
+		];
+	}
+
+	public function testConfirmNo(): void
+	{
 		$this->dumpTemporaryFile(
 			'composer.json',
 			<<<'CONTENT'
@@ -30,20 +119,7 @@ class ScoperInitCommandTest extends TestCase
 			}
 			CONTENT,
 		);
-	}
 
-	public function testConfirm(): void
-	{
-		$command = new Commander($this->getTemporaryPath());
-		$tester = new CommandTester($command->get('scoper:init'));
-		$tester->execute([]);
-
-		$this->assertStringContainsString('This command will prefix the dependencies namespace', $tester->getDisplay());
-		$this->assertStringContainsString('Do you want to proceed? (yes/no) [yes]:', $tester->getDisplay());
-	}
-
-	public function testConfirmNo(): void
-	{
 		$command = new Commander($this->getTemporaryPath());
 		$tester = new CommandTester($command->get('scoper:init'));
 		$tester->setInputs(['no']);
