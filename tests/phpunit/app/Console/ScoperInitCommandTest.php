@@ -20,8 +20,7 @@ class ScoperInitCommandTest extends TestCase
 
 		$command = new Commander($this->getTemporaryPath());
 		$tester = new CommandTester($command->get('scoper:init'));
-		$tester->setInputs($inputs);
-		$tester->execute([]);
+		$tester->execute($inputs);
 
 		$this->assertStringContainsString($message, $tester->getDisplay());
 		$this->assertStringContainsString('Do you want to proceed? (yes/no) [yes]:', $tester->getDisplay());
@@ -55,7 +54,7 @@ class ScoperInitCommandTest extends TestCase
 				}
 			}
 			CONTENT,
-			['--no-dev' => true], // Inputs.
+			['--no-dev' => true ], // Inputs.
 			'The packages listed in "install-dev" will be skipped.',
 		];
 

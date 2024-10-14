@@ -73,7 +73,7 @@ class ScoperInitCommand extends BaseCommand
 		}
 
 		return (new PrefixerProcess($this->codex, $this->output))
-			->setDevMode(! (bool) $input->getOption('no-dev'))
+			->setDevMode($this->isDevMode())
 			->execute();
 	}
 
@@ -86,30 +86,35 @@ class ScoperInitCommand extends BaseCommand
 
 	private function getConfirmationNote(): string
 	{
-		$devMode = ! (bool) $this->input->getOption('no-dev');
+		$devMode = $this->isDevMode();
 		$prefix = $this->codex->getConfig('scoper.prefix');
 
 		if (! is_string($prefix) || Val::isBlank($prefix)) {
 			if ($devMode) {
-				return <<<'MESSAGE'
-				This command will prefix the dependencies namespace.
-				The packages listed in "install-dev" will be skipped.
-				MESSAGE;
+				return 'This command will prefix the dependencies namespace.';
 			}
 
-			return 'This command will prefix the dependencies namespace.';
-		}
-
-		if ($devMode) {
-			return <<<MESSAGE
-			This command will prefix the dependencies namespace with "$prefix".
+			return <<<'MESSAGE'
+			This command will prefix the dependencies namespace.
 			The packages listed in "install-dev" will be skipped.
 			MESSAGE;
 		}
 
-		return sprintf(
-			'This command will prefix the dependencies namespace with "%s".',
-			$prefix,
-		);
+		if ($devMode) {
+			return sprintf(
+				'This command will prefix the dependencies namespace with "%s".',
+				$prefix,
+			);
+		}
+
+		return <<<MESSAGE
+			This command will prefix the dependencies namespace with "$prefix".
+			The packages listed in "install-dev" will be skipped.
+			MESSAGE;
+	}
+
+	private function isDevMode(): bool
+	{
+		return $this->input->getOption('no-dev') === false;
 	}
 }
