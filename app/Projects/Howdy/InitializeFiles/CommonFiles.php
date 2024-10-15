@@ -137,22 +137,80 @@ class CommonFiles implements Dumpable, EditableFile
 		return array_map(static function ($key, $value) {
 			switch ($key) {
 				case 'php_namespace':
-					return '/(?<![\w+\d]\\\)' . preg_quote($value) . '(?=[\\\;])/m';
+					/**
+					 * Generates a RegEx pattern to match a PHP namespace pattern in a file.
+					 *
+					 * Given `$value` equals to "PluginName', it will match the 'PluginName'
+					 * in 'PluginName\' but will not match one in 'Foo\PluginName'.
+					 *
+					 * @see https://regex101.com/r/EDl0kh/1
+					 */
+					return '/(?<!\w\d\\\)(?:^|(?:\s+|^\\\|\'|"|\(|\[))(?:\\\)?\K' . preg_quote($value) . '(?=[\\\;:\'"])/m';
 
 				case 'wp_plugin_name':
+					/**
+					 * Generates a RegEx pattern to match a specific plugin name n a file.
+					 *
+					 * This pattern matches the text in `$value`. In case the `$value` equals
+					 * to 'Plugin Name', it will match the text after 'Plugin Name:' so it
+					 * won't replace the 'Plugin Name:' which is required in the plugin
+					 * file.
+					 */
 					return '/(?<=Plugin Name:)\s+\K' . preg_quote($value) . '/';
 
 				case 'wp_plugin_description':
 					return '/(?<=Description:)\s+\K' . preg_quote($value) . '/';
 
 				case 'wp_plugin_slug':
+					/**
+					 * Generates a RegEx pattern to match the plugin slug in a file.
+					 *
+					 * The plugin slug will generally be in kebabcase format. The RegEx rules
+					 * will match the following instances:
+					 *
+					 * -  plugin-name (starts with a space)
+					 * - "plugin-name (double quotes)
+					 * - 'plugin-name (single quotes)
+					 * - .plugin-name (dot) Usually found in CSS as a class.
+					 * - #plugin-name (hash) Usually found in CSS as an ID.
+					 */
+					return '/(?<=[\s|\"|\'|\.|\#])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])/';
+
 				case 'kebabcase':
 					return '/(?<=[\s|\"|\'|\.|\#])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])/';
 
 				case 'camelcase':
+					/**
+					 * Generates a RegEx pattern to match the given value in camelCase format
+					 * in a file.
+					 *
+					 * The camelCase pattern is commonly used for variables in both PHP and
+					 * JS file.
+					 *
+					 * This RegEx rules will match the following instances:
+					 *
+					 * -  pluginName (starts with a space)
+					 * - "pluginName (double quotes)
+					 * - 'pluginName (single quotes)
+					 * - .pluginName (dot) Usually found in CSS as a class.
+					 */
 					return '/(?<=[\s|__|\$|\"|\'|\.])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\w])/';
 
 				case 'snakecase':
+					/**
+					 * Generates a RegEx pattern to match the given value in camel_case format
+					 * in a file.
+					 *
+					 * The snake_case pattern is commonly used for variables in PHP file, as
+					 * well as in JS file, and CSS file for selectors.
+					 *
+					 * This RegEx rules will match the following instances:
+					 * -  plugin_name (starts with a space)
+					 * - "plugin_name (double quotes)
+					 * - 'plugin_name (single quotes)
+					 * - .plugin_name (dot) Usually found in CSS as a class.
+					 * - #plugin_name (hash) Usually found in CSS as an ID.
+					 */
 					return '/(?<=[\s|__|\$|\"|\'|\.])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\_])/';
 
 				default:
