@@ -140,6 +140,15 @@ class CommonFiles implements Dumpable, EditableFile
 					return '/(?<![\w+\d]\\\)' . preg_quote($value) . '(?=[\\\;])/m';
 
 				case 'wp_plugin_name':
+					/**
+					 * Generates a regular expression pattern to match a specific plugin name
+					 * in a file.
+					 *
+					 * This pattern matches the text in `$value`. In case the `$value` equals
+					 * to "Plugin Name", it will match the text after "Plugin Name:" so it
+					 * won't replace the "Plugin Name:" which is required in the plugin
+					 * file.
+					 */
 					return '/(?<=Plugin Name:)\s+\K' . preg_quote($value) . '/';
 
 				case 'wp_plugin_description':
