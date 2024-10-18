@@ -9,7 +9,6 @@ use Syntatis\Codex\Companion\Contracts\Dumpable;
 use Syntatis\Codex\Companion\Contracts\EditableFile;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\CommonFiles;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\ComposerFile;
-use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\PackageFile;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\PHPCSFile;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\POTFile;
 use Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\ReadmeTxtFile;
@@ -105,9 +104,6 @@ class InitializeFiles
 
 			case 'composer.json':
 				return new ComposerFile($this->searches, $this->replacements);
-
-			case 'package.json':
-				return new PackageFile($this->searches, $this->replacements);
 
 			case 'phpcs.xml':
 			case 'phpcs.xml.dist':
