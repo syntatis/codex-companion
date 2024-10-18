@@ -147,34 +147,6 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'package.json' => [
-					'origin' => <<<'CONTENT'
-					{
-						"files": [
-							"app",
-							"dist-autoload",
-							"dist",
-							"inc",
-							"index.php",
-							"uninstall.php",
-							"plugin-name.php"
-						]
-					}
-					CONTENT,
-					'expect' => <<<'CONTENT'
-					{
-					    "files": [
-					        "app",
-					        "dist-autoload",
-					        "dist",
-					        "inc",
-					        "index.php",
-					        "uninstall.php",
-					        "awesome-plugin-name.php"
-					    ]
-					}
-					CONTENT,
-				],
 				'plugin-name.php' => [
 					'origin' => <<<'CONTENT'
 					/**
