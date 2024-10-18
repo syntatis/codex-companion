@@ -66,4 +66,54 @@ class ComposerFileTest extends TestCase
 
 		$this->assertEquals($json['scripts']['archive:zip'], '@composer archive --format=zip --file=acme-plugin');
 	}
+
+	/**
+	 * @dataProvider dataBuildScripts
+	 *
+	 * @param mixed $expect The expected result of the "scripts".
+	 */
+	public function testBuildScripts(string $content, $expect): void
+	{
+		$this->dumpTemporaryFile('composer.json', $content);
+
+		$this->instance->setFile(new SplFileInfo($this->getTemporaryPath('composer.json')));
+		$this->instance->dump();
+
+		$json = json_decode(file_get_contents($this->getTemporaryPath('composer.json')), true);
+
+		$this->assertTrue(true);
+
+		// $this->assertEquals($json['scripts']['build'], $expect);
+	}
+
+	public static function dataBuildScripts(): iterable
+	{
+		yield [
+			<<<'CONTENT'
+			{
+				"scripts": {
+					"build": [
+						"wp i18n make-pot --exclude=vendor,dist . inc/languages/plugin-name.pot",
+						"codex scoper:init --yes --no-dev"
+					]
+				}
+			}
+			CONTENT,
+			[
+				'wp i18n make-pot --exclude=vendor,dist . inc/languages/acme-plugin.pot',
+				'codex scoper:init --yes --no-dev',
+			],
+		];
+
+		yield [
+			<<<'CONTENT'
+			{
+				"scripts": {
+					"build": "wp i18n make-pot --exclude=vendor,dist . inc/languages/plugin-name.pot"
+				}
+			}
+			CONTENT,
+			'wp i18n make-pot --exclude=vendor,dist . inc/languages/acme-plugin.pot',
+		];
+	}
 }

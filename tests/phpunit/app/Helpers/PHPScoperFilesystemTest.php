@@ -468,7 +468,6 @@ class PHPScoperFilesystemTest extends TestCase
 		);
 	}
 
-	/** @group test-here */
 	public function testDumpComposerWithEmptyInstallDev(): void
 	{
 		$this->dumpTemporaryFile(
