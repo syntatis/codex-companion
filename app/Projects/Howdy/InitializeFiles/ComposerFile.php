@@ -16,10 +16,12 @@ use function array_unique;
 use function dot;
 use function file_get_contents;
 use function is_array;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function preg_quote;
 use function preg_replace;
+use function str_replace;
 use function trim;
 
 use const JSON_PRETTY_PRINT;
@@ -91,14 +93,25 @@ class ComposerFile implements Dumpable, EditableFile
 
 		$excludeNamespaces = $this->getConfigExcludeNamespaces();
 
-		if (! is_array($excludeNamespaces) || Val::isBlank($excludeNamespaces)) {
+		if (is_array($excludeNamespaces) && ! Val::isBlank($excludeNamespaces)) {
+			$this->data->set(
+				'extra.codex.scoper.exclude-namespaces',
+				$excludeNamespaces,
+			);
+		}
+
+		$scripts = $this->data->get('scripts') ?? null;
+		$archiveZip = is_array($scripts) ? ($scripts['archive:zip'] ?? null) : '';
+
+		if (! is_string($archiveZip) || Val::isBlank($archiveZip)) {
 			return;
 		}
 
-		$this->data->set(
-			'extra.codex.scoper.exclude-namespaces',
-			$excludeNamespaces,
-		);
+		$this->data->set('scripts.archive:zip', str_replace(
+			$this->searches['wp_plugin_slug'],
+			$this->replacements['wp_plugin_slug'],
+			$archiveZip,
+		));
 	}
 
 	/** @phpstan-return array<string,string|list<string>>|null */
