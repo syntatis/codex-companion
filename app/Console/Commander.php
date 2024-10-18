@@ -26,6 +26,7 @@ class Commander extends Application
 			new ProjectInitCommand($this->projectPath),
 			new ScoperInitCommand($this->projectPath),
 			new ScoperPurgeCommand($this->projectPath),
+			new VersionsUpdateCommand($this->projectPath),
 		];
 	}
 }
