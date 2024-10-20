@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Tests\Helpers;
+namespace Syntatis\Tests\Helpers\Strings;
 
 use PHPUnit\Framework\TestCase;
 use Syntatis\Codex\Companion\Helpers\PHPNamespace;

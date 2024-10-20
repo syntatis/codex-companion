@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Codex\Companion\Helpers;
+namespace Syntatis\Codex\Companion\Helpers\Strings;
 
 use InvalidArgumentException;
 use Stringable;
