@@ -16,6 +16,7 @@ use function array_unique;
 use function dot;
 use function file_get_contents;
 use function is_array;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function preg_quote;
@@ -29,7 +30,7 @@ use const JSON_UNESCAPED_SLASHES;
 class ComposerFile implements Dumpable, EditableFile
 {
 	/** @phpstan-var Dot<string,mixed> */
-	private Dot $data;
+	private ?Dot $data = null;
 
 	private SplFileInfo $file;
 
@@ -57,6 +58,10 @@ class ComposerFile implements Dumpable, EditableFile
 	public function dump(): void
 	{
 		$this->doSearchReplace();
+
+		if (! ($this->data instanceof Dot)) {
+			return;
+		}
 
 		$filesystem = new Filesystem();
 		$filesystem->dumpFile(
@@ -91,19 +96,23 @@ class ComposerFile implements Dumpable, EditableFile
 
 		$excludeNamespaces = $this->getConfigExcludeNamespaces();
 
-		if (! is_array($excludeNamespaces) || Val::isBlank($excludeNamespaces)) {
-			return;
+		if (is_array($excludeNamespaces) && ! Val::isBlank($excludeNamespaces)) {
+			$this->data->set(
+				'extra.codex.scoper.exclude-namespaces',
+				$excludeNamespaces,
+			);
 		}
 
-		$this->data->set(
-			'extra.codex.scoper.exclude-namespaces',
-			$excludeNamespaces,
-		);
+		$this->handleScripts();
 	}
 
 	/** @phpstan-return array<string,string|list<string>>|null */
 	private function getAutoloads(string $key): ?array
 	{
+		if (! ($this->data instanceof Dot)) {
+			return null;
+		}
+
 		$autoloads = $this->data->get($key) ?? null;
 
 		if (! is_array($autoloads) || Val::isBlank($autoloads)) {
@@ -128,6 +137,10 @@ class ComposerFile implements Dumpable, EditableFile
 	/** @phpstan-return list<string>|null */
 	private function getConfigExcludeNamespaces(): ?array
 	{
+		if (! ($this->data instanceof Dot)) {
+			return null;
+		}
+
 		$namespaces = $this->data->get('extra.codex.scoper.exclude-namespaces') ?? [];
 
 		if (! is_array($namespaces) || Val::isBlank($namespaces)) {
@@ -145,6 +158,52 @@ class ComposerFile implements Dumpable, EditableFile
 				},
 				$namespaces,
 			),
+		);
+	}
+
+	private function handleScripts(): void
+	{
+		if (! ($this->data instanceof Dot)) {
+			return;
+		}
+
+		$scripts = $this->data->get('scripts') ?? null;
+
+		if (! is_array($scripts) || Val::isBlank($scripts)) {
+			return;
+		}
+
+		$searchReplace = function ($script) {
+			if (is_string($script)) {
+				return $this->searchReplaceSlug($script);
+			}
+
+			if (is_array($script)) {
+				return array_map(
+					[$this, 'searchReplaceSlug'],
+					$script,
+				);
+			}
+
+			return $script;
+		};
+
+		foreach ($scripts as $name => $script) {
+			$this->data->set('scripts.' . $name, $searchReplace($script));
+		}
+	}
+
+	public function searchReplaceSlug(string $subject): ?string
+	{
+		$search = preg_quote($this->searches['wp_plugin_slug']);
+
+		return preg_replace(
+			[
+				'/(?<=\s|\=|\/)' . $search . '$/',
+				'/(?<=\s|\=|\/)' . $search . '(?=[\s|\.])/',
+			],
+			$this->replacements['wp_plugin_slug'],
+			$subject,
 		);
 	}
 }
