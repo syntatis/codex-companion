@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Projects\Howdy;
 
+use SplFileInfo;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Helpers\WPPluginProps;
 use Syntatis\Utils\Val;
@@ -38,25 +39,33 @@ class ProjectProps
 {
 	private Codex $codex;
 
+	private WPPluginProps $pluginProps;
+
 	/** @phpstan-var Props */
 	private array $props = [];
 
 	public function __construct(Codex $codex)
 	{
 		$this->codex = $codex;
+		$this->pluginProps = new WPPluginProps($codex);
 		$this->props = array_merge(
 			[
 				'php_vendor_prefix' => $this->findVendorPrefix(),
 				'php_namespace' => $this->findNamespace(),
 			],
-			(new WPPluginProps($codex))->get(),
+			$this->pluginProps->getAll(),
 		);
 	}
 
 	/** @phpstan-return Props */
-	public function get(): array
+	public function getAll(): array
 	{
 		return $this->props;
+	}
+
+	public function getPluginFile(): SplFileInfo
+	{
+		return $this->pluginProps->getFile();
 	}
 
 	/**
