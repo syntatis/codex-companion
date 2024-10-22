@@ -33,8 +33,24 @@ use function trim;
  * Based on the WordPress plugin guideline, a plugin should have a plugin
  * file with, a header comment containing the "Plugin Name:", at min.
  *
+ * In WordPress, when specifying numbers for some of the headers, such as
+ * the "Requires at least" and "Requires PHP", the patch number is not
+ * included. For example:
+ *
+ * Requires at least: 6.1
+ *
+ * WordPress.org will automatically add the latest minor version. It will
+ * convert it to "6.1.1" or "6.1.2" or "6.1.3", etc. as needed.
+ *
+ * But, as the "6.1" itself is not a valid Semver format, the class won't
+ * be trying to be super accurate. Instead of assuming the latest patch
+ * number, which can be slow, it will add "0" if it isn't explicitly
+ * defined. For example, in this case, the version returned would
+ * be "6.1.0".
+ *
  * @see https://developer.wordpress.org/plugins/plugin-basics/header-requirements/
  * @see https://developer.wordpress.org/plugins/wordpress-org/how-your-readme-txt-works/
+ * @see https://semver.org/
  *
  * @phpstan-type Props = array{
  *      wp_plugin_name:non-empty-string,
@@ -125,9 +141,12 @@ class WPPluginProps
 		return $this->props['wp_plugin_description'] ?? null;
 	}
 
-	public function getVersion(): Version
+	/** @phptan-param 'wp_plugin_version'|'wp_plugin_requires_min'|'wp_plugin_requires_php'|'wp_plugin_tested_upto' $key */
+	public function getVersion(string $key = 'wp_plugin_version'): ?Version
 	{
-		return $this->props['wp_plugin_version'];
+		$version = $this->props[$key];
+
+		return $version instanceof Version ? $version : null;
 	}
 
 	/**
@@ -297,7 +316,7 @@ class WPPluginProps
 			return $item;
 		}
 
-		throw new RuntimeException('Unable to find the WordPress plugin main file.');
+		throw new RuntimeException('Unable to find the WordPress plugin readme.txt file.');
 	}
 
 	/**
