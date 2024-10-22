@@ -30,23 +30,6 @@ class WPPluginPropsTest extends TestCase
 	 */
 	public function testGetSlug(array $files, $expect): void
 	{
-		$this->dumpTemporaryFile('readme.txt', <<<'CONTENT'
-		=== Plugin Name ===
-
-		Contributors: tfirdaus
-		Tags: wordpress, plugin, boilerplate
-		Tested up to: 6.6
-		Stable tag: v0.1.0
-		License: GPLv2 or later
-		License URI: https://www.gnu.org/licenses/gpl-2.0.html
-
-		The plugin short description.
-
-		== Description ==
-
-		The plugin long description.
-		CONTENT);
-
 		foreach ($files as $filename => $content) {
 			$this->dumpTemporaryFile($filename, $content);
 		}
@@ -61,13 +44,13 @@ class WPPluginPropsTest extends TestCase
 	{
 		yield 'single file' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
 				CONTENT,
 			],
-			'expect' => 'foo',
+			'expect' => 'main-plugin-file',
 		];
 
 		yield 'multiple files' => [
@@ -80,7 +63,7 @@ class WPPluginPropsTest extends TestCase
 				 */
 				CONTENT,
 				// Empty.
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 */
 				CONTENT,
@@ -137,7 +120,7 @@ class WPPluginPropsTest extends TestCase
 	{
 		yield 'default' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -148,7 +131,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'edited' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Awesome Plugin
 				 */
@@ -159,7 +142,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'has spaces' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name:        Foo Plugin
 				 */
@@ -229,7 +212,7 @@ class WPPluginPropsTest extends TestCase
 	{
 		yield [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 * Description: The plugin short description.
@@ -241,7 +224,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 * Description: Awesome plugin.
@@ -273,7 +256,7 @@ class WPPluginPropsTest extends TestCase
 	{
 		yield 'normal' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -287,7 +270,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'without patch version' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -301,7 +284,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'with v* prefix' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -315,7 +298,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'with v* prefix, and without patch version' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -329,7 +312,7 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'with spaces between colon' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -343,7 +326,34 @@ class WPPluginPropsTest extends TestCase
 
 		yield 'with complete headers' => [
 			'files' => [
-				'foo.php' => <<<'CONTENT'
+				'main-plugin-file.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				=== Plugin Name ===
+
+				Contributors: tfirdaus
+				Tags: wordpress, plugin, boilerplate
+				Tested up to: 6.6
+				Stable tag: 0.1
+				License: GPLv2 or later
+				License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+				The plugin short description.
+
+				== Description ==
+
+				The plugin long description.
+				CONTENT,
+			],
+			'expect' => '0.1.0',
+		];
+
+		yield 'with complete headers, & prefixed with "v*"' => [
+			'files' => [
+				'main-plugin-file.php' => <<<'CONTENT'
 				/**
 				 * Plugin Name: Plugin Name
 				 */
@@ -366,6 +376,58 @@ class WPPluginPropsTest extends TestCase
 				CONTENT,
 			],
 			'expect' => '0.1.0',
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetVersionTestedUpTo
+	 *
+	 * @param mixed $expect
+	 */
+	public function testGetVersionTestedUpto(array $files, $expect): void
+	{
+		foreach ($files as $filename => $content) {
+			$this->dumpTemporaryFile($filename, $content);
+		}
+
+		$codex = new Codex($this->getTemporaryPath());
+		$props = new WPPluginProps($codex);
+
+		$this->assertSame($expect, $props->getVersion('wp_plugin_tested_upto')->toString());
+	}
+
+	public static function dataGetVersionTestedUpTo(): iterable
+	{
+		yield 'normal' => [
+			'files' => [
+				'main-plugin-file.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 * Version: 1.0.2
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Tested up to: 6.6
+				Stable tag: 1.0
+				CONTENT,
+			],
+			'expect' => '6.6.0',
+		];
+
+		yield 'with version' => [
+			'files' => [
+				'main-plugin-file.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 * Version: 1.0.2
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Tested up to: v6.6
+				Stable tag: 1.0
+				CONTENT,
+			],
+			'expect' => '6.6.0',
 		];
 	}
 }
