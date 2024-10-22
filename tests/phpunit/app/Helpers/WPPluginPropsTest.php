@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Syntatis\Tests\Helpers;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Helpers\WPPluginProps;
 use Syntatis\Tests\WithTemporaryFiles;
@@ -29,6 +30,23 @@ class WPPluginPropsTest extends TestCase
 	 */
 	public function testGetSlug(array $files, $expect): void
 	{
+		$this->dumpTemporaryFile('readme.txt', <<<'CONTENT'
+		=== Plugin Name ===
+
+		Contributors: tfirdaus
+		Tags: wordpress, plugin, boilerplate
+		Tested up to: 6.6
+		Stable tag: v0.1.0
+		License: GPLv2 or later
+		License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+		The plugin short description.
+
+		== Description ==
+
+		The plugin long description.
+		CONTENT);
+
 		foreach ($files as $filename => $content) {
 			$this->dumpTemporaryFile($filename, $content);
 		}
@@ -36,7 +54,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getPluginSlug());
+		$this->assertSame($expect, $props->getSlug());
 	}
 
 	public static function dataGetSlug(): iterable
@@ -96,11 +114,6 @@ class WPPluginPropsTest extends TestCase
 			],
 			'expect' => 'foo1',
 		];
-
-		yield 'no file' => [
-			'files' => [],
-			'expect' => null,
-		];
 	}
 
 	/**
@@ -117,7 +130,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getPluginName());
+		$this->assertSame($expect, $props->getName());
 	}
 
 	public static function dataGetName(): iterable
@@ -184,6 +197,17 @@ class WPPluginPropsTest extends TestCase
 		];
 	}
 
+	public function testGetNameEmpty(): void
+	{
+		$this->dumpTemporaryFile('foo3.php', '');
+
+		$codex = new Codex($this->getTemporaryPath());
+
+		$this->expectException(RuntimeException::class);
+
+		new WPPluginProps($codex);
+	}
+
 	/**
 	 * @dataProvider dataGetDescription
 	 *
@@ -198,7 +222,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getPluginDescription());
+		$this->assertSame($expect, $props->getDescription());
 	}
 
 	public static function dataGetDescription(): iterable
@@ -226,16 +250,122 @@ class WPPluginPropsTest extends TestCase
 			],
 			'expect' => 'Awesome plugin.',
 		];
+	}
 
-		yield [
+	/**
+	 * @dataProvider dataGetVersion
+	 *
+	 * @param mixed $expect
+	 */
+	public function testGetVersion(array $files, $expect): void
+	{
+		foreach ($files as $filename => $content) {
+			$this->dumpTemporaryFile($filename, $content);
+		}
+
+		$codex = new Codex($this->getTemporaryPath());
+		$props = new WPPluginProps($codex);
+
+		$this->assertSame($expect, $props->getVersion()->toString());
+	}
+
+	public static function dataGetVersion(): iterable
+	{
+		yield 'normal' => [
 			'files' => [
 				'foo.php' => <<<'CONTENT'
 				/**
-				 * Description: Awesome plugin.
+				 * Plugin Name: Plugin Name
 				 */
 				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
+				CONTENT,
 			],
-			'expect' => null,
+			'expect' => '1.0.0',
+		];
+
+		yield 'without patch version' => [
+			'files' => [
+				'foo.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0
+				CONTENT,
+			],
+			'expect' => '1.0.0',
+		];
+
+		yield 'with v* prefix' => [
+			'files' => [
+				'foo.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: v1.1.0
+				CONTENT,
+			],
+			'expect' => '1.1.0', // Version will be normalized without the `v` prefix.
+		];
+
+		yield 'with v* prefix, and without patch version' => [
+			'files' => [
+				'foo.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: v1.1
+				CONTENT,
+			],
+			'expect' => '1.1.0', // Version will be normalized without the `v` prefix.
+		];
+
+		yield 'with spaces between colon' => [
+			'files' => [
+				'foo.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag:    1.2.0
+				CONTENT,
+			],
+			'expect' => '1.2.0',
+		];
+
+		yield 'with complete headers' => [
+			'files' => [
+				'foo.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				=== Plugin Name ===
+
+				Contributors: tfirdaus
+				Tags: wordpress, plugin, boilerplate
+				Tested up to: 6.6
+				Stable tag: v0.1
+				License: GPLv2 or later
+				License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+				The plugin short description.
+
+				== Description ==
+
+				The plugin long description.
+				CONTENT,
+			],
+			'expect' => '0.1.0',
 		];
 	}
 }
