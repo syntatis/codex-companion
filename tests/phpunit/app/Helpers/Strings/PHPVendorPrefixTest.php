@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Tests\Helpers;
+namespace Syntatis\Tests\Helpers\Strings;
 
 use PHPUnit\Framework\TestCase;
-use Syntatis\Codex\Companion\Helpers\PHPVendorPrefix;
+use Syntatis\Codex\Companion\Helpers\Strings\PHPVendorPrefix;
 
 class PHPVendorPrefixTest extends TestCase
 {
