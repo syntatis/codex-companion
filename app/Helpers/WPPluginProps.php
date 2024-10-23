@@ -9,6 +9,9 @@ use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
+use Syntatis\Codex\Companion\Contracts\Versionable;
+use Syntatis\Codex\Companion\Helpers\Versions\WPTestedUpto;
+use Syntatis\Codex\Companion\Helpers\Versions\WPVersion;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 use Version\Exception\InvalidVersionString;
@@ -31,22 +34,24 @@ use function trim;
  * Find and handle common properties of a WordPress plugin.
  *
  * Based on the WordPress plugin guideline, a plugin should have a plugin
- * file with, a header comment containing the "Plugin Name:", at min.
+ * file with a header comment containing the "Plugin Name:" header, at
+ * the minimum. As such as the plugin file is required to determine
+ * that a project is a WordPress.
  *
- * In WordPress, when specifying numbers for some of the headers, such as
- * the "Requires at least" and "Requires PHP", the patch number is not
- * included. For example:
+ * This class also follows WordPress guideline and recommended practices,
+ * to parse the plugin properties, as follows:
  *
- * Requires at least: 6.1
- *
- * WordPress.org will automatically add the latest minor version. It will
- * convert it to "6.1.1" or "6.1.2" or "6.1.3", etc. as needed.
- *
- * But, as the "6.1" itself is not a valid Semver format, the class won't
- * be trying to be super accurate. Instead of assuming the latest patch
- * number, which can be slow, it will add "0" if it isn't explicitly
- * defined. For example, in this case, the version returned would
- * be "6.1.0".
+ * 1. The "Plugin Name" header should present in the main plugin file.
+ *    This class will consider a PHP file that contains this header
+ *    as main plugin file.
+ * 2. The main plugin file should adopt the name of the plugin, e.g.,
+ *    a plugin with the directory name `plugin-name` would have its
+ *    main file named `plugin-name.php`. As such, the class will
+ *    derive the plugin slug from the main plugin file name.
+ * 3. The "Stable tag" header in the `readme.txt` file. Since the
+ *    "Stable tag" header is one that WordPress.org will use to
+ *    determine the plugin canonical version, this class will
+ *    also use it to return the plugin version.
  *
  * @see https://developer.wordpress.org/plugins/plugin-basics/header-requirements/
  * @see https://developer.wordpress.org/plugins/wordpress-org/how-your-readme-txt-works/
@@ -59,7 +64,7 @@ use function trim;
  *      wp_plugin_description?:non-empty-string|null,
  *      wp_plugin_requires_min?:Version|null,
  *      wp_plugin_requires_php?:Version|null,
- *      wp_plugin_tested_upto?:Version|null,
+ *      wp_plugin_tested_up_to?:Version|null,
  * }
  * @phpstan-type PluginHeaders = array{
  * 		wp_plugin_name:non-empty-string,
@@ -69,7 +74,7 @@ use function trim;
  * }
  * @phpstan-type ReadmeHeaders = array{
  * 		wp_plugin_version:Version,
- * 		wp_plugin_tested_upto?:Version,
+ * 		wp_plugin_tested_up_to?:Version,
  * }
  */
 class WPPluginProps
@@ -83,7 +88,14 @@ class WPPluginProps
 
 	private const VALID_README_HEADERS = [
 		'wp_plugin_version' => 'Stable tag',
-		'wp_plugin_tested_upto' => 'Tested up to',
+		'wp_plugin_tested_up_to' => 'Tested up to',
+	];
+
+	private const VERSIONING_HEADERS = [
+		'Stable tag' => 'wp_plugin_version',
+		'Tested up to' => 'wp_plugin_tested_up_to',
+		'Requires at least' => 'wp_plugin_requires_min',
+		'Requires PHP' => 'wp_plugin_requires_php',
 	];
 
 	private Codex $codex;
@@ -141,9 +153,15 @@ class WPPluginProps
 		return $this->props['wp_plugin_description'] ?? null;
 	}
 
-	/** @phptan-param 'wp_plugin_version'|'wp_plugin_requires_min'|'wp_plugin_requires_php'|'wp_plugin_tested_upto' $key */
-	public function getVersion(string $key = 'wp_plugin_version'): ?Version
+	/** @phptan-param 'Stable tag'|'Tested up to'|'Requires at least'|'Requires PHP' $key */
+	public function getVersion(string $key = 'Stable tag'): ?Versionable
 	{
+		$key = self::VERSIONING_HEADERS[$key] ?? null;
+
+		if (Val::isBlank($key)) {
+			return null;
+		}
+
 		$version = $this->props[$key];
 
 		return $version instanceof Version ? $version : null;
@@ -240,17 +258,14 @@ class WPPluginProps
 
 			$value = $matches[1] ?? '';
 
-			if ($field === 'wp_plugin_version') {
-				$headers[$field] = self::normalizeVersion(ltrim($value, 'v'));
-
-				continue;
+			switch ($field) {
+				case 'wp_plugin_version':
+					$headers[$field] = new WPVersion($value);
+					break;
+				case 'wp_plugin_tested_up_to':
+					$headers[$field] = new WPTestedUpto($value);
+					break;
 			}
-
-			if (Val::isBlank($value)) {
-				continue;
-			}
-
-			$headers[$field] = self::normalizeVersion($value);
 		}
 
 		return $headers;
@@ -324,7 +339,7 @@ class WPPluginProps
 	 */
 	private static function normalizeVersion(string $version): Version
 	{
-		self::isVersion($version, $matches);
+		self::isVersion(ltrim($version, 'v'), $matches);
 
 		$major = $matches['major'] ?? null;
 		$minor = $matches['minor'] ?? null;

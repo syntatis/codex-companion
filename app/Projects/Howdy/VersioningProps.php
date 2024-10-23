@@ -17,14 +17,14 @@ use function is_readable;
 /**
  * Parse and retrieve the current versions of the WordPress plugin.
  *
- * @phpstan-type Props = array{
- * 		wp_version:non-empty-string,
- * 		wp_tested:non-empty-string,
- * 		wp_requires_min?:string|null,
- * 		wp_requires_php?:string|null,
- * }
- *
  * @see https://developer.wordpress.org/plugins/wordpress-org/how-your-readme-txt-works/
+ *
+ * @phpstan-type Props = array{
+ *      wp_version:non-empty-string,
+ *      wp_tested:non-empty-string,
+ *      wp_requires_min?:string|null,
+ *      wp_requires_php?:string|null,
+ * }
  */
 class VersioningProps
 {
@@ -53,7 +53,7 @@ class VersioningProps
 			throw new RuntimeException('Unable to read the "readme.txt" file.');
 		}
 
-		$pluginFile = $this->wpPluginProps->getPluginFile();
+		$pluginFile = $this->wpPluginProps->getFile();
 
 		if (! $pluginFile instanceof SplFileInfo) {
 			throw new RuntimeException('Unable to find the WordPress plugin main file.');

@@ -49,6 +49,9 @@ class WPPluginPropsTest extends TestCase
 				 * Plugin Name: Plugin Name
 				 */
 				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
+				CONTENT,
 			],
 			'expect' => 'main-plugin-file',
 		];
@@ -67,6 +70,9 @@ class WPPluginPropsTest extends TestCase
 				/**
 				 */
 				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
+				CONTENT,
 			],
 			'expect' => 'bar',
 		];
@@ -77,6 +83,9 @@ class WPPluginPropsTest extends TestCase
 				/**
 				 * Plugin Name: Foo Bar Plugin
 				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
 				CONTENT,
 			],
 			'expect' => 'foo-bar',
@@ -93,6 +102,9 @@ class WPPluginPropsTest extends TestCase
 				/**
 				 * Plugin Name: Foo 2 Plugin
 				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
 				CONTENT,
 			],
 			'expect' => 'foo1',
@@ -125,6 +137,9 @@ class WPPluginPropsTest extends TestCase
 				 * Plugin Name: Plugin Name
 				 */
 				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
+				CONTENT,
 			],
 			'expect' => 'Plugin Name',
 		];
@@ -135,6 +150,9 @@ class WPPluginPropsTest extends TestCase
 				/**
 				 * Plugin Name: Awesome Plugin
 				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
 				CONTENT,
 			],
 			'expect' => 'Awesome Plugin',
@@ -147,6 +165,9 @@ class WPPluginPropsTest extends TestCase
 				 * Plugin Name:        Foo Plugin
 				 */
 				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
+				CONTENT,
 			],
 			'expect' => 'Foo Plugin',
 		];
@@ -158,6 +179,9 @@ class WPPluginPropsTest extends TestCase
 				 * Plugin Name:        Foo Plugin
 				 * Plugin Name:        Bar Plugin
 				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
 				CONTENT,
 			],
 			'expect' => 'Foo Plugin',
@@ -174,6 +198,9 @@ class WPPluginPropsTest extends TestCase
 				/**
 				 * Plugin Name: Foo2 Plugin
 				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
 				CONTENT,
 			],
 			'expect' => 'Foo1 Plugin',
@@ -218,6 +245,9 @@ class WPPluginPropsTest extends TestCase
 				 * Description: The plugin short description.
 				 */
 				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
+				CONTENT,
 			],
 			'expect' => 'The plugin short description.',
 		];
@@ -229,6 +259,9 @@ class WPPluginPropsTest extends TestCase
 				 * Plugin Name: Plugin Name
 				 * Description: Awesome plugin.
 				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.0
 				CONTENT,
 			],
 			'expect' => 'Awesome plugin.',
@@ -393,7 +426,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getVersion('wp_plugin_tested_upto')->toString());
+		$this->assertSame($expect, $props->getVersion('Tested up to')->toString());
 	}
 
 	public static function dataGetVersionTestedUpTo(): iterable
@@ -428,6 +461,58 @@ class WPPluginPropsTest extends TestCase
 				CONTENT,
 			],
 			'expect' => '6.6.0',
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetVersionRequiresMin
+	 *
+	 * @param mixed $expect
+	 */
+	public function testGetVersionRequiresMin(array $files, $expect): void
+	{
+		foreach ($files as $filename => $content) {
+			$this->dumpTemporaryFile($filename, $content);
+		}
+
+		$codex = new Codex($this->getTemporaryPath());
+		$props = new WPPluginProps($codex);
+
+		$this->assertSame($expect, $props->getVersion('wp_plugin_requires_min')->toString());
+	}
+
+	public static function dataGetVersionRequiresMin(): iterable
+	{
+		yield 'normal' => [
+			'files' => [
+				'main-plugin-file.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 * Version: 1.0.2
+				 * Requires at least: 5.8
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0
+				CONTENT,
+			],
+			'expect' => '5.8.0',
+		];
+
+		yield 'with v* prefix' => [
+			'files' => [
+				'main-plugin-file.php' => <<<'CONTENT'
+				/**
+				 * Plugin Name: Plugin Name
+				 * Version: 1.0.2
+				 * Requires at least: v5.8
+				 */
+				CONTENT,
+				'readme.txt' => <<<'CONTENT'
+				Stable tag: 1.0.2
+				CONTENT,
+			],
+			'expect' => '5.8.0',
 		];
 	}
 }

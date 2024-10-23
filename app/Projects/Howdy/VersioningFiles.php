@@ -59,7 +59,7 @@ class VersioningFiles implements IteratorAggregate, Countable
 		$results = Finder::create()
 			->in($this->codex->getProjectPath())
 			->name('package.php')
-			->append([$props->getPluginFile()]);
+			->append([$props->getFile()]);
 
 		foreach ($results as $result) {
 			yield $result;
