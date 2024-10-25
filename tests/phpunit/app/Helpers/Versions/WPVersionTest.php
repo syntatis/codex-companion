@@ -39,6 +39,10 @@ class WPVersionTest extends TestCase
 		yield ['0'];
 		yield [''];
 		yield ['0.'];
+
+		// WordPress only accepts stable version.
+		yield ['1.0.0-beta.1'];
+		yield ['1.1.2-prerelease+meta'];
 	}
 
 	/** @dataProvider dataIncrementMajor */

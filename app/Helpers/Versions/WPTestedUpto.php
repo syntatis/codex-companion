@@ -9,16 +9,14 @@ use Syntatis\Codex\Companion\Contracts\Versionable;
 use Version\Version;
 
 /**
- * Handles the version number retrieved from the "Tested up to:" field in
- * the WordPress plugin header.
+ * This class handles the version number retrieved from the "Tested up to"
+ * field in the WordPress plugin header.
  */
 class WPTestedUpto implements Versionable
 {
 	use HandleVersioning;
 
 	private Version $version;
-
-	private ?string $str = null;
 
 	public function __construct(string $version)
 	{
@@ -27,7 +25,6 @@ class WPTestedUpto implements Versionable
 
 	public function incrementMajor(): Versionable
 	{
-		$this->str = null;
 		$this->version->incrementMajor();
 
 		return $this;
@@ -35,7 +32,6 @@ class WPTestedUpto implements Versionable
 
 	public function incrementMinor(): Versionable
 	{
-		$this->str = null;
 		$this->version->incrementMinor();
 
 		return $this;
@@ -43,12 +39,11 @@ class WPTestedUpto implements Versionable
 
 	public function __toString(): string
 	{
-		$str = self::removePatchPart($this->version->toString());
-
-		if ($this->str === null) {
-			$this->str = $str;
-		}
-
-		return $str;
+		/**
+		 * As described in the WordPress handbook, a plugin should not break with
+		 * a minor update. As such, WordPress will ignore the patch version of
+		 * the "Tested up to" field.
+		 */
+		return self::removePatchPart($this->version->toString());
 	}
 }
