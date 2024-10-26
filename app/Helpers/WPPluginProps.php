@@ -261,9 +261,9 @@ class WPPluginProps
 		$headers = [];
 
 		foreach (self::VALID_README_HEADERS as $field => $regex) {
-			preg_match('/^(?:\s*)' . preg_quote($regex) . '\:\s*\K(v?[\d\.]+)$/mi', $fileData, $matches);
+			preg_match('/^(?:\s*)' . preg_quote($regex) . '\:\s*?\Kv?[\d\.]+$/mi', $fileData, $matches);
 
-			$value = $matches[1] ?? '';
+			$value = $matches[0] ?? '';
 
 			/**
 			 * The `wp_plugin_version` field is required.

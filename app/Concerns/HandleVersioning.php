@@ -28,9 +28,7 @@ trait HandleVersioning
 		$minor = $matches['minor'] ?? null;
 
 		if (Val::isBlank($major) || Val::isBlank($minor)) {
-			throw InvalidVersionString::notParsable(
-				$errorMessage ?? 'Invalid version string: ' . $version,
-			);
+			throw InvalidVersionString::notParsable($version);
 		}
 
 		$patch = $matches['patch'] ?? 0;
