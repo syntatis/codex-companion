@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Concerns;
 
-use PharIo\Version\InvalidVersionException;
 use Syntatis\Utils\Val;
+use Version\Exception\InvalidVersionString;
 use Version\Extension\Build;
 use Version\Extension\PreRelease;
 use Version\Version;
@@ -28,7 +28,7 @@ trait HandleVersioning
 		$minor = $matches['minor'] ?? null;
 
 		if (Val::isBlank($major) || Val::isBlank($minor)) {
-			throw new InvalidVersionException('Invalid version string: ' . $version);
+			throw InvalidVersionString::notParsable('Invalid version string: ' . $version);
 		}
 
 		$patch = $matches['patch'] ?? 0;
