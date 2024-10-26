@@ -6,7 +6,10 @@ namespace Syntatis\Codex\Companion\Helpers\Versions;
 
 use Syntatis\Codex\Companion\Concerns\HandleVersioning;
 use Syntatis\Codex\Companion\Contracts\Versionable;
+use Syntatis\Codex\Companion\Exceptions\InvalidVersion;
 use Version\Version;
+
+use function sprintf;
 
 /**
  * This class handles the version number retrieved from the "Tested up to"
@@ -18,14 +21,17 @@ class WPPluginTestedUpto implements Versionable
 
 	protected Version $version;
 
-	protected string $errorMessage = 'Invalid WordPress plugin "Tested up to" version.';
+	protected string $field = 'Tested up to';
 
 	public function __construct(string $version)
 	{
-		$this->version = self::normalizeVersion(
-			$version,
-			$this->errorMessage,
-		);
+		$normalizedVersion = self::normalizeVersion($version);
+
+		if ($normalizedVersion === false) {
+			throw new InvalidVersion(sprintf('Invalid "%s" version: %s', $this->field, $version));
+		}
+
+		$this->version = $normalizedVersion;
 	}
 
 	public function incrementMajor(): Versionable

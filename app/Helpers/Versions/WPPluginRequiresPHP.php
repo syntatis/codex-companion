@@ -6,5 +6,5 @@ namespace Syntatis\Codex\Companion\Helpers\Versions;
 
 class WPPluginRequiresPHP extends WPPluginTestedUpto
 {
-	protected string $errorMessage = 'Invalid WordPress plugin "Requires PHP" version.';
+	protected string $field = 'Requires PHP';
 }

@@ -7,6 +7,7 @@ namespace Syntatis\Codex\Companion\Helpers\Versions;
 use Syntatis\Codex\Companion\Concerns\HandleVersioning;
 use Syntatis\Codex\Companion\Contracts\Versionable;
 use Syntatis\Codex\Companion\Contracts\VersionPatchIncrementable;
+use Syntatis\Codex\Companion\Exceptions\InvalidVersion;
 use Version\Version;
 
 /**
@@ -20,10 +21,13 @@ class WPPluginVersion implements Versionable, VersionPatchIncrementable
 
 	public function __construct(string $version)
 	{
-		$this->version = self::normalizeVersion(
-			$version,
-			'Invalid WordPress plugin "Stable tag" version.',
-		);
+		$normalizedVersion = self::normalizeVersion($version);
+
+		if ($normalizedVersion === false) {
+			throw new InvalidVersion('Invalid "Stable tag" version: ' . $version);
+		}
+
+		$this->version = $normalizedVersion;
 	}
 
 	public function incrementMajor(): Versionable

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion\Concerns;
 
 use Syntatis\Utils\Val;
-use Version\Exception\InvalidVersionString;
 use Version\Extension\Build;
 use Version\Extension\PreRelease;
 use Version\Version;
@@ -19,8 +18,10 @@ trait HandleVersioning
 {
 	/**
 	 * Normalize version before it's validated.
+	 *
+	 * @return Version|false
 	 */
-	protected static function normalizeVersion(string $version, ?string $errorMessage = null): Version
+	protected static function normalizeVersion(string $version, ?string $errorMessage = null)
 	{
 		self::isVersion(ltrim($version, 'v'), $matches);
 
@@ -28,7 +29,7 @@ trait HandleVersioning
 		$minor = $matches['minor'] ?? null;
 
 		if (Val::isBlank($major) || Val::isBlank($minor)) {
-			throw InvalidVersionString::notParsable($version);
+			return false;
 		}
 
 		$patch = $matches['patch'] ?? 0;
