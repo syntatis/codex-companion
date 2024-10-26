@@ -10,6 +10,9 @@ use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Contracts\Versionable;
+use Syntatis\Codex\Companion\Contracts\VersionPatchIncrementable;
+use Syntatis\Codex\Companion\Helpers\Versions\WPRequiresAtLeast;
+use Syntatis\Codex\Companion\Helpers\Versions\WPRequiresPHP;
 use Syntatis\Codex\Companion\Helpers\Versions\WPTestedUpto;
 use Syntatis\Codex\Companion\Helpers\Versions\WPVersion;
 use Syntatis\Utils\Str;
@@ -60,21 +63,21 @@ use function trim;
  * @phpstan-type Props = array{
  *      wp_plugin_name:non-empty-string,
  *      wp_plugin_slug:non-empty-string,
- *      wp_plugin_version:Version,
+ *      wp_plugin_version:Versionable,
  *      wp_plugin_description?:non-empty-string|null,
- *      wp_plugin_requires_min?:Version|null,
- *      wp_plugin_requires_php?:Version|null,
- *      wp_plugin_tested_up_to?:Version|null,
+ *      wp_plugin_requires_at_least?:Versionable|null,
+ *      wp_plugin_requires_php?:Versionable|null,
+ *      wp_plugin_tested_up_to?:Versionable|null,
  * }
  * @phpstan-type PluginHeaders = array{
  * 		wp_plugin_name:non-empty-string,
  * 		wp_plugin_description?:non-empty-string,
- * 		wp_plugin_requires_min?:Version,
- * 		wp_plugin_requires_php?:Version,
+ * 		wp_plugin_requires_at_least?:Versionable,
+ * 		wp_plugin_requires_php?:Versionable,
  * }
  * @phpstan-type ReadmeHeaders = array{
- * 		wp_plugin_version:Version,
- * 		wp_plugin_tested_up_to?:Version,
+ * 		wp_plugin_version:Versionable&VersionPatchIncrementable,
+ * 		wp_plugin_tested_up_to?:Versionable,
  * }
  */
 class WPPluginProps
@@ -82,7 +85,7 @@ class WPPluginProps
 	private const VALID_PLUGIN_HEADERS = [
 		'wp_plugin_name' => 'Plugin Name',
 		'wp_plugin_description' => 'Description',
-		'wp_plugin_requires_min' => 'Requires at least',
+		'wp_plugin_requires_at_least' => 'Requires at least',
 		'wp_plugin_requires_php' => 'Requires PHP',
 	];
 
@@ -92,10 +95,10 @@ class WPPluginProps
 	];
 
 	private const VERSIONING_HEADERS = [
-		'Stable tag' => 'wp_plugin_version',
-		'Tested up to' => 'wp_plugin_tested_up_to',
-		'Requires at least' => 'wp_plugin_requires_min',
-		'Requires PHP' => 'wp_plugin_requires_php',
+		'wp_plugin_version',
+		'wp_plugin_tested_up_to',
+		'wp_plugin_requires_at_least',
+		'wp_plugin_requires_php',
 	];
 
 	private Codex $codex;
@@ -153,18 +156,16 @@ class WPPluginProps
 		return $this->props['wp_plugin_description'] ?? null;
 	}
 
-	/** @phptan-param 'Stable tag'|'Tested up to'|'Requires at least'|'Requires PHP' $key */
-	public function getVersion(string $key = 'Stable tag'): ?Versionable
+	/** @phptan-param key-of<VERSIONING_HEADERS> $key */
+	public function getVersion(string $key): ?Versionable
 	{
-		$key = self::VERSIONING_HEADERS[$key] ?? null;
-
-		if (Val::isBlank($key)) {
+		if (! in_array($key, self::VERSIONING_HEADERS, true)) {
 			return null;
 		}
 
 		$version = $this->props[$key];
 
-		return $version instanceof Version ? $version : null;
+		return $version instanceof Versionable ? $version : null;
 	}
 
 	/**
@@ -187,7 +188,6 @@ class WPPluginProps
 	 *
 	 * @see https://developer.wordpress.org/reference/functions/get_file_data/
 	 *
-	 * @return array<string,string> The plugin headers mapped in array.
 	 * @phpstan-return PluginHeaders
 	 */
 	private function parsePluginHeaders(): array
@@ -223,13 +223,19 @@ class WPPluginProps
 				continue;
 			}
 
-			if (in_array($field, ['wp_plugin_requires_min', 'wp_plugin_requires_php'], true)) {
-				$headers[$field] = self::normalizeVersion($value);
-
-				continue;
+			switch ($field) {
+				case 'wp_plugin_requires_at_least':
+					$version = self::normalizeVersion($value);
+					$headers[$field] = new WPRequiresAtLeast($version->toString());
+					break;
+				case 'wp_plugin_requires_php':
+					$version = self::normalizeVersion($value);
+					$headers[$field] = new WPRequiresPHP($version->toString());
+					break;
+				default:
+					$headers[$field] = $value;
+					break;
 			}
-
-			$headers[$field] = $value;
 		}
 
 		return $headers;
@@ -258,10 +264,20 @@ class WPPluginProps
 
 			$value = $matches[1] ?? '';
 
+			/**
+			 * The `wp_plugin_version` field is required.
+			 * If the field is not found, or invalid, throw an error.
+			 */
+			if ($field === 'wp_plugin_version') {
+				$headers[$field] = new WPVersion($value);
+				continue;
+			}
+
+			if (Val::isBlank($value)) {
+				continue;
+			}
+
 			switch ($field) {
-				case 'wp_plugin_version':
-					$headers[$field] = new WPVersion($value);
-					break;
 				case 'wp_plugin_tested_up_to':
 					$headers[$field] = new WPTestedUpto($value);
 					break;

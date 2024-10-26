@@ -56,7 +56,7 @@ class WPPluginPropsTest extends TestCase
 			'expect' => 'main-plugin-file',
 		];
 
-		yield 'multiple files' => [
+		yield 'multiple php files' => [
 			'files' => [
 				'bar.php' => <<<'CONTENT'
 				/**
@@ -282,7 +282,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getVersion()->toString());
+		$this->assertSame($expect, (string) $props->getVersion('wp_plugin_version'));
 	}
 
 	public static function dataGetVersion(): iterable
@@ -414,6 +414,7 @@ class WPPluginPropsTest extends TestCase
 
 	/**
 	 * @dataProvider dataGetVersionTestedUpTo
+	 * @group test-here
 	 *
 	 * @param mixed $expect
 	 */
@@ -426,7 +427,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getVersion('Tested up to')->toString());
+		$this->assertSame($expect, (string) $props->getVersion('wp_plugin_tested_up_to'));
 	}
 
 	public static function dataGetVersionTestedUpTo(): iterable
@@ -444,7 +445,7 @@ class WPPluginPropsTest extends TestCase
 				Stable tag: 1.0
 				CONTENT,
 			],
-			'expect' => '6.6.0',
+			'expect' => '6.6',
 		];
 
 		yield 'with version' => [
@@ -460,7 +461,7 @@ class WPPluginPropsTest extends TestCase
 				Stable tag: 1.0
 				CONTENT,
 			],
-			'expect' => '6.6.0',
+			'expect' => '6.6',
 		];
 	}
 
@@ -478,7 +479,7 @@ class WPPluginPropsTest extends TestCase
 		$codex = new Codex($this->getTemporaryPath());
 		$props = new WPPluginProps($codex);
 
-		$this->assertSame($expect, $props->getVersion('wp_plugin_requires_min')->toString());
+		$this->assertSame($expect, (string) $props->getVersion('wp_plugin_requires_at_least'));
 	}
 
 	public static function dataGetVersionRequiresMin(): iterable
@@ -496,7 +497,7 @@ class WPPluginPropsTest extends TestCase
 				Stable tag: 1.0
 				CONTENT,
 			],
-			'expect' => '5.8.0',
+			'expect' => '5.8',
 		];
 
 		yield 'with v* prefix' => [
@@ -512,7 +513,7 @@ class WPPluginPropsTest extends TestCase
 				Stable tag: 1.0.2
 				CONTENT,
 			],
-			'expect' => '5.8.0',
+			'expect' => '5.8',
 		];
 	}
 }
