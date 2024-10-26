@@ -6,14 +6,14 @@ namespace Syntatis\Tests\Helpers\Versions;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Syntatis\Codex\Companion\Helpers\Versions\WPTestedUpto;
+use Syntatis\Codex\Companion\Helpers\Versions\WPPluginTestedUpto;
 
-class WPTestedUptoTest extends TestCase
+class WPPluginTestedUptoTest extends TestCase
 {
 	/** @dataProvider dataStringVersion */
 	public function testStringVersion(string $value, string $expect): void
 	{
-		$this->assertSame($expect, (string) (new WPTestedUpto($value)));
+		$this->assertSame($expect, (string) (new WPPluginTestedUpto($value)));
 	}
 
 	public static function dataStringVersion(): iterable
@@ -32,7 +32,7 @@ class WPTestedUptoTest extends TestCase
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		new WPTestedUpto($value);
+		new WPPluginTestedUpto($value);
 	}
 
 	public static function dataStringVersionInvalid(): iterable

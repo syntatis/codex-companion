@@ -6,14 +6,14 @@ namespace Syntatis\Tests\Helpers\Versions;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Syntatis\Codex\Companion\Helpers\Versions\WPVersion;
+use Syntatis\Codex\Companion\Helpers\Versions\WPPluginVersion;
 
-class WPVersionTest extends TestCase
+class WPPluginVersionTest extends TestCase
 {
 	/** @dataProvider dataStringVersion */
 	public function testStringVersion(string $value, string $expect): void
 	{
-		$this->assertSame($expect, (string) (new WPVersion($value)));
+		$this->assertSame($expect, (string) (new WPPluginVersion($value)));
 	}
 
 	public static function dataStringVersion(): iterable
@@ -31,7 +31,7 @@ class WPVersionTest extends TestCase
 	{
 		$this->expectException(InvalidArgumentException::class);
 
-		new WPVersion($value);
+		new WPPluginVersion($value);
 	}
 
 	public static function dataStringVersionInvalid(): iterable
@@ -48,7 +48,7 @@ class WPVersionTest extends TestCase
 	/** @dataProvider dataIncrementMajor */
 	public function testIncrementMajor(string $value, string $expect): void
 	{
-		$instance = new WPVersion($value);
+		$instance = new WPPluginVersion($value);
 		$version = $instance->incrementMajor();
 
 		$this->assertSame($expect, (string) $version);
@@ -67,7 +67,7 @@ class WPVersionTest extends TestCase
 	/** @dataProvider dataIncrementMinor */
 	public function testIncrementMinor(string $value, string $expect): void
 	{
-		$instance = new WPVersion($value);
+		$instance = new WPPluginVersion($value);
 		$version = $instance->incrementMinor();
 
 		$this->assertSame($expect, (string) $version);
@@ -90,7 +90,7 @@ class WPVersionTest extends TestCase
 	/** @dataProvider dataIncrementPatch */
 	public function testIncrementPatch(string $value, string $expect): void
 	{
-		$instance = new WPVersion($value);
+		$instance = new WPPluginVersion($value);
 		$version = $instance->incrementPatch();
 
 		$this->assertSame($expect, (string) $version);

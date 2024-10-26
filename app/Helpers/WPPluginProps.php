@@ -10,8 +10,10 @@ use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Contracts\Versionable;
 use Syntatis\Codex\Companion\Contracts\VersionPatchIncrementable;
-use Syntatis\Codex\Companion\Helpers\Versions\WPRequiresAtLeast;
-use Syntatis\Codex\Companion\Helpers\Versions\WPRequiresPHP;
+use Syntatis\Codex\Companion\Helpers\Versions\WPPluginRequiresAtLeast;
+use Syntatis\Codex\Companion\Helpers\Versions\WPPluginRequiresPHP;
+use Syntatis\Codex\Companion\Helpers\Versions\WPPluginTestedUpto;
+use Syntatis\Codex\Companion\Helpers\Versions\WPPluginVersion;
 use Syntatis\Codex\Companion\Helpers\Versions\WPTestedUpto;
 use Syntatis\Codex\Companion\Helpers\Versions\WPVersion;
 use Syntatis\Utils\Str;
@@ -225,11 +227,11 @@ class WPPluginProps
 			switch ($field) {
 				case 'wp_plugin_requires_at_least':
 					$version = self::normalizeVersion($value);
-					$headers[$field] = new WPRequiresAtLeast($version->toString());
+					$headers[$field] = new WPPluginRequiresAtLeast($version->toString());
 					break;
 				case 'wp_plugin_requires_php':
 					$version = self::normalizeVersion($value);
-					$headers[$field] = new WPRequiresPHP($version->toString());
+					$headers[$field] = new WPPluginRequiresPHP($version->toString());
 					break;
 				default:
 					$headers[$field] = $value;
@@ -268,7 +270,7 @@ class WPPluginProps
 			 * If the field is not found, or invalid, throw an error.
 			 */
 			if ($field === 'wp_plugin_version') {
-				$headers[$field] = new WPVersion($value);
+				$headers[$field] = new WPPluginVersion($value);
 				continue;
 			}
 
@@ -278,7 +280,7 @@ class WPPluginProps
 
 			switch ($field) {
 				case 'wp_plugin_tested_up_to':
-					$headers[$field] = new WPTestedUpto($value);
+					$headers[$field] = new WPPluginTestedUpto($value);
 					break;
 			}
 		}
@@ -354,7 +356,12 @@ class WPPluginProps
 	 */
 	private static function normalizeVersion(string $version): Version
 	{
-		self::isVersion(ltrim($version, 'v'), $matches);
+		/**
+		 * Modify the Semver RegEx rules to match version without the patch number.
+		 *
+		 * @see https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+		 */
+		$matched = preg_match('/^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)(?:\.(?P<patch>0|[1-9]\d*))?(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/', ltrim($version, 'v'), $matches);
 
 		$major = $matches['major'] ?? null;
 		$minor = $matches['minor'] ?? null;
@@ -376,18 +383,5 @@ class WPPluginProps
 		);
 
 		return $version;
-	}
-
-	/** @param array<mixed>|null $matches */
-	private static function isVersion(string $version, ?array &$matches = null): bool
-	{
-		/**
-		 * Modify the Semver RegEx rules to match version without the patch number.
-		 *
-		 * @see https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-		 */
-		$matched = preg_match('/^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)(?:\.(?P<patch>0|[1-9]\d*))?(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/', $version, $matches);
-
-		return $matched === 1;
 	}
 }

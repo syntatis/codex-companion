@@ -12,7 +12,7 @@ use Version\Version;
 /**
  * Handle WordPress "Stable Tag" version.
  */
-class WPVersion implements Versionable, VersionPatchIncrementable
+class WPPluginVersion implements Versionable, VersionPatchIncrementable
 {
 	use HandleVersioning;
 
@@ -20,7 +20,10 @@ class WPVersion implements Versionable, VersionPatchIncrementable
 
 	public function __construct(string $version)
 	{
-		$this->version = self::normalizeVersion($version);
+		$this->version = self::normalizeVersion(
+			$version,
+			'Invalid WordPress plugin "Stable tag" version.',
+		);
 	}
 
 	public function incrementMajor(): Versionable

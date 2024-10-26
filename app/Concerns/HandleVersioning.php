@@ -20,7 +20,7 @@ trait HandleVersioning
 	/**
 	 * Normalize version before it's validated.
 	 */
-	private static function normalizeVersion(string $version): Version
+	protected static function normalizeVersion(string $version, ?string $errorMessage = null): Version
 	{
 		self::isVersion(ltrim($version, 'v'), $matches);
 
@@ -28,7 +28,9 @@ trait HandleVersioning
 		$minor = $matches['minor'] ?? null;
 
 		if (Val::isBlank($major) || Val::isBlank($minor)) {
-			throw InvalidVersionString::notParsable('Invalid version string: ' . $version);
+			throw InvalidVersionString::notParsable(
+				$errorMessage ?? 'Invalid version string: ' . $version,
+			);
 		}
 
 		$patch = $matches['patch'] ?? 0;

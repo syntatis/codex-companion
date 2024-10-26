@@ -12,15 +12,20 @@ use Version\Version;
  * This class handles the version number retrieved from the "Tested up to"
  * field in the WordPress plugin header.
  */
-class WPTestedUpto implements Versionable
+class WPPluginTestedUpto implements Versionable
 {
 	use HandleVersioning;
 
-	private Version $version;
+	protected Version $version;
+
+	protected string $errorMessage = 'Invalid WordPress plugin "Tested up to" version.';
 
 	public function __construct(string $version)
 	{
-		$this->version = self::normalizeVersion($version);
+		$this->version = self::normalizeVersion(
+			$version,
+			$this->errorMessage,
+		);
 	}
 
 	public function incrementMajor(): Versionable
