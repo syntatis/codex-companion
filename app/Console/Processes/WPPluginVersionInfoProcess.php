@@ -36,7 +36,7 @@ class WPPluginVersionInfoProcess implements Executable
 			$props = new WPPluginProps($this->codex);
 
 			$this->output->listing([
-				sprintf('<info>Version:</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_version')),
+				sprintf('<info>Version (Stable tag):</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_version')),
 				sprintf('<info>Tested up to:</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_tested_up_to')),
 			]);
 		} catch (Throwable $th) {
