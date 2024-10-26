@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Syntatis\Codex\Companion\Helpers;
 
-use PharIo\Version\InvalidVersionException;
 use RuntimeException;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -361,7 +360,7 @@ class WPPluginProps
 		$minor = $matches['minor'] ?? null;
 
 		if (Val::isBlank($major) || Val::isBlank($minor)) {
-			throw new InvalidVersionException('Invalid version string: ' . $version);
+			throw InvalidVersionString::notParsable($version);
 		}
 
 		$patch = $matches['patch'] ?? 0;

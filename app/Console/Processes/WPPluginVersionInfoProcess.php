@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Codex\Companion\Console\VersionInfoCommand;
+namespace Syntatis\Codex\Companion\Console\Processes;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Concerns\RunProcess;
 use Syntatis\Codex\Companion\Contracts\Executable;
-use Syntatis\Codex\Companion\Projects\Howdy\VersioningProps;
+use Syntatis\Codex\Companion\Helpers\WPPluginProps;
 use Throwable;
 
 use function sprintf;
 
-class WPVersionInfoProcess implements Executable
+class WPPluginVersionInfoProcess implements Executable
 {
 	use RunProcess;
 
@@ -33,14 +33,10 @@ class WPVersionInfoProcess implements Executable
 	public function execute(): int
 	{
 		try {
-			$props = new VersioningProps($this->codex);
-			$props = $props->get();
+			$props = new WPPluginProps($this->codex);
 
-			$wpVersion = $props['wp_version'];
-			$wpTested = $props['wp_tested'];
-
-			$this->output->text(sprintf('Version: %s', $wpVersion));
-			$this->output->text(sprintf('Tested up to: %s', $wpTested));
+			$this->output->text(sprintf('Version: %s', (string) $props->getVersion('wp_plugin_version')));
+			$this->output->text(sprintf('Tested up to: %s', $props->getVersion('wp_plugin_tested_up_to')));
 		} catch (Throwable $th) {
 			$this->output->error($th->getMessage());
 

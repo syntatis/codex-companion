@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Syntatis\Codex\Companion\Codex;
-use Syntatis\Codex\Companion\Console\VersionInfoCommand\WPVersionInfoProcess;
+use Syntatis\Codex\Companion\Console\Processes\WPPluginVersionInfoProcess;
 
 class VersionInfoCommand extends BaseCommand
 {
@@ -26,7 +26,7 @@ class VersionInfoCommand extends BaseCommand
 		$type = $codex->getComposer('type');
 
 		if ($type === 'wordpress-plugin') {
-			return (new WPVersionInfoProcess($codex, $style))->execute();
+			return (new WPPluginVersionInfoProcess($codex, $style))->execute();
 		}
 
 		$style->warning('Unsupported project type.');
