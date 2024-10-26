@@ -38,6 +38,8 @@ class WPPluginVersionInfoProcess implements Executable
 			$this->output->listing([
 				sprintf('<info>Version (Stable tag):</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_version')),
 				sprintf('<info>Tested up to:</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_tested_up_to')),
+				sprintf('<info>Requires at least:</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_requires_at_least')),
+				sprintf('<info>Requires PHP:</info> <comment>%s</comment>', (string) $props->getVersion('wp_plugin_requires_php')),
 			]);
 		} catch (Throwable $th) {
 			$this->output->error($th->getMessage());
