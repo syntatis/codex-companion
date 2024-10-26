@@ -261,7 +261,7 @@ class WPPluginProps
 		$headers = [];
 
 		foreach (self::VALID_README_HEADERS as $field => $regex) {
-			preg_match('/^(?:\s*)\K' . preg_quote($regex) . ':\s*(v?[\d\.]+)$/mi', $fileData, $matches);
+			preg_match('/^(?:\s*)' . preg_quote($regex) . '\:\s*\K(v?[\d\.]+)$/mi', $fileData, $matches);
 
 			$value = $matches[1] ?? '';
 
