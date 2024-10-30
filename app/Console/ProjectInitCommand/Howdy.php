@@ -66,7 +66,7 @@ class Howdy implements Executable
 		}
 
 		try {
-			$userInputs = new UserInputPrompts($projectProps->get(), $this->style);
+			$userInputs = new UserInputPrompts($projectProps->getAll(), $this->style);
 			$userInputs->execute();
 
 			$projectFiles = new ProjectFiles($this->codex);

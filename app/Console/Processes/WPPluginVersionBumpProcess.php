@@ -2,20 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\Codex\Companion\Console\VersionBumpCommand;
+namespace Syntatis\Codex\Companion\Console\Processes;
 
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
-use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Concerns\RunProcess;
 use Syntatis\Codex\Companion\Contracts\Executable;
-use Syntatis\Codex\Companion\Projects\Howdy\VersioningFiles;
-use Throwable;
+use Syntatis\Utils\Val;
 
 use function sprintf;
 
-class WPVersionBumpProcess implements Executable
+class WPPluginVersionBumpProcess implements Executable
 {
 	use RunProcess;
 
@@ -33,21 +31,22 @@ class WPVersionBumpProcess implements Executable
 
 	public function execute(): int
 	{
-		try {
-			$files = new VersioningFiles($this->codex);
+		/** @var string $version */
+		$version = $this->output->choice('Which version would you like to bump?', [
+			'Stable tag',
+			'WordPress min. requirement',
+			'PHP min. requirement',
+		], 'Stable tag');
 
-			foreach ($files as $file) {
-				$this->output->text(
-					sprintf(
-						'Updating version in <comment>%s</comment>',
-						Path::makeRelative($file->getRealPath(), $this->codex->getProjectPath()),
-					),
-				);
-			}
-		} catch (Throwable $th) {
-			$this->output->error($th->getMessage());
-
-			return 1;
+		if (! Val::isBlank($version)) {
+			$choice = $this->output->choice(
+				sprintf('Which "%s" version would you like to bump?', $version),
+				[
+					'major',
+					'minor',
+					'patch',
+				],
+			);
 		}
 
 		return 0;

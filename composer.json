@@ -40,8 +40,7 @@
         "symfony/finder": "^5.4 || ^6.4 || ^7.0",
         "symfony/options-resolver": "^5.4 || ^6.4 || ^7.0",
         "symfony/process": "^5.4 || ^6.4 || ^7.0",
-        "syntatis/utils": "^2.1",
-        "syntatis/wp-plugin-readme-parser": "^2.1"
+        "syntatis/utils": "^2.1"
     },
     "require-dev": {
         "composer/composer": "^2.8",
@@ -54,7 +53,7 @@
         "phpstan/phpstan-strict-rules": "^1.6",
         "phpunit/phpunit": "^9.6",
         "symfony/var-dumper": "^5.4",
-        "syntatis/coding-standard": "^1.4"
+        "syntatis/coding-standard": "^1.5"
     },
     "bin": ["bin/codex"],
     "config": {

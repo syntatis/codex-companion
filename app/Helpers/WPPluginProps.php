@@ -14,8 +14,6 @@ use Syntatis\Codex\Companion\Helpers\Versions\WPPluginRequiresAtLeast;
 use Syntatis\Codex\Companion\Helpers\Versions\WPPluginRequiresPHP;
 use Syntatis\Codex\Companion\Helpers\Versions\WPPluginTestedUpto;
 use Syntatis\Codex\Companion\Helpers\Versions\WPPluginVersion;
-use Syntatis\Codex\Companion\Helpers\Versions\WPTestedUpto;
-use Syntatis\Codex\Companion\Helpers\Versions\WPVersion;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 use Version\Exception\InvalidVersionString;
