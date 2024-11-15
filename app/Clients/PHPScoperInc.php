@@ -171,21 +171,32 @@ class PHPScoperInc
 	/** @return array<string> */
 	private function getDefaultExcludeNamespaces(): array
 	{
+		/**
+		 * @var array<string> $excludeNamespaces
+		 * @phpstan-var list<string> $excludeNamespaces
+		 */
 		$excludeNamespaces = [];
+
+		/**
+		 * @var array<string> $namespaces
+		 * @see \Syntatis\Codex\Companion\Projects\Howdy\InitializeFiles\ComposerFile::getConfigExcludeNamespaces
+		 * @phpstan-var list<string> $namespaces
+		 */
+		$namespaces = $this->codex->getConfig('scoper.exclude-namespaces');
 		$rootNamespace = $this->codex->getRootNamespace();
 
 		if ($rootNamespace !== null) {
 			$excludeNamespaces[] = trim($rootNamespace, '\\');
 		}
 
-		$namespaces = $this->codex->getConfig('scoper.exclude-namespaces');
-
-		if (is_array($namespaces) && ! Val::isBlank($namespaces)) {
+		if (! Val::isBlank($namespaces)) {
+			$namespaces = array_map(
+				static fn ($value) => trim($value, '\\'),
+				$namespaces,
+			);
 			$excludeNamespaces = array_merge(
 				$excludeNamespaces,
-				array_map(static function ($value) {
-					return trim($value, '\\');
-				}, $namespaces),
+				$namespaces,
 			);
 		}
 

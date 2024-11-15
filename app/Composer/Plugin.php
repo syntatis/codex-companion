@@ -15,6 +15,8 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Syntatis\Codex\Companion\Console\ProjectInitCommand;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand;
 
+use function is_array;
+
 /** @codeCoverageIgnore */
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
@@ -57,7 +59,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
 	public function onPostAutoloadDump(Event $event): void
 	{
-		if (($GLOBALS['argv'][1] ?? null) === 'create-project') {
+		$argv = isset($GLOBALS['argv']) && is_array($GLOBALS['argv']) ?
+			$GLOBALS['argv'] :
+			[];
+
+		if (($argv[1] ?? null) === 'create-project') {
 			return;
 		}
 

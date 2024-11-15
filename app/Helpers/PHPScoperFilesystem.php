@@ -8,11 +8,13 @@ use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 use Syntatis\Codex\Companion\Codex;
+use Syntatis\Utils\Arr;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
 use function array_filter;
 use function array_map;
+use function array_unique;
 use function file_exists;
 use function in_array;
 use function is_array;
@@ -187,20 +189,29 @@ class PHPScoperFilesystem
 	 * file. It should only include the packages that are explicitly added
 	 * in the `scoper.install-dev` configuration.
 	 *
-	 * @return array<string>
+	 * @return array<string,string>
 	 */
 	private function getRequireDev(): array
 	{
 		$requireDev = $this->codex->getComposer('require-dev');
 
-		if (! is_array($requireDev) || Val::isBlank($requireDev)) {
+		if (Val::isBlank($requireDev) || ! is_array($requireDev)) {
 			return [];
 		}
 
+		$requireDev = array_filter(
+			$requireDev,
+			static fn ($value, $key): bool => is_string($value) && is_string($key),
+			ARRAY_FILTER_USE_BOTH,
+		);
 		$installDev = $this->codex->getConfig('scoper.install-dev');
+		$installDev = array_filter(
+			is_array($installDev) ? array_unique($installDev) : [],
+			static fn ($v) => is_string($v),
+		);
 
-		if (! is_array($installDev) || Val::isBlank($installDev)) {
-			return [];
+		if (! Arr::isList($installDev)) {
+			return $requireDev;
 		}
 
 		return array_filter(
