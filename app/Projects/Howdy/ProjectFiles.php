@@ -42,7 +42,9 @@ class ProjectFiles implements IteratorAggregate, Countable
 
 	public function count(): int
 	{
-		return $this->finder->count();
+		$count = $this->finder->count();
+
+		return $count > 0 ? $count : 0;
 	}
 
 	/** @return Traversable<SplFileInfo> */

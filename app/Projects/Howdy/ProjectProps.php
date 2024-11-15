@@ -223,7 +223,7 @@ class ProjectProps
 				'Description' => 'Description',
 			] as $field => $regex
 		) {
-			preg_match('/^(?:[ \t]*<\?php)?[ \t\/*#@]*' . preg_quote($regex) . ':(.*)$/mi', $fileData, $match);
+			preg_match('/^(?:[ \t]*<\?php)?[ \t\/*#@]*' . preg_quote($regex, '/') . ':(.*)$/mi', $fileData, $match);
 
 			if (isset($match[1])) {
 				$headers[$field] = trim((string) preg_replace('/\s*(?:\*\/|\?>).*/', '', $match[1]));

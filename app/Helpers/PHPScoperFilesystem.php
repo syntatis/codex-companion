@@ -221,7 +221,11 @@ class PHPScoperFilesystem
 		);
 	}
 
-	/** @return array<string,array<string,string|array<string>>>|null */
+	/**
+	 * @phpstan-param 'autoload'|'autoload-dev' $key
+	 *
+	 * @return array<string,array<string,string|array<string>>>|null
+	 */
 	private function getAutoload(string $key): ?array
 	{
 		$mapper = function ($paths) {
@@ -233,12 +237,13 @@ class PHPScoperFilesystem
 			}
 
 			if (is_array($paths)) {
-				return array_map(function (string $path) {
-					return Path::makeRelative(
-						$this->codex->getProjectPath(rtrim($path, '/')),
+				return array_map(
+					fn ($path) => Path::makeRelative(
+						$this->codex->getProjectPath(rtrim(is_string($path) ? $path : '', '/')),
 						$this->getBuildPath(),
-					);
-				}, $paths);
+					),
+					$paths,
+				);
 			}
 
 			return $paths;
@@ -248,7 +253,7 @@ class PHPScoperFilesystem
 
 		if (is_array($autoloads) && ! Val::isBlank($autoloads)) {
 			foreach ($autoloads as $std => $autoload) {
-				$autoloads[$std] = array_map($mapper, $autoload);
+				$autoloads[$std] = array_map($mapper, is_array($autoload) ? $autoload : [$autoload]);
 			}
 
 			return $autoloads;
