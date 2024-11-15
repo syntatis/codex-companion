@@ -43,7 +43,7 @@ class UserInputPrompts implements Executable
 	{
 		$missing = [];
 
-		if (! $this->evelProjectProps($props, $missing)) {
+		if (! $this->evalProjectProps($props, $missing)) {
 			throw new MissingRequiredInfo(...$missing);
 		}
 
@@ -53,11 +53,11 @@ class UserInputPrompts implements Executable
 
 	/**
 	 * @param array<string,string|null> $props
-	 * @param array<string,string|null> $missing
+	 * @param array<int,string>         $missing
 	 *
 	 * @phpstan-assert-if-true ValidatedItems $props
 	 */
-	private function evelProjectProps(array $props, array &$missing): bool
+	private function evalProjectProps(array $props, array &$missing): bool
 	{
 		$required = [
 			'php_vendor_prefix',

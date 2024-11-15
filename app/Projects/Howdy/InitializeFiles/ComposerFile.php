@@ -9,8 +9,10 @@ use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use Syntatis\Codex\Companion\Contracts\Dumpable;
 use Syntatis\Codex\Companion\Contracts\EditableFile;
+use Syntatis\Utils\Arr;
 use Syntatis\Utils\Val;
 
+use function array_filter;
 use function array_map;
 use function array_unique;
 use function dot;
@@ -123,7 +125,7 @@ class ComposerFile implements Dumpable, EditableFile
 			unset($autoloads[$namespace]);
 
 			$newNamespace = preg_replace(
-				'/^' . preg_quote($this->searches['php_namespace']) . '\\\\/',
+				'/^' . preg_quote($this->searches['php_namespace'], '/') . '\\\\/',
 				$this->replacements['php_namespace'] . '\\',
 				$namespace,
 			);
@@ -143,21 +145,28 @@ class ComposerFile implements Dumpable, EditableFile
 
 		$namespaces = $this->data->get('extra.codex.scoper.exclude-namespaces') ?? [];
 
-		if (! is_array($namespaces) || Val::isBlank($namespaces)) {
+		if (Val::isBlank($namespaces) || ! is_array($namespaces)) {
 			return null;
 		}
 
-		return array_unique(
-			array_map(
-				function ($namespace) {
-					if (trim($namespace, '\\') === trim($this->searches['php_namespace'], '\\')) {
-						return trim($this->replacements['php_namespace'], '\\');
-					}
+		$namespaces = array_filter(
+			array_unique($namespaces),
+			static fn ($namespace) => is_string($namespace),
+		);
 
-					return $namespace;
-				},
-				$namespaces,
-			),
+		if (! Arr::isList($namespaces)) {
+			return null;
+		}
+
+		return array_map(
+			function (string $namespace) {
+				if (trim($namespace, '\\') === trim($this->searches['php_namespace'], '\\')) {
+					return trim($this->replacements['php_namespace'], '\\');
+				}
+
+				return $namespace;
+			},
+			$namespaces,
 		);
 	}
 
@@ -179,8 +188,10 @@ class ComposerFile implements Dumpable, EditableFile
 			}
 
 			if (is_array($script)) {
+				$script = array_filter($script, static fn ($s) => is_string($s));
+
 				return array_map(
-					[$this, 'searchReplaceSlug'],
+					fn ($s) => $this->searchReplaceSlug($s),
 					$script,
 				);
 			}
