@@ -31,6 +31,13 @@ use const JSON_UNESCAPED_SLASHES;
  *
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
  *
+ * @phpstan-type Configs = array{
+ * 		expose-global-constants:bool,
+ * 		expose-global-classes:bool,
+ * 		expose-global-functions:bool,
+ * 		exclude-namespaces:array<string>,
+ * 		exclude-files:iterable<SplFileInfo>|array<string>
+ * }
  * @phpstan-type FinderConfigs = array{not-path?:array<string>, exclude?:array<string>}
  */
 class PHPScoperInc
@@ -43,9 +50,12 @@ class PHPScoperInc
 	/** @phpstan-var FinderConfigs|array{} */
 	private array $finderConfigs = [];
 
-	/** @param array<string,mixed> $configs */
+	/** @phpstan-param Configs|array{} $configs */
 	public function __construct(string $projectPath, array $configs = [])
 	{
+		$excludeFiles = $configs['exclude-files'] ?? [];
+		unset($configs['exclude-files']);
+
 		$this->codex = new Codex($projectPath);
 		$this->data = new Dot(array_merge(
 			[
@@ -53,10 +63,10 @@ class PHPScoperInc
 				'expose-global-classes' => true,
 				'expose-global-functions' => true,
 				'exclude-namespaces' => [],
-				'exclude-files' => [],
 			],
 			$configs,
 		));
+		$this->excludeFiles($excludeFiles);
 	}
 
 	/**
@@ -88,42 +98,6 @@ class PHPScoperInc
 		clone $self = $this;
 
 		$self->data->push('finders', $finder);
-
-		return $self;
-	}
-
-	/**
-	 * The list of files that will be left untouched during the scoping process.
-	 *
-	 * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md#excluded-files
-	 *
-	 * @param iterable<mixed> $files A list of path of files to exclude. Each path may be an
-	 *                               absolute or relative to the PHP-Scoper config file.
-	 */
-	public function excludeFiles(iterable $files): self
-	{
-		$self = clone $this;
-
-		$merger = [];
-		$current = $self->data->get('exclude-files', []);
-		$current = is_array($current) ? $current : [];
-
-		foreach ($files as $file) {
-			if (is_string($file)) {
-				$merger[] = $file;
-				continue;
-			}
-
-			if ($file instanceof SplFileInfo) {
-				$merger[] = (string) $file;
-				continue;
-			}
-		}
-
-		$self->data->set(
-			'exclude-files',
-			array_values(array_unique(array_merge($current, $merger))),
-		);
 
 		return $self;
 	}
@@ -251,5 +225,37 @@ class PHPScoperInc
 				return $content;
 			},
 		];
+	}
+
+	/**
+	 * The list of files that will be left untouched during the scoping process.
+	 *
+	 * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md#excluded-files
+	 *
+	 * @param iterable<mixed> $files A list of path of files to exclude. Each path may be an
+	 *                               absolute or relative to the PHP-Scoper config file.
+	 */
+	private function excludeFiles(iterable $files): void
+	{
+		$merger = [];
+		$current = $this->data->get('exclude-files', []);
+		$current = is_array($current) ? $current : [];
+
+		foreach ($files as $file) {
+			if (is_string($file)) {
+				$merger[] = $file;
+				continue;
+			}
+
+			if ($file instanceof SplFileInfo) {
+				$merger[] = (string) $file;
+				continue;
+			}
+		}
+
+		$this->data->set(
+			'exclude-files',
+			array_values(array_unique(array_merge($current, $merger))),
+		);
 	}
 }

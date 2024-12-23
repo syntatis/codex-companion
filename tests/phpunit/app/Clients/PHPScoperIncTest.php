@@ -209,13 +209,17 @@ class PHPScoperIncTest extends TestCase
 		$this->dumpTemporaryFile('vendor/foo.js', '');
 		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
-		$instance = new PHPScoperInc($this->getTemporaryPath());
-		$instance = $instance->excludeFiles([
-			$this->getTemporaryPath('vendor/foo.css'),
-			$this->getTemporaryPath('vendor/foo.html'),
-			$this->getTemporaryPath('vendor/foo.js'),
-			$this->getTemporaryPath('vendor/foo.html.php'),
-		]);
+		$instance = new PHPScoperInc(
+			$this->getTemporaryPath(),
+			[
+				'exclude-files' => [
+					$this->getTemporaryPath('vendor/foo.css'),
+					$this->getTemporaryPath('vendor/foo.html'),
+					$this->getTemporaryPath('vendor/foo.js'),
+					$this->getTemporaryPath('vendor/foo.html.php'),
+				],
+			],
+		);
 
 		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
 		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
@@ -242,7 +246,7 @@ class PHPScoperIncTest extends TestCase
 		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$finder = Finder::create();
-		$instance = $instance->addFinder($finder);
+		$instance = $instance->withFinder($finder);
 
 		$this->assertContains($finder, $instance->get()['finders']);
 	}
@@ -267,7 +271,7 @@ class PHPScoperIncTest extends TestCase
 			return 'patched';
 		};
 		$instance = new PHPScoperInc($this->getTemporaryPath());
-		$instance = $instance->addPatcher($patcher);
+		$instance = $instance->withPatcher($patcher);
 
 		$this->assertContains($patcher, $instance->get()['patchers']);
 	}
