@@ -30,6 +30,8 @@ use const JSON_UNESCAPED_SLASHES;
  * Abstraction for PHP-Scoper configuration.
  *
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
+ *
+ * @phpstan-type FinderConfigs = array{not-path?:array<string>, exclude?:array<string>}
  */
 class PHPScoperInc
 {
@@ -37,6 +39,9 @@ class PHPScoperInc
 
 	/** @var Dot<string,mixed> */
 	private Dot $data;
+
+	/** @phpstan-var FinderConfigs|array{} */
+	private array $finderConfigs = [];
 
 	/** @param array<string,mixed> $configs */
 	public function __construct(string $projectPath, array $configs = [])
@@ -52,6 +57,16 @@ class PHPScoperInc
 			],
 			$configs,
 		));
+	}
+
+	/**
+	 * Add the list of files to exclude from the main Finder instance.
+	 *
+	 * @phpstan-param FinderConfigs $configs
+	 */
+	public function setFinderConfigs(array $configs): void
+	{
+		$this->finderConfigs = $configs;
 	}
 
 	public function addPatcher(callable $patcher): self
@@ -79,7 +94,7 @@ class PHPScoperInc
 	 * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md#excluded-files
 	 *
 	 * @param iterable<mixed> $files A list of path of files to exclude. Each path may be an
-	 *                                                   absolute or relative to the PHP-Scoper config file.
+	 *                               absolute or relative to the PHP-Scoper config file.
 	 */
 	public function excludeFiles(iterable $files): self
 	{
@@ -133,21 +148,35 @@ class PHPScoperInc
 	/** @return array<iterable<SplFileInfo>> */
 	private function getDefaultFinders(): array
 	{
+		$notPath = $this->finderConfigs['not-path'] ?? [];
+		$exclude = $this->finderConfigs['exclude'] ?? [];
+
 		return [
 			Finder::create()
 				->files()
 				->in(['vendor'])
 				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
-				->notPath(['bamarni', 'bin'])
-				->exclude([
-					'doc',
-					'test',
-					'test_old',
-					'tests',
-					'Tests',
-					'Test',
-					'vendor-bin',
-				]),
+				->notPath(
+					array_merge(
+						['bamarni', 'bin'],
+						$notPath,
+					),
+				)
+				->exclude(
+					array_merge(
+						[
+							'.github',
+							'Test',
+							'Tests',
+							'doc',
+							'test',
+							'test_old',
+							'tests',
+							'vendor-bin',
+						],
+						$exclude,
+					),
+				),
 			Finder::create()->append(['composer.json']),
 		];
 	}
