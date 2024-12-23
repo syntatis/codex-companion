@@ -95,7 +95,7 @@ class PHPScoperInc
 	/** @param iterable<SplFileInfo> $finder */
 	public function withFinder(iterable $finder): self
 	{
-		clone $self = $this;
+		$self = clone $this;
 
 		$self->data->push('finders', $finder);
 
