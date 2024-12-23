@@ -64,7 +64,7 @@ class PHPScoperInc
 	 *
 	 * @phpstan-param FinderConfigs $configs
 	 */
-	public function setFinderConfigs(array $configs): self
+	public function withFinderConfigs(array $configs): self
 	{
 		$self = clone $this;
 
@@ -73,7 +73,7 @@ class PHPScoperInc
 		return $self;
 	}
 
-	public function addPatcher(callable $patcher): self
+	public function withPatcher(callable $patcher): self
 	{
 		$self = clone $this;
 
@@ -83,7 +83,7 @@ class PHPScoperInc
 	}
 
 	/** @param iterable<SplFileInfo> $finder */
-	public function addFinder(iterable $finder): self
+	public function withFinder(iterable $finder): self
 	{
 		clone $self = $this;
 
