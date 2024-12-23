@@ -64,14 +64,18 @@ class PHPScoperInc
 	 *
 	 * @phpstan-param FinderConfigs $configs
 	 */
-	public function setFinderConfigs(array $configs): void
+	public function setFinderConfigs(array $configs): self
 	{
-		$this->finderConfigs = $configs;
+		$self = clone $this;
+
+		$self->finderConfigs = $configs;
+
+		return $self;
 	}
 
 	public function addPatcher(callable $patcher): self
 	{
-		clone $self = $this;
+		$self = clone $this;
 
 		$self->data->push('patchers', $patcher);
 
@@ -98,7 +102,7 @@ class PHPScoperInc
 	 */
 	public function excludeFiles(iterable $files): self
 	{
-		clone $self = $this;
+		$self = clone $this;
 
 		$merger = [];
 		$current = $self->data->get('exclude-files', []);
