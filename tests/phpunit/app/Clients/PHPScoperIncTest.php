@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Syntatis\Tests\Clients;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Clients\PHPScoperInc;
 use Syntatis\Tests\WithTemporaryFiles;
@@ -209,13 +211,17 @@ class PHPScoperIncTest extends TestCase
 		$this->dumpTemporaryFile('vendor/foo.js', '');
 		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
-		$instance = new PHPScoperInc($this->getTemporaryPath());
-		$instance = $instance->excludeFiles([
-			$this->getTemporaryPath('vendor/foo.css'),
-			$this->getTemporaryPath('vendor/foo.html'),
-			$this->getTemporaryPath('vendor/foo.js'),
-			$this->getTemporaryPath('vendor/foo.html.php'),
-		]);
+		$instance = new PHPScoperInc(
+			$this->getTemporaryPath(),
+			[
+				'exclude-files' => [
+					$this->getTemporaryPath('vendor/foo.css'),
+					$this->getTemporaryPath('vendor/foo.html'),
+					$this->getTemporaryPath('vendor/foo.js'),
+					$this->getTemporaryPath('vendor/foo.html.php'),
+				],
+			],
+		);
 
 		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
 		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
@@ -223,7 +229,45 @@ class PHPScoperIncTest extends TestCase
 		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
 	}
 
-	public function testAddFinder(): void
+	public function testExcludeFilesWithSplFileInfo(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				}
+			}
+			CONTENT,
+		);
+		$this->dumpTemporaryFile('vendor/foo.css', '');
+		$this->dumpTemporaryFile('vendor/foo.html', '');
+		$this->dumpTemporaryFile('vendor/foo.js', '');
+		$this->dumpTemporaryFile('vendor/foo.html.php', '');
+
+		$instance = new PHPScoperInc(
+			$this->getTemporaryPath(),
+			[
+				'exclude-files' => [
+					new SplFileInfo($this->getTemporaryPath('vendor/foo.css')),
+					new SplFileInfo($this->getTemporaryPath('vendor/foo.html')),
+					new SplFileInfo($this->getTemporaryPath('vendor/foo.js')),
+					new SplFileInfo($this->getTemporaryPath('vendor/foo.html.php')),
+				],
+			],
+		);
+
+		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
+	}
+
+	public function testWithFinder(): void
 	{
 		$this->dumpTemporaryFile(
 			'composer.json',
@@ -242,12 +286,41 @@ class PHPScoperIncTest extends TestCase
 		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$finder = Finder::create();
-		$instance = $instance->addFinder($finder);
+		$instance = $instance->withFinder($finder);
 
 		$this->assertContains($finder, $instance->get()['finders']);
 	}
 
-	public function testAddPatcher(): void
+	public function testWithFinderConfigs(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				}
+			}
+			CONTENT,
+		);
+		$this->dumpTemporaryFile('vendor/foo/foo.html.php', '');
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+
+		$finder = Finder::create();
+		$instance = $instance->withFinderConfigs(['not-path' => ['foo']]);
+		$finder = $instance->get()['finders'][0];
+
+		$finderNotPaths = (new ReflectionClass($finder))->getProperty('notPaths');
+		$finderNotPaths->setAccessible(true);
+
+		$this->assertContains('foo', $finderNotPaths->getValue($finder));
+	}
+
+	public function testWithPatcher(): void
 	{
 		$this->dumpTemporaryFile(
 			'composer.json',
@@ -267,7 +340,7 @@ class PHPScoperIncTest extends TestCase
 			return 'patched';
 		};
 		$instance = new PHPScoperInc($this->getTemporaryPath());
-		$instance = $instance->addPatcher($patcher);
+		$instance = $instance->withPatcher($patcher);
 
 		$this->assertContains($patcher, $instance->get()['patchers']);
 	}
