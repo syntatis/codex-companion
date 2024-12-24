@@ -159,6 +159,7 @@ class Codex
 				'expose-global-functions',
 				'prefix',
 				'output-dir',
+				'finder',
 			]);
 			$resolver->setAllowedTypes('prefix', 'string');
 			$resolver->setAllowedTypes('output-dir', 'string');
@@ -175,7 +176,13 @@ class Codex
 				'expose-global-functions' => true,
 				'exclude-namespaces' => [],
 				'install-dev' => [],
+				'finder' => [],
 			]);
+			$resolver->setDefault('finder', static function (OptionsResolver $resolver): void {
+				$resolver->setDefined(['not-path', 'exclude']);
+				$resolver->setAllowedTypes('not-path', 'string[]');
+				$resolver->setAllowedTypes('exclude', 'string[]');
+			});
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
 			});

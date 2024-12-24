@@ -87,7 +87,20 @@ class PHPScoperInc
 		$self = clone $this;
 
 		if (is_array($finder)) {
-			$self->finderConfigs = $finder;
+			$self->finderConfigs = [
+				'not-path' => array_unique(
+					array_merge(
+						(array) ($this->codex->getConfig('finder.not-path') ?? []),
+						(array) ($finder['not-path'] ?? []),
+					),
+				),
+				'exclude' => array_unique(
+					array_merge(
+						(array) ($this->codex->getConfig('finder.exclude') ?? []),
+						(array) ($finder['exclude'] ?? []),
+					),
+				),
+			];
 		} else {
 			$self->data->push('finders', $finder);
 		}
