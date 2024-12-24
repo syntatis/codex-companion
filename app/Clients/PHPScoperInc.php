@@ -67,6 +67,7 @@ class PHPScoperInc
 			$configs,
 		));
 		$this->excludeFiles($excludeFiles);
+		$this->finderConfigs = (array) ($this->codex->getConfig('scoper.finder') ?? []);
 	}
 
 	public function withPatcher(callable $patcher): self
@@ -90,13 +91,13 @@ class PHPScoperInc
 			$self->finderConfigs = [
 				'not-path' => array_unique(
 					array_merge(
-						(array) ($this->codex->getConfig('finder.not-path') ?? []),
+						(array) ($self->finderConfigs['not-path'] ?? []),
 						(array) ($finder['not-path'] ?? []),
 					),
 				),
 				'exclude' => array_unique(
 					array_merge(
-						(array) ($this->codex->getConfig('finder.exclude') ?? []),
+						(array) ($self->finderConfigs['exclude'] ?? []),
 						(array) ($finder['exclude'] ?? []),
 					),
 				),
@@ -139,7 +140,7 @@ class PHPScoperInc
 			Finder::create()
 				->files()
 				->in(['vendor'])
-				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst|psalm.xml/')
+				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
 				->notPath(
 					array_merge(
 						['bamarni', 'bin'],
