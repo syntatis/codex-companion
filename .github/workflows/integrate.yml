@@ -58,7 +58,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.php-version == '8.3'
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: env.CODECOV_TOKEN && matrix.os == 'ubuntu-latest' && matrix.php-version == '8.3'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
