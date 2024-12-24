@@ -38,7 +38,7 @@ use const JSON_UNESCAPED_SLASHES;
  * 		exclude-namespaces:array<string>,
  * 		exclude-files:iterable<SplFileInfo>|array<string>
  * }
- * @phpstan-type FinderConfigs = array{not-path?:array<string>, exclude?:array<string>}
+ * @phpstan-type FinderConfigs = array{not-path?:array<string>,exclude?:array<string>}
  */
 class PHPScoperInc
 {
@@ -91,13 +91,13 @@ class PHPScoperInc
 			$self->finderConfigs = [
 				'not-path' => array_unique(
 					array_merge(
-						(array) ($self->finderConfigs['not-path'] ?? []),
+						$self->finderConfigs['not-path'] ?? [],
 						(array) ($finder['not-path'] ?? []),
 					),
 				),
 				'exclude' => array_unique(
 					array_merge(
-						(array) ($self->finderConfigs['exclude'] ?? []),
+						$self->finderConfigs['exclude'] ?? [],
 						(array) ($finder['exclude'] ?? []),
 					),
 				),
