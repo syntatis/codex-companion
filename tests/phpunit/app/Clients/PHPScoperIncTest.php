@@ -311,7 +311,7 @@ class PHPScoperIncTest extends TestCase
 		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$finder = Finder::create();
-		$instance = $instance->withFinderConfigs(['not-path' => ['foo']]);
+		$instance = $instance->withFinder(['not-path' => ['foo']]);
 		$finder = $instance->get()['finders'][0];
 
 		$finderNotPaths = (new ReflectionClass($finder))->getProperty('notPaths');

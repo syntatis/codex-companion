@@ -38,7 +38,7 @@ use const JSON_UNESCAPED_SLASHES;
  * 		exclude-namespaces:array<string>,
  * 		exclude-files:iterable<SplFileInfo>|array<string>
  * }
- * @phpstan-type FinderConfigs = array{not-path?:array<string>, exclude?:array<string>}
+ * @phpstan-type FinderConfigs = array{not-path?:array<string>,exclude?:array<string>}
  */
 class PHPScoperInc
 {
@@ -59,28 +59,15 @@ class PHPScoperInc
 		$this->codex = new Codex($projectPath);
 		$this->data = new Dot(array_merge(
 			[
-				'expose-global-constants' => true,
-				'expose-global-classes' => true,
-				'expose-global-functions' => true,
-				'exclude-namespaces' => [],
+				'expose-global-constants' => $this->codex->getConfig('scoper.expose-global-constants'),
+				'expose-global-classes' => $this->codex->getConfig('scoper.expose-global-classes'),
+				'expose-global-functions' => $this->codex->getConfig('scoper.expose-global-functions'),
+				'exclude-namespaces' => $this->codex->getConfig('scoper.exclude-namespaces'),
 			],
 			$configs,
 		));
 		$this->excludeFiles($excludeFiles);
-	}
-
-	/**
-	 * Add the list of files to exclude from the main Finder instance.
-	 *
-	 * @phpstan-param FinderConfigs $configs
-	 */
-	public function withFinderConfigs(array $configs): self
-	{
-		$self = clone $this;
-
-		$self->finderConfigs = $configs;
-
-		return $self;
+		$this->finderConfigs = (array) ($this->codex->getConfig('scoper.finder') ?? []);
 	}
 
 	public function withPatcher(callable $patcher): self
@@ -92,12 +79,32 @@ class PHPScoperInc
 		return $self;
 	}
 
-	/** @param iterable<SplFileInfo> $finder */
+	/**
+	 * @param iterable<SplFileInfo>|array<string,mixed> $finder
+	 * @phpstan-param iterable<SplFileInfo>|FinderConfigs $finder
+	 */
 	public function withFinder(iterable $finder): self
 	{
 		$self = clone $this;
 
-		$self->data->push('finders', $finder);
+		if (is_array($finder)) {
+			$self->finderConfigs = [
+				'not-path' => array_unique(
+					array_merge(
+						$self->finderConfigs['not-path'] ?? [],
+						(array) ($finder['not-path'] ?? []),
+					),
+				),
+				'exclude' => array_unique(
+					array_merge(
+						$self->finderConfigs['exclude'] ?? [],
+						(array) ($finder['exclude'] ?? []),
+					),
+				),
+			];
+		} else {
+			$self->data->push('finders', $finder);
+		}
 
 		return $self;
 	}
