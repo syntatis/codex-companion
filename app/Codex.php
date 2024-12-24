@@ -150,13 +150,31 @@ class Codex
 	{
 		$options = new OptionsResolver();
 		$options->setDefault('scoper', static function (OptionsResolver $resolver): void {
-			$resolver->setDefined(['install-dev', 'exclude-namespaces', 'prefix', 'output-dir']);
+			$resolver->setDefined([
+				'install-dev',
+				'exclude-namespaces',
+				'exclude-files',
+				'expose-global-constants',
+				'expose-global-classes',
+				'expose-global-functions',
+				'prefix',
+				'output-dir',
+			]);
 			$resolver->setAllowedTypes('prefix', 'string');
 			$resolver->setAllowedTypes('output-dir', 'string');
+			$resolver->setAllowedTypes('expose-global-constants', 'bool');
+			$resolver->setAllowedTypes('expose-global-classes', 'bool');
+			$resolver->setAllowedTypes('expose-global-functions', 'bool');
+			$resolver->setAllowedTypes('exclude-files', 'string[]');
 			$resolver->setAllowedTypes('exclude-namespaces', 'string[]');
 			$resolver->setAllowedTypes('install-dev', 'string[]');
 			$resolver->setDefaults([
 				'output-dir' => self::DEFAULT_SCOPER_OUTPUT_PATH,
+				'expose-global-constants' => true,
+				'expose-global-classes' => true,
+				'expose-global-functions' => true,
+				'exclude-namespaces' => [],
+				'install-dev' => [],
 			]);
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
