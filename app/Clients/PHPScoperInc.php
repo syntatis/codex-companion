@@ -139,7 +139,7 @@ class PHPScoperInc
 			Finder::create()
 				->files()
 				->in(['vendor'])
-				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
+				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst|psalm.xml/')
 				->notPath(
 					array_merge(
 						['bamarni', 'bin'],
