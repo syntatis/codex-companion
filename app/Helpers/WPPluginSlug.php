@@ -35,7 +35,7 @@ class WPPluginSlug implements Stringable
 		$slug = $inflector->urlize(Str::toKebabCase($slug));
 
 		if (Val::isBlank($slug)) {
-			throw new InvalidArgumentException('The plugin slug cannnot be blank.');
+			throw new InvalidArgumentException('The plugin slug cannot be blank.');
 		}
 
 		if (strlen($slug) > 214) {

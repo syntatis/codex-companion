@@ -22,7 +22,7 @@ class WPPluginDescription implements Stringable
 	private function validate(string $description): string
 	{
 		if (Val::isBlank($description)) {
-			throw new InvalidArgumentException('The plugin description cannnot be blank.');
+			throw new InvalidArgumentException('The plugin description cannot be blank.');
 		}
 
 		if (strlen($description) > 140) {

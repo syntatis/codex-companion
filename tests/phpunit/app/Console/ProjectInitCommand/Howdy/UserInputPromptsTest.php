@@ -260,10 +260,10 @@ class UserInputPromptsTest extends TestCase
 
 	public static function dataPromptInvalidPluginSlug(): iterable
 	{
-		yield [null, 'The plugin slug cannnot be blank.'];
-		yield [false, 'The plugin slug cannnot be blank.'];
-		yield ['', 'The plugin slug cannnot be blank.'];
-		yield [' ', 'The plugin slug cannnot be blank.'];
+		yield [null, 'The plugin slug cannot be blank.'];
+		yield [false, 'The plugin slug cannot be blank.'];
+		yield ['', 'The plugin slug cannot be blank.'];
+		yield [' ', 'The plugin slug cannot be blank.'];
 		yield [
 			str_repeat('a', 215),
 			'The plugin slug must be less than or equal to 214 characters.',
@@ -311,17 +311,17 @@ class UserInputPromptsTest extends TestCase
 	{
 		yield [
 			'',
-			'The plugin name cannnot be blank.',
+			'The plugin name cannot be blank.',
 		];
 
 		yield [
 			' ',
-			'The plugin name cannnot be blank.',
+			'The plugin name cannot be blank.',
 		];
 
 		yield [
 			null,
-			'The plugin name cannnot be blank.',
+			'The plugin name cannot be blank.',
 		];
 
 		yield [
@@ -515,17 +515,17 @@ class UserInputPromptsTest extends TestCase
 	{
 		yield [
 			'',
-			'The plugin description cannnot be blank.',
+			'The plugin description cannot be blank.',
 		];
 
 		yield [
 			' ',
-			'The plugin description cannnot be blank.',
+			'The plugin description cannot be blank.',
 		];
 
 		yield [
 			null,
-			'The plugin description cannnot be blank.',
+			'The plugin description cannot be blank.',
 		];
 
 		yield [

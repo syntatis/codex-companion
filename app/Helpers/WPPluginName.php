@@ -24,7 +24,7 @@ class WPPluginName implements Stringable
 	private function validate(string $name): string
 	{
 		if (Val::isBlank($name)) {
-			throw new InvalidArgumentException('The plugin name cannnot be blank.');
+			throw new InvalidArgumentException('The plugin name cannot be blank.');
 		}
 
 		if (strlen($name) > 214) {
