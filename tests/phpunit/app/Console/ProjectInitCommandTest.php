@@ -148,7 +148,7 @@ class ProjectInitCommandTest extends TestCase
 		$tester->setInputs([$input]);
 		$tester->execute([]);
 
-		$this->assertStringContainsString('The plugin slug cannnot be blank.', $tester->getDisplay());
+		$this->assertStringContainsString('The plugin slug cannot be blank.', $tester->getDisplay());
 		$this->assertSame(1, $tester->getStatusCode());
 	}
 

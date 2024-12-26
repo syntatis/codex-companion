@@ -18,7 +18,7 @@ use function count;
 use function file_exists;
 
 /**
- * Handles the "syntatis/howdy" project intialization when "project:init"
+ * Handles the "syntatis/howdy" project initialization when "project:init"
  * command is run.
  */
 class Howdy implements Executable
