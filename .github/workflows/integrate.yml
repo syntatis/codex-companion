@@ -1,0 +1,114 @@
+name: integrate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/php.yml"
+      - "**.php"
+      - "composer.json"
+      - "composer.lock"
+      - "phpcs.xml.dist"
+      - "phpstan.neon.dist"
+      - "phpunit.xml.dist"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/php.yml"
+      - "**.php"
+      - "composer.json"
+      - "composer.lock"
+      - "phpcs.xml.dist"
+      - "phpstan.neon.dist"
+      - "phpunit.xml.dist"
+
+jobs:
+  unit_tests:
+    strategy:
+      fail-fast: true
+      matrix:
+        php-version: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+        dependencies: [lowest, highest]
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+
+      - name: Run unit tests
+        run: vendor/bin/phpunit
+        if: matrix.os != 'ubuntu-latest' || matrix.php-version != '8.3'
+
+      - name: Run unit tests with coverage
+        run: vendor/bin/phpunit --coverage-clover coverage.xml
+        if: matrix.os == 'ubuntu-latest' && matrix.php-version == '8.3'
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: env.CODECOV_TOKEN && matrix.os == 'ubuntu-latest' && matrix.php-version == '8.3'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  coding_standards:
+    strategy:
+      matrix:
+        php-version: ["7.4"]
+        dependencies: [highest]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+
+      - name: Run linter
+        run: composer run phpcs
+
+  static_analysis:
+    strategy:
+      matrix:
+        php-version: ["7.4"]
+        dependencies: [highest]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+
+      - name: Run static analysis
+        run: composer run phpstan
