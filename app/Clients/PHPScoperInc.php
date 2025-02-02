@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion\Clients;
 
 use Adbar\Dot;
-use Isolated\Symfony\Component\Finder\Finder as IsolatedFinder;
+use Isolated\Symfony\Component\Finder\Finder;
 use SplFileInfo;
-use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Utils\Val;
 
@@ -16,7 +15,6 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function basename;
-use function class_exists;
 use function is_array;
 use function is_string;
 use function iterator_to_array;
@@ -139,7 +137,7 @@ class PHPScoperInc
 		$exclude = $this->finderConfigs['exclude'] ?? [];
 
 		return [
-			self::finder()
+			Finder::create()
 				->files()
 				->in(['vendor'])
 				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
@@ -164,7 +162,7 @@ class PHPScoperInc
 						$exclude,
 					),
 				),
-			self::finder()->append(['composer.json']),
+			Finder::create()->append(['composer.json']),
 		];
 	}
 
@@ -175,7 +173,7 @@ class PHPScoperInc
 			array_map(
 				static fn ($file): string => $file->getRealPath(),
 				iterator_to_array(
-					self::finder()
+					Finder::create()
 						->files()
 						->in(['vendor'])
 						->name(['*.html.php']),
@@ -266,14 +264,5 @@ class PHPScoperInc
 			'exclude-files',
 			array_values(array_unique(array_merge($current, $merger))),
 		);
-	}
-
-	private static function finder(): Finder
-	{
-		if (class_exists('\Isolated\Symfony\Component\Finder\Finder')) {
-			return IsolatedFinder::create();
-		}
-
-		return self::finder();
 	}
 }
