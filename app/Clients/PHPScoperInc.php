@@ -148,19 +148,15 @@ class PHPScoperInc
 			IsolatedFinder::create()
 				->files()
 				->in(['vendor'])
-				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
-				->notPath(
-					array_merge(
-						['bin'],
-						$notPath,
-					),
-				)
+				->notName('/composer.json|phpunit.xml|phpcs.xml|pint.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
+				->notPath($notPath)
 				->exclude(
 					array_merge(
 						[
 							'.github',
 							'Test',
 							'Tests',
+							'bin',
 							'doc',
 							'test',
 							'test_old',
