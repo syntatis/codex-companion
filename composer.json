@@ -54,7 +54,7 @@
         "symfony/var-dumper": "^5.4",
         "syntatis/coding-standard": "^1.5"
     },
-    "bin": ["bin/codex"],
+    "bin": ["bin/codex", "bin/php-scoper"],
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
