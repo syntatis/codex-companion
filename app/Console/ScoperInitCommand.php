@@ -11,7 +11,6 @@ use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Concerns\RunOnComposerEvent;
 use Syntatis\Codex\Companion\Concerns\RunProcess;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand\PrefixerProcess;
-use Syntatis\Codex\Companion\Helpers\PHPScoperRequirement;
 use Syntatis\Utils\Val;
 
 use function is_string;
@@ -59,17 +58,6 @@ class ScoperInitCommand extends BaseCommand
 		 */
 		if ($proc->isFailed()) {
 			return $proc->getExitCode();
-		}
-
-		// If the required package is not installed, install it first.
-		if (! (new PHPScoperRequirement($proc->getCurrent()->getOutput()))->isMet()) {
-			$proc = $this->process($this->codex->getProjectPath())
-				->withMessage('Installing <info>humbug/php-scoper</info>...')
-				->run('composer bin php-scoper require -W humbug/php-scoper');
-
-			if ($proc->isFailed()) {
-				return $proc->getExitCode();
-			}
 		}
 
 		return (new PrefixerProcess($this->codex, $this->output))

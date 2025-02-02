@@ -12,6 +12,7 @@ use Syntatis\Codex\Companion\Contracts\Executable;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Utils\Val;
 
+use function file_exists;
 use function is_string;
 use function sprintf;
 
@@ -65,6 +66,30 @@ class PrefixerProcess implements Executable
 					$this->devMode ? '' : ' --no-dev',
 				),
 			);
+
+		if ($proc->isSuccessful()) {
+			if (! file_exists($filesystem->getBinPath())) {
+				$this->output->error('Unable to locate the PHP-Scoper binary.');
+
+				return 1;
+			}
+
+			$proc = $this->process($filesystem->getBuildPath())
+				->withMessage(
+					sprintf(
+						'Prefixing dependencies namespace with <comment>%s</comment>...',
+						$prefix,
+					),
+				)
+				->run(
+					sprintf(
+						'%s add-prefix --force --config=%s --output-dir=%s',
+						$filesystem->getBinPath(),
+						$filesystem->getConfigPath(),
+						$filesystem->getOutputPath(),
+					),
+				);
+		}
 
 		if ($proc->isSuccessful()) {
 			$proc = $this->process($filesystem->getOutputPath())
