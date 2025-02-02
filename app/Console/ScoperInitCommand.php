@@ -45,21 +45,6 @@ class ScoperInitCommand extends BaseCommand
 			return 0;
 		}
 
-		$proc = $this->process($this->codex->getProjectPath())
-			->withErrorMessage('Failed to scope the dependencies namespace')
-			->run('composer bin php-scoper show -N');
-
-		/**
-		 * If an error occurred while listing all the available package installed,
-		 * do not proceed. This list is required to verify whether the required
-		 * packages, such as "humbug/php-scoper", is already installed.
-		 *
-		 * @see https://getcomposer.org/doc/03-cli.md#show-info
-		 */
-		if ($proc->isFailed()) {
-			return $proc->getExitCode();
-		}
-
 		return (new PrefixerProcess($this->codex, $this->output))
 			->setDevMode($this->isDevMode())
 			->execute();
