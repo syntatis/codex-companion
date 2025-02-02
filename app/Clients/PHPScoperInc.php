@@ -141,12 +141,6 @@ class PHPScoperInc
 				->files()
 				->in(['vendor'])
 				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
-				->notPath(
-					array_merge(
-						['bamarni', 'bin'],
-						$notPath,
-					),
-				)
 				->exclude(
 					array_merge(
 						[
