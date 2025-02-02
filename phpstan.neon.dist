@@ -1,5 +1,8 @@
 parameters:
-	level: 9
-	paths:
-		- app
-		- bin
+  level: 9
+  paths:
+    - app
+    - bin
+  ignoreErrors:
+    - message: '#Call to static method create\(\) on an unknown class Isolated\\Symfony\\Component\\Finder\\Finder\.#'
+      path: app/Clients/PHPScoperInc.php
