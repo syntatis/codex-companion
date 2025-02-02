@@ -15,7 +15,6 @@ use Syntatis\Utils\Val;
 use function array_filter;
 use function array_map;
 use function array_unique;
-use function file_exists;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -73,7 +72,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return string The absolute path to the output directory.
 	 */
-	public function getOutputPath(?string $path = null): string
+	public function getOutputPath(string|null $path = null): string
 	{
 		$outputPath = $this->outputPath;
 
@@ -101,7 +100,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return string The absolute path to the build directory.
 	 */
-	public function getBuildPath(?string $path = null): string
+	public function getBuildPath(string|null $path = null): string
 	{
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
@@ -122,22 +121,7 @@ class PHPScoperFilesystem
 
 	public function getBinPath(): string
 	{
-		$path = $this->codex->getProjectPath('vendor/bin/php-scoper');
-
-		if (file_exists($path)) {
-			return $path;
-		}
-
-		/**
-		 * Find the PHP-Scoper binary in the custom target directory.
-		 *
-		 * @see https://github.com/bamarni/composer-bin-plugin?tab=readme-ov-file#target-directory-target-directory
-		 */
-		$targetDir = $this->codex->getComposer('extra.bamarni-bin.target-directory');
-		$targetDir = is_string($targetDir) ? $targetDir : 'vendor-bin';
-		$path = rtrim($targetDir, '/') . '/php-scoper/vendor/humbug/php-scoper/bin/php-scoper';
-
-		return $this->codex->getProjectPath($path);
+		return $this->codex->getProjectPath('vendor/bin/php-scoper');
 	}
 
 	public function getConfigPath(): string
@@ -226,7 +210,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return array<string,array<string,string|array<string>>>|null
 	 */
-	private function getAutoload(string $key): ?array
+	private function getAutoload(string $key): array|null
 	{
 		$mapper = function ($paths) {
 			if (is_string($paths)) {
