@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion\Clients;
 
 use Adbar\Dot;
+use Isolated\Symfony\Component\Finder\Finder as IsolatedFinder;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
@@ -15,6 +16,8 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function basename;
+use function class_alias;
+use function class_exists;
 use function is_array;
 use function is_string;
 use function iterator_to_array;
@@ -25,6 +28,11 @@ use function trim;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
+
+// Exposes the finder used by PHP-Scoper PHAR to allow its usage in the configuration file.
+if (class_exists(IsolatedFinder::class) === false) {
+	class_alias(Finder::class, IsolatedFinder::class);
+}
 
 /**
  * Abstraction for PHP-Scoper configuration.
@@ -137,22 +145,18 @@ class PHPScoperInc
 		$exclude = $this->finderConfigs['exclude'] ?? [];
 
 		return [
-			Finder::create()
+			IsolatedFinder::create()
 				->files()
 				->in(['vendor'])
-				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
-				->notPath(
-					array_merge(
-						['bamarni', 'bin'],
-						$notPath,
-					),
-				)
+				->notName('/composer.json|phpunit.xml|phpcs.xml|pint.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
+				->notPath($notPath)
 				->exclude(
 					array_merge(
 						[
 							'.github',
 							'Test',
 							'Tests',
+							'bin',
 							'doc',
 							'test',
 							'test_old',
@@ -162,7 +166,7 @@ class PHPScoperInc
 						$exclude,
 					),
 				),
-			Finder::create()->append(['composer.json']),
+			IsolatedFinder::create()->append(['composer.json']),
 		];
 	}
 
@@ -173,7 +177,7 @@ class PHPScoperInc
 			array_map(
 				static fn ($file): string => $file->getRealPath(),
 				iterator_to_array(
-					Finder::create()
+					IsolatedFinder::create()
 						->files()
 						->in(['vendor'])
 						->name(['*.html.php']),

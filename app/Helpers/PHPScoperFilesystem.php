@@ -15,7 +15,6 @@ use Syntatis\Utils\Val;
 use function array_filter;
 use function array_map;
 use function array_unique;
-use function file_exists;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -122,22 +121,7 @@ class PHPScoperFilesystem
 
 	public function getBinPath(): string
 	{
-		$path = $this->codex->getProjectPath('vendor/bin/php-scoper');
-
-		if (file_exists($path)) {
-			return $path;
-		}
-
-		/**
-		 * Find the PHP-Scoper binary in the custom target directory.
-		 *
-		 * @see https://github.com/bamarni/composer-bin-plugin?tab=readme-ov-file#target-directory-target-directory
-		 */
-		$targetDir = $this->codex->getComposer('extra.bamarni-bin.target-directory');
-		$targetDir = is_string($targetDir) ? $targetDir : 'vendor-bin';
-		$path = rtrim($targetDir, '/') . '/php-scoper/vendor/humbug/php-scoper/bin/php-scoper';
-
-		return $this->codex->getProjectPath($path);
+		return $this->codex->getProjectPath('vendor/bin/php-scoper');
 	}
 
 	public function getConfigPath(): string

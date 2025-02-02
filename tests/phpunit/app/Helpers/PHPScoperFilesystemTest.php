@@ -412,62 +412,6 @@ class PHPScoperFilesystemTest extends TestCase
 		);
 	}
 
-	/** @testdox should fallback to the origin path if the bin is not forwarded */
-	public function testGetScoperBinNotForwarded(): void
-	{
-		$this->dumpTemporaryFile(
-			'vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
-			<<<'CONTENT'
-			#!/usr/bin/env php
-			namespace Humbug\PhpScoper;
-			CONTENT,
-		);
-
-		$codex = new Codex($this->getTemporaryPath());
-		$filesystem = new PHPScoperFilesystem($codex);
-
-		$this->assertSame(
-			$this->getTemporaryPath('vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
-			$filesystem->getBinPath(),
-		);
-	}
-
-	/** @testdox should respects the "target-directory" configuration */
-	public function testGetScoperBinCustomTargetDir(): void
-	{
-		$this->dumpTemporaryFile(
-			'vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper',
-			<<<'CONTENT'
-			#!/usr/bin/env php
-			namespace Humbug\PhpScoper;
-			CONTENT,
-		);
-		$this->dumpTemporaryFile(
-			'composer.json',
-			json_encode(
-				[
-					'name' => 'syntatis/howdy',
-					'require' => ['php' => '>=7.4'],
-					'autoload' => [
-						'psr-4' => ['Syntatis\\' => 'src/'],
-					],
-					'extra' => [
-						'bamarni-bin' => ['target-directory' => 'vendor-cli' ],
-					],
-				],
-				JSON_UNESCAPED_SLASHES,
-			),
-		);
-
-		$codex = new Codex($this->getTemporaryPath());
-		$filesystem = new PHPScoperFilesystem($codex);
-
-		$this->assertSame(
-			$this->getTemporaryPath('vendor-cli/php-scoper/vendor/humbug/php-scoper/bin/php-scoper'),
-			$filesystem->getBinPath(),
-		);
-	}
-
 	public function testDumpComposerWithEmptyInstallDev(): void
 	{
 		$this->dumpTemporaryFile(

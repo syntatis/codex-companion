@@ -11,7 +11,6 @@ use Syntatis\Codex\Companion\Codex;
 use Syntatis\Codex\Companion\Concerns\RunOnComposerEvent;
 use Syntatis\Codex\Companion\Concerns\RunProcess;
 use Syntatis\Codex\Companion\Console\ScoperInitCommand\PrefixerProcess;
-use Syntatis\Codex\Companion\Helpers\PHPScoperRequirement;
 use Syntatis\Utils\Val;
 
 use function is_string;
@@ -44,32 +43,6 @@ class ScoperInitCommand extends BaseCommand
 			$this->output->warning('The command has been aborted.');
 
 			return 0;
-		}
-
-		$proc = $this->process($this->codex->getProjectPath())
-			->withErrorMessage('Failed to scope the dependencies namespace')
-			->run('composer bin php-scoper show -N');
-
-		/**
-		 * If an error occurred while listing all the available package installed,
-		 * do not proceed. This list is required to verify whether the required
-		 * packages, such as "humbug/php-scoper", is already installed.
-		 *
-		 * @see https://getcomposer.org/doc/03-cli.md#show-info
-		 */
-		if ($proc->isFailed()) {
-			return $proc->getExitCode();
-		}
-
-		// If the required package is not installed, install it first.
-		if (! (new PHPScoperRequirement($proc->getCurrent()->getOutput()))->isMet()) {
-			$proc = $this->process($this->codex->getProjectPath())
-				->withMessage('Installing <info>humbug/php-scoper</info>...')
-				->run('composer bin php-scoper require -W humbug/php-scoper');
-
-			if ($proc->isFailed()) {
-				return $proc->getExitCode();
-			}
 		}
 
 		return (new PrefixerProcess($this->codex, $this->output))

@@ -17,6 +17,7 @@ class PHPScoperIncTest extends TestCase
 
 	public function setUp(): void
 	{
+		// $this->markTestIncomplete('Incompatible with "Isolated\Symfony\Component\Finder\Finder" use.');
 		parent::setUp();
 
 		$this->dumpTemporaryFile(

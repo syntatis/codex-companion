@@ -8,6 +8,7 @@
         "neilbrayfield.php-docblocker",
         "sanderronde.phpstan-vscode",
         "wmaurer.change-case",
-        "dotjoshjohnson.xml"
+        "dotjoshjohnson.xml",
+        "valeryanm.vscode-phpsab"
     ]
 }
