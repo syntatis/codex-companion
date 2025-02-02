@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion\Clients;
 
 use Adbar\Dot;
-use Isolated\Symfony\Component\Finder\Finder;
+use Isolated\Symfony\Component\Finder\Finder as IsolatedFinder;
 use SplFileInfo;
+use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Utils\Val;
 
@@ -15,6 +16,8 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function basename;
+use function class_alias;
+use function class_exists;
 use function is_array;
 use function is_string;
 use function iterator_to_array;
@@ -25,6 +28,11 @@ use function trim;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
+
+// Exposes the finder used by PHP-Scoper PHAR to allow its usage in the configuration file.
+if (class_exists(IsolatedFinder::class) === false) {
+	class_alias(Finder::class, IsolatedFinder::class);
+}
 
 /**
  * Abstraction for PHP-Scoper configuration.

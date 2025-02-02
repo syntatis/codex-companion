@@ -4,5 +4,5 @@ parameters:
     - app
     - bin
   ignoreErrors:
-    - message: '#Call to static method create\(\) on an unknown class Isolated\\Symfony\\Component\\Finder\\Finder\.#'
+    - message: '#Class Isolated\\Symfony\\Component\\Finder\\Finder not found\.#'
       path: app/Clients/PHPScoperInc.php
