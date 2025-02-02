@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phive xmlns="https://phar.io/phive">
+  <phar name="humbug/php-scoper" version="0.17.5" installed="0.17.5" location="./bin/php-scoper" copy="true"/>
+</phive>
