@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Syntatis\Codex\Companion\Clients;
 
 use Adbar\Dot;
+use Isolated\Symfony\Component\Finder\Finder;
 use SplFileInfo;
-use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Codex;
 use Syntatis\Utils\Val;
 
