@@ -145,7 +145,7 @@ class PHPScoperInc
 		$exclude = $this->finderConfigs['exclude'] ?? [];
 
 		return [
-			Finder::create()
+			IsolatedFinder::create()
 				->files()
 				->in(['vendor'])
 				->notName('/composer.json|composer.lock|Makefile|LICENSE|CHANGELOG.*|.*\\.md|.*\\.dist|.*\\.rst/')
@@ -170,7 +170,7 @@ class PHPScoperInc
 						$exclude,
 					),
 				),
-			Finder::create()->append(['composer.json']),
+			IsolatedFinder::create()->append(['composer.json']),
 		];
 	}
 
@@ -181,7 +181,7 @@ class PHPScoperInc
 			array_map(
 				static fn ($file): string => $file->getRealPath(),
 				iterator_to_array(
-					Finder::create()
+					IsolatedFinder::create()
 						->files()
 						->in(['vendor'])
 						->name(['*.html.php']),
