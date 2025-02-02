@@ -72,7 +72,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return string The absolute path to the output directory.
 	 */
-	public function getOutputPath(string|null $path = null): string
+	public function getOutputPath(?string $path = null): string
 	{
 		$outputPath = $this->outputPath;
 
@@ -100,7 +100,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return string The absolute path to the build directory.
 	 */
-	public function getBuildPath(string|null $path = null): string
+	public function getBuildPath(?string $path = null): string
 	{
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
@@ -210,7 +210,7 @@ class PHPScoperFilesystem
 	 *
 	 * @return array<string,array<string,string|array<string>>>|null
 	 */
-	private function getAutoload(string $key): array|null
+	private function getAutoload(string $key): ?array
 	{
 		$mapper = function ($paths) {
 			if (is_string($paths)) {
