@@ -78,7 +78,7 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[php]": {
-        "editor.defaultFormatter": "wongjn.php-sniffer"
+        "editor.defaultFormatter": "valeryanm.vscode-phpsab"
     },
     "files.exclude": {
         "**/.git": true,
@@ -97,7 +97,5 @@
         "**/.DS_Store/**",
         "**/.history/**",
         "**/CVS/**"
-    ],
-    "phpSniffer.autoDetect": true,
-    "phpSniffer.run": "onSave"
+    ]
 }
