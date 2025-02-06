@@ -8,7 +8,6 @@ use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Process\Process;
 use Syntatis\Utils\Val;
 
-use function explode;
 use function trim;
 
 class ShellProcess
@@ -59,11 +58,11 @@ class ShellProcess
 		return $self;
 	}
 
-	/** @phpstan-param non-empty-string $command */
-	public function run(string $command, ?callable $callback = null): self
+	/** @phpstan-param list<string> $command The command and the arguments. */
+	public function run(array $command, ?callable $callback = null): self
 	{
 		$self = clone $this;
-		$self->process = new Process(explode(' ', $command), $this->cwd);
+		$self->process = new Process($command, $this->cwd);
 
 		if (! Val::isBlank($self->preMessage)) {
 			$self->style->text($self->preMessage);

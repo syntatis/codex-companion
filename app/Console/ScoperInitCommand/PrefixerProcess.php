@@ -12,6 +12,7 @@ use Syntatis\Codex\Companion\Contracts\Executable;
 use Syntatis\Codex\Companion\Helpers\PHPScoperFilesystem;
 use Syntatis\Utils\Val;
 
+use function array_merge;
 use function file_exists;
 use function is_string;
 use function sprintf;
@@ -58,14 +59,25 @@ class PrefixerProcess implements Executable
 		$filesystem->removeAll();
 		$filesystem->dumpComposerFile();
 
+		$processDepsArgs = [
+			'composer',
+			'install',
+			'--no-interaction',
+			'--no-plugins',
+			'--no-scripts',
+			'--prefer-dist',
+		];
+
+		if ($this->devMode) {
+			$processDepsArgs = array_merge(
+				$processDepsArgs,
+				['--no-dev'],
+			);
+		}
+
 		$proc = $this->process($filesystem->getBuildPath())
 			->withMessage('Processing dependencies to scope...')
-			->run(
-				sprintf(
-					'composer install --no-interaction --no-plugins --no-scripts --prefer-dist%s',
-					$this->devMode ? '' : ' --no-dev',
-				),
-			);
+			->run($processDepsArgs);
 
 		if ($proc->isSuccessful()) {
 			if (! file_exists($filesystem->getBinPath())) {
@@ -82,19 +94,20 @@ class PrefixerProcess implements Executable
 					),
 				)
 				->run(
-					sprintf(
-						'%s add-prefix --force --config=%s --output-dir=%s',
+					[
 						$filesystem->getBinPath(),
-						$filesystem->getConfigPath(),
-						$filesystem->getOutputPath(),
-					),
+						'add-prefix',
+						'--force',
+						sprintf('--config=%s', $filesystem->getConfigPath()),
+						sprintf('--output-dir=%s', $filesystem->getOutputPath()),
+					],
 				);
 		}
 
 		if ($proc->isSuccessful()) {
 			$proc = $this->process($filesystem->getOutputPath())
 				->withSuccessMessage('Dependencies namespace has been prefixed successfully')
-				->run('composer dump');
+				->run(['composer', 'dump']);
 		}
 
 		$filesystem->removeBuildPath();
