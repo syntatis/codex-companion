@@ -68,7 +68,7 @@ class PrefixerProcess implements Executable
 			'--prefer-dist',
 		];
 
-		if ($this->devMode) {
+		if (! $this->devMode) {
 			$processDepsArgs = array_merge(
 				$processDepsArgs,
 				['--no-dev'],
