@@ -17,6 +17,7 @@ use Syntatis\Utils\Val;
 use function in_array;
 use function is_array;
 use function is_string;
+use function method_exists;
 use function sprintf;
 use function trim;
 
@@ -149,7 +150,7 @@ class Codex
 	private function resolveConfigs(): void
 	{
 		$options = new OptionsResolver();
-		$options->setDefault('scoper', static function (OptionsResolver $resolver): void {
+		$callback = static function (OptionsResolver $resolver): void {
 			$resolver->setDefined([
 				'install-dev',
 				'exclude-namespaces',
@@ -186,8 +187,20 @@ class Codex
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
 			});
-		});
-		$options->setAllowedTypes('scoper', 'array');
+		};
+
+		/**
+		 * Since symfony/options-resolver 7.3: Defining nested options via "Symfony\Component\OptionsResolver\OptionsResolver::setDefault()"
+		 * is deprecated and will be removed in Symfony 8.0, use "setOptions()" method instead.
+		 *
+		 * @see https://github.com/syntatis/codex-companion/issues/70
+		 */
+		// @phpstan-ignore function.impossibleType
+		if (method_exists($options, 'setOptions')) {
+			$options->setOptions('scoper', 'array');
+		} else {
+			$options->setDefault('scoper', $callback);
+		}
 
 		$configs = $this->composer->get('extra.codex');
 		$configs = $this->getResolvedConfigs($options->resolve(is_array($configs) ? $configs : []));
