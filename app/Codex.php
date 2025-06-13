@@ -150,7 +150,7 @@ class Codex
 	private function resolveConfigs(): void
 	{
 		$options = new OptionsResolver();
-		$callback = static function (OptionsResolver $resolver): void {
+		$scoper = static function (OptionsResolver $resolver): void {
 			$resolver->setDefined([
 				'install-dev',
 				'exclude-namespaces',
@@ -179,11 +179,26 @@ class Codex
 				'install-dev' => [],
 				'finder' => [],
 			]);
-			$resolver->setDefault('finder', static function (OptionsResolver $resolver): void {
+
+			$finder = static function (OptionsResolver $resolver): void {
 				$resolver->setDefined(['not-path', 'exclude']);
 				$resolver->setAllowedTypes('not-path', 'string[]');
 				$resolver->setAllowedTypes('exclude', 'string[]');
-			});
+			};
+
+			/**
+			 * Since symfony/options-resolver 7.3: Defining nested options via "Symfony\Component\OptionsResolver\OptionsResolver::setDefault()"
+			 * is deprecated and will be removed in Symfony 8.0, use "setOptions()" method instead.
+			 *
+			 * @see https://github.com/syntatis/codex-companion/issues/70
+			 */
+			// @phpstan-ignore function.impossibleType
+			if (method_exists($resolver, 'setOptions')) {
+				$resolver->setOptions('finder', $finder);
+			} else {
+				$resolver->setDefault('finder', $finder);
+			}
+
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
 			});
@@ -197,9 +212,9 @@ class Codex
 		 */
 		// @phpstan-ignore function.impossibleType
 		if (method_exists($options, 'setOptions')) {
-			$options->setOptions('scoper', $callback);
+			$options->setOptions('scoper', $scoper);
 		} else {
-			$options->setDefault('scoper', $callback);
+			$options->setDefault('scoper', $scoper);
 		}
 
 		$configs = $this->composer->get('extra.codex');
