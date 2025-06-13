@@ -17,6 +17,7 @@ use Syntatis\Utils\Val;
 use function in_array;
 use function is_array;
 use function is_string;
+use function method_exists;
 use function sprintf;
 use function trim;
 
@@ -34,7 +35,7 @@ class Codex
 	/** @var Dot<string,mixed> */
 	private Dot $configs;
 
-	private string $projectPath;
+	private string $projectPath = '';
 
 	public function __construct(string $projectPath)
 	{
@@ -49,7 +50,7 @@ class Codex
 	 */
 	public function getProjectPath(?string $path = null): string
 	{
-		$projectPath = $this->projectPath ?? '';
+		$projectPath = $this->projectPath;
 
 		if (! Val::isBlank($path)) {
 			if (Str::startsWith($path, '..') || Path::isAbsolute($path)) {
@@ -149,7 +150,7 @@ class Codex
 	private function resolveConfigs(): void
 	{
 		$options = new OptionsResolver();
-		$options->setDefault('scoper', static function (OptionsResolver $resolver): void {
+		$scoper = static function (OptionsResolver $resolver): void {
 			$resolver->setDefined([
 				'install-dev',
 				'exclude-namespaces',
@@ -178,16 +179,41 @@ class Codex
 				'install-dev' => [],
 				'finder' => [],
 			]);
-			$resolver->setDefault('finder', static function (OptionsResolver $resolver): void {
+
+			$finder = static function (OptionsResolver $resolver): void {
 				$resolver->setDefined(['not-path', 'exclude']);
 				$resolver->setAllowedTypes('not-path', 'string[]');
 				$resolver->setAllowedTypes('exclude', 'string[]');
-			});
+			};
+
+			/**
+			 * Since symfony/options-resolver 7.3: Defining nested options via "Symfony\Component\OptionsResolver\OptionsResolver::setDefault()"
+			 * is deprecated and will be removed in Symfony 8.0, use "setOptions()" method instead.
+			 *
+			 * @see https://github.com/syntatis/codex-companion/issues/70
+			 */
+			if (method_exists($resolver, 'setOptions')) {
+				$resolver->setOptions('finder', $finder);
+			} else {
+				$resolver->setDefault('finder', $finder);
+			}
+
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
 			});
-		});
-		$options->setAllowedTypes('scoper', 'array');
+		};
+
+		/**
+		 * Since symfony/options-resolver 7.3: Defining nested options via "Symfony\Component\OptionsResolver\OptionsResolver::setDefault()"
+		 * is deprecated and will be removed in Symfony 8.0, use "setOptions()" method instead.
+		 *
+		 * @see https://github.com/syntatis/codex-companion/issues/70
+		 */
+		if (method_exists($options, 'setOptions')) {
+			$options->setOptions('scoper', $scoper);
+		} else {
+			$options->setDefault('scoper', $scoper);
+		}
 
 		$configs = $this->composer->get('extra.codex');
 		$configs = $this->getResolvedConfigs($options->resolve(is_array($configs) ? $configs : []));
