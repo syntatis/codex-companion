@@ -192,7 +192,6 @@ class Codex
 			 *
 			 * @see https://github.com/syntatis/codex-companion/issues/70
 			 */
-			// @phpstan-ignore function.impossibleType
 			if (method_exists($resolver, 'setOptions')) {
 				$resolver->setOptions('finder', $finder);
 			} else {
@@ -210,7 +209,6 @@ class Codex
 		 *
 		 * @see https://github.com/syntatis/codex-companion/issues/70
 		 */
-		// @phpstan-ignore function.impossibleType
 		if (method_exists($options, 'setOptions')) {
 			$options->setOptions('scoper', $scoper);
 		} else {
