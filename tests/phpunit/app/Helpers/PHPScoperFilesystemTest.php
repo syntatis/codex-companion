@@ -393,7 +393,8 @@ class PHPScoperFilesystemTest extends TestCase
 		$this->assertFileDoesNotExist($temporaryFile);
 	}
 
-	public function testGetScoperBin(): void
+	/** @requires PHP >= 8.1 */
+	public function testGetScoperBinPhp81000(): void
 	{
 		$this->dumpTemporaryFile(
 			'vendor/bin/php-scoper',
@@ -408,6 +409,26 @@ class PHPScoperFilesystemTest extends TestCase
 
 		$this->assertSame(
 			$this->getTemporaryPath('vendor/bin/php-scoper'),
+			$filesystem->getBinPath(),
+		);
+	}
+
+	/** @requires PHP <= 8.0 */
+	public function testGetScoperBinPhp80000(): void
+	{
+		$this->dumpTemporaryFile(
+			'vendor/bin/php-scoper',
+			<<<'CONTENT'
+			#!/usr/bin/env php
+			namespace Humbug\PhpScoper;
+			CONTENT,
+		);
+
+		$codex = new Codex($this->getTemporaryPath());
+		$filesystem = new PHPScoperFilesystem($codex);
+
+		$this->assertSame(
+			$this->getTemporaryPath('vendor/bin/php-scoper-0.17.5'),
 			$filesystem->getBinPath(),
 		);
 	}
