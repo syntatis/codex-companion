@@ -197,7 +197,7 @@ class Codex
 		 */
 		// @phpstan-ignore function.impossibleType
 		if (method_exists($options, 'setOptions')) {
-			$options->setOptions('scoper', 'array');
+			$options->setOptions('scoper', $callback);
 		} else {
 			$options->setDefault('scoper', $callback);
 		}
