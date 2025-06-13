@@ -32,7 +32,7 @@ use const JSON_UNESCAPED_SLASHES;
 class ComposerFile implements Dumpable, EditableFile
 {
 	/** @phpstan-var Dot<string,mixed> */
-	private ?Dot $data = null;
+	private Dot $data;
 
 	private SplFileInfo $file;
 
@@ -61,10 +61,6 @@ class ComposerFile implements Dumpable, EditableFile
 	{
 		$this->doSearchReplace();
 
-		if (! ($this->data instanceof Dot)) {
-			return;
-		}
-
 		$filesystem = new Filesystem();
 		$filesystem->dumpFile(
 			$this->file->getPathname(),
@@ -77,11 +73,7 @@ class ComposerFile implements Dumpable, EditableFile
 		$content = file_get_contents($this->file->getPathname());
 		$data = json_decode((string) $content, true);
 
-		if (! is_array($data)) {
-			return;
-		}
-
-		$this->data = dot($data);
+		$this->data = dot(! is_array($data) ? [] : $data);
 		$this->data->set('extra.codex.scoper.prefix', trim($this->replacements['php_vendor_prefix'], '\\'));
 
 		$autoload = $this->getAutoloads('autoload.psr-4');
@@ -111,10 +103,6 @@ class ComposerFile implements Dumpable, EditableFile
 	/** @phpstan-return array<string,string|list<string>>|null */
 	private function getAutoloads(string $key): ?array
 	{
-		if (! ($this->data instanceof Dot)) {
-			return null;
-		}
-
 		$autoloads = $this->data->get($key) ?? null;
 
 		if (! is_array($autoloads) || Val::isBlank($autoloads)) {
@@ -139,10 +127,6 @@ class ComposerFile implements Dumpable, EditableFile
 	/** @phpstan-return list<string>|null */
 	private function getConfigExcludeNamespaces(): ?array
 	{
-		if (! ($this->data instanceof Dot)) {
-			return null;
-		}
-
 		$namespaces = $this->data->get('extra.codex.scoper.exclude-namespaces') ?? [];
 
 		if (Val::isBlank($namespaces) || ! is_array($namespaces)) {
@@ -172,10 +156,6 @@ class ComposerFile implements Dumpable, EditableFile
 
 	private function handleScripts(): void
 	{
-		if (! ($this->data instanceof Dot)) {
-			return;
-		}
-
 		$scripts = $this->data->get('scripts') ?? null;
 
 		if (! is_array($scripts) || Val::isBlank($scripts)) {

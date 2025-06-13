@@ -35,7 +35,7 @@ class Codex
 	/** @var Dot<string,mixed> */
 	private Dot $configs;
 
-	private string $projectPath;
+	private string $projectPath = '';
 
 	public function __construct(string $projectPath)
 	{
@@ -50,7 +50,7 @@ class Codex
 	 */
 	public function getProjectPath(?string $path = null): string
 	{
-		$projectPath = $this->projectPath ?? '';
+		$projectPath = $this->projectPath;
 
 		if (! Val::isBlank($path)) {
 			if (Str::startsWith($path, '..') || Path::isAbsolute($path)) {
