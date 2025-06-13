@@ -36,8 +36,38 @@
 		</properties>
 	</rule>
 	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
-		<exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingAnyTypeHint" />
-		<exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint" />
+		<properties>
+			<property name="enableMixedTypeHint" value="false" />
+			<property name="enableUnionTypeHint" value="false" />
+			<property name="enableIntersectionTypeHint" value="false" />
+			<property name="enableStandaloneNullTrueFalseTypeHints" value="false" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint">
+		<properties>
+			<property name="enableMixedTypeHint" value="false" />
+			<property name="enableUnionTypeHint" value="false" />
+			<property name="enableIntersectionTypeHint" value="false" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.TypeHints.ClassConstantTypeHint">
+		<properties>
+			<property name="enableNativeTypeHint" value="false" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
+		<properties>
+			<property name="enableIntersectionTypeHint" value="false" />
+			<property name="enableMixedTypeHint" value="false" />
+			<property name="enableNeverTypeHint" value="false" />
+			<property name="enableUnionTypeHint" value="false" />
+			<property name="enableStaticTypeHint" value="false" />
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.TypeHints.DNFTypeHintFormat">
+		<properties>
+			<property name="shortNullable" value="true" />
+		</properties>
 	</rule>
 	<rule ref="PHPCompatibility"/>
 </ruleset>

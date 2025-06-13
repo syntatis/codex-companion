@@ -28,6 +28,7 @@ use const ARRAY_FILTER_USE_BOTH;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
+use const PHP_VERSION_ID;
 
 class PHPScoperFilesystem
 {
@@ -121,6 +122,10 @@ class PHPScoperFilesystem
 
 	public function getBinPath(): string
 	{
+		if (PHP_VERSION_ID <= 80000) {
+			return $this->codex->getProjectPath('vendor/bin/php-scoper-0.17.5');
+		}
+
 		return $this->codex->getProjectPath('vendor/bin/php-scoper');
 	}
 
