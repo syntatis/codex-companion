@@ -43,7 +43,7 @@
     },
     "require-dev": {
         "composer/composer": "^2.8",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
