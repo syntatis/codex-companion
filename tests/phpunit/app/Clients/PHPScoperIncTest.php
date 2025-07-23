@@ -384,6 +384,35 @@ class PHPScoperIncTest extends TestCase
 		new PHPScoperInc($this->getTemporaryPath());
 	}
 
+	public function testExcludeFilesArrayInvalid(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": "tmp/phpunit-dumps/files/foo.css"
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
 	public function testExcludeFilesArray(): void
 	{
 		$this->dumpTemporaryFile(
