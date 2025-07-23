@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Syntatis\Tests\Clients;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use SplFileInfo;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Clients\PHPScoperInc;
 use Syntatis\Tests\WithTemporaryFiles;
+
+use function array_map;
 
 class PHPScoperIncTest extends TestCase
 {
@@ -47,13 +50,31 @@ class PHPScoperIncTest extends TestCase
 
 	public function testOverrideExposeGlobals(): void
 	{
-		$instance = new PHPScoperInc(
-			$this->getTemporaryPath(),
-			[
-				'expose-global-constants' => false,
-				'expose-global-classes' => false,
-			],
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\Vendor\\": "app/"
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"expose-global-constants": false,
+							"expose-global-classes": false,
+							"expose-global-functions": true
+						}
+					}
+				}
+			}
+			CONTENT,
 		);
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertFalse($instance->get()['expose-global-constants']);
 		$this->assertFalse($instance->get()['expose-global-classes']);
@@ -192,7 +213,7 @@ class PHPScoperIncTest extends TestCase
 		$this->assertContains('Symfony\\Component\\Console', $instance->get()['exclude-namespaces']);
 	}
 
-	public function testExcludeFiles(): void
+	public function testExcludeFilesFieldInAndName(): void
 	{
 		$this->dumpTemporaryFile(
 			'composer.json',
@@ -203,34 +224,35 @@ class PHPScoperIncTest extends TestCase
 					"psr-4": {
 						"PluginName\\": ["app/"]
 					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files", "name": ["foo.css"]}
+							]
+						}
+					}
 				}
 			}
 			CONTENT,
 		);
-		$this->dumpTemporaryFile('vendor/foo.css', '');
-		$this->dumpTemporaryFile('vendor/foo.html', '');
-		$this->dumpTemporaryFile('vendor/foo.js', '');
-		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
-		$instance = new PHPScoperInc(
-			$this->getTemporaryPath(),
-			[
-				'exclude-files' => [
-					$this->getTemporaryPath('vendor/foo.css'),
-					$this->getTemporaryPath('vendor/foo.html'),
-					$this->getTemporaryPath('vendor/foo.js'),
-					$this->getTemporaryPath('vendor/foo.html.php'),
-				],
-			],
+		$this->dumpTemporaryFile('files/foo.css', '');
+		$this->dumpTemporaryFile('files/foo.html', '');
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+		$excludeFiles = array_map(
+			static fn ($file) => Path::canonicalize($file),
+			$instance->get()['exclude-files'],
 		);
 
-		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('files/foo.css'), $excludeFiles);
+		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
 	}
 
-	public function testExcludeFilesWithSplFileInfo(): void
+	public function testExcludeFilesFieldOnlyIn(): void
 	{
 		$this->dumpTemporaryFile(
 			'composer.json',
@@ -241,31 +263,255 @@ class PHPScoperIncTest extends TestCase
 					"psr-4": {
 						"PluginName\\": ["app/"]
 					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files"}
+							]
+						}
+					}
 				}
 			}
 			CONTENT,
 		);
-		$this->dumpTemporaryFile('vendor/foo.css', '');
-		$this->dumpTemporaryFile('vendor/foo.html', '');
-		$this->dumpTemporaryFile('vendor/foo.js', '');
-		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
-		$instance = new PHPScoperInc(
-			$this->getTemporaryPath(),
-			[
-				'exclude-files' => [
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.css')),
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.html')),
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.js')),
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.html.php')),
-				],
-			],
+		$this->dumpTemporaryFile('files/foo.css', '');
+		$this->dumpTemporaryFile('files/foo.html', '');
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+		$excludeFiles = array_map(
+			static fn ($file) => Path::canonicalize($file),
+			$instance->get()['exclude-files'],
 		);
 
-		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
+		$this->assertContains($this->getTemporaryPath('files/foo.css'), $excludeFiles);
+		$this->assertContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
+	}
+
+	public function testExcludeFilesFieldOnlyName(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"name": "foo.css"}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesFieldInInvalid(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": 1}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesFieldNameInvalid(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files", "name": 1}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesArrayInvalid(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": ["string"]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesArray(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files", "name": ["foo.css"]}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->dumpTemporaryFile('files/foo.css', '');
+		$this->dumpTemporaryFile('files/foo.html', '');
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+		$excludeFiles = array_map(
+			static fn ($file) => Path::canonicalize($file),
+			$instance->get()['exclude-files'],
+		);
+
+		$this->assertContains($this->getTemporaryPath('files/foo.css'), $excludeFiles);
+		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
+	}
+
+	public function testExcludeFilesArrayInvalidIn(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": ["tmp/phpunit-dumps/files", 1], "name": ["foo.css"]}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesArrayInvalidName(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": ["tmp/phpunit-dumps/files"], "name": ["foo.css", 1]}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
 	}
 
 	public function testWithFinder(): void

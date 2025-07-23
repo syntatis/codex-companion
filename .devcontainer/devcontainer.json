@@ -25,7 +25,7 @@
                 "editorConfig.editorConfig",
                 "neilbrayfield.php-docblocker",
                 "SanderRonde.phpstan-vscode",
-                "wongjn.php-sniffer"
+                "valeryanm.vscode-phpsab"
             ]
         }
     }
