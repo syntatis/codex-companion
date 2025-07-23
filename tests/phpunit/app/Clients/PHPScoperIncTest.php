@@ -400,7 +400,7 @@ class PHPScoperIncTest extends TestCase
 					"codex": {
 						"scoper": {
 							"prefix": "PVA\\Vendor",
-							"exclude-files": "tmp/phpunit-dumps/files/foo.css"
+							"exclude-files": ["string"]
 						}
 					}
 				}
