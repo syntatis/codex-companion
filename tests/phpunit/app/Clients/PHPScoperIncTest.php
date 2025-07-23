@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Syntatis\Tests\Clients;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Symfony\Component\Filesystem\Path;
@@ -316,6 +317,40 @@ class PHPScoperIncTest extends TestCase
 			CONTENT,
 		);
 
+		// If "in" is not set, it defaults to the "vendor" directory.
+		$this->dumpTemporaryFile('vendor/foo.css', '');
+		$this->dumpTemporaryFile('vendor/foo.html', '');
+		$this->expectException(InvalidArgumentException::class);
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesArray(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files", "name": ["foo.css"]}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
 		$this->dumpTemporaryFile('files/foo.css', '');
 		$this->dumpTemporaryFile('files/foo.html', '');
 
@@ -326,7 +361,7 @@ class PHPScoperIncTest extends TestCase
 		);
 
 		$this->assertContains($this->getTemporaryPath('files/foo.css'), $excludeFiles);
-		$this->assertContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
+		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
 	}
 
 	public function testWithFinder(): void

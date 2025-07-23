@@ -14,7 +14,7 @@ use Syntatis\Utils\Arr;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
-use function gettype;
+use function array_key_exists;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -207,34 +207,34 @@ class Codex
 			$resolver->setNormalizer('exclude-files', static function (Options $options, $value): array {
 				foreach ($value as $index => $item) {
 					if (! is_array($item)) {
-						throw new InvalidArgumentException(sprintf('Each parameter must be an array, "%s" given at index %d.', gettype($item), $index));
+						throw new InvalidArgumentException(sprintf('Each parameter must be an array at index %d.', $index));
 					}
 
-					// Validate "in" if present.
-					if (isset($item['in'])) {
-						if (! is_string($item['in']) && ! is_array($item['in'])) {
-							throw new InvalidArgumentException(sprintf('"in" must be a string or array of strings at index %d.', $index));
-						}
-
-						if (is_array($item['in']) && ! self::isStringArray($item['in'])) {
-							throw new InvalidArgumentException(sprintf('"in" must be an array of strings at index %d.', $index));
-						}
+					// "in" is required
+					if (! array_key_exists('in', $item)) {
+						throw new InvalidArgumentException(sprintf('Missing required "in" key at index %d.', $index));
 					}
 
-					// Validate "name" if present.
-					if (isset($item['name'])) {
-						if (! is_string($item['name']) && ! is_array($item['name'])) {
-							throw new InvalidArgumentException(sprintf('"name" must be a string or array of strings at index %d.', $index));
-						}
-
-						if (is_array($item['name']) && ! self::isStringArray($item['name'])) {
-							throw new InvalidArgumentException(sprintf('"name" must be an array of strings at index %d.', $index));
-						}
+					// "in" must be string or array<string>
+					if (! is_string($item['in']) && ! is_array($item['in'])) {
+						throw new InvalidArgumentException(sprintf('"in" must be a string or array of strings at index %d.', $index));
 					}
 
-					// Require "name" only if "in" is not provided.
-					if (! isset($item['in']) && ! isset($item['name'])) {
-						throw new InvalidArgumentException(sprintf('Either "in" or "name" must be provided at index %d.', $index));
+					if (is_array($item['in']) && ! self::isStringArray($item['in'])) {
+						throw new InvalidArgumentException(sprintf('"in" must be an array of strings at index %d.', $index));
+					}
+
+					// "name" is optional, but must be string or array<string> if present
+					if (! isset($item['name'])) {
+						continue;
+					}
+
+					if (! is_string($item['name']) && ! is_array($item['name'])) {
+						throw new InvalidArgumentException(sprintf('"name" must be a string or array of strings at index %d.', $index));
+					}
+
+					if (is_array($item['name']) && ! self::isStringArray($item['name'])) {
+						throw new InvalidArgumentException(sprintf('"name" must be an array of strings at index %d.', $index));
 					}
 				}
 

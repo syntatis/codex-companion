@@ -34,7 +34,7 @@ trait WithTemporaryFiles
 
 	public static function tearDownAfterClass(): void
 	{
-		self::$filesystem->remove(self::$tempDir);
+		// self::$filesystem->remove(self::$tempDir);
 
 		parent::tearDownAfterClass();
 	}
@@ -70,15 +70,15 @@ trait WithTemporaryFiles
 
 	protected function tearDownTemporaryPath(): void
 	{
-		$finder = Finder::create()
-			->in(self::$tempDir)
-			->ignoreDotFiles(false)
-			->sortByName();
+		// $finder = Finder::create()
+		// 	->in(self::$tempDir)
+		// 	->ignoreDotFiles(false)
+		// 	->sortByName();
 
-		if (! $finder->hasResults()) {
-			return;
-		}
+		// if (! $finder->hasResults()) {
+		// 	return;
+		// }
 
-		self::$filesystem->remove($finder);
+		// self::$filesystem->remove($finder);
 	}
 }

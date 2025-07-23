@@ -232,32 +232,30 @@ class PHPScoperInc
 	 */
 	private function excludeFiles(): void
 	{
-		/** @var array<array{in?:string|array<string>,name?:string|array<string>}> $configs List of directory and name file to exclude. */
+		/** @var array<array{in:string|array<string>,name?:string|array<string>}> $configs List of directory and name file to exclude. */
 		$configs = $this->codex->getConfig('scoper.exclude-files');
 		$excludes = [];
 
 		foreach ($configs as $conf) {
 			$name = $conf['name'] ?? null;
-			$in = $conf['in'] ?? null;
+			$in = $conf['in'];
 
 			if (Val::isBlank($name) && Val::isBlank($in)) {
 				continue;
 			}
 
 			$finder = IsolatedFinder::create()->files();
+			$finder->in($in);
 
 			if (! Val::isBlank($name)) {
 				$finder->name($name);
 			}
 
-			if (Val::isBlank($in)) {
-				continue;
-			}
-
-			$finder->in($in);
-
-			$paths = array_values(array_map(static fn ($file): string => $file->getRealPath(), iterator_to_array($finder)));
-			$excludes = array_merge($excludes, $paths);
+			$paths = array_map(
+				static fn ($file): string => $file->getRealPath(),
+				iterator_to_array($finder),
+			);
+			$excludes = array_merge($excludes, array_values($paths));
 		}
 
 		$this->data->set('exclude-files', $excludes);
