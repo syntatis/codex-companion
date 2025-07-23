@@ -212,7 +212,7 @@ class PHPScoperIncTest extends TestCase
 		$this->assertContains('Symfony\\Component\\Console', $instance->get()['exclude-namespaces']);
 	}
 
-	public function testExcludeFilesFieldIn(): void
+	public function testExcludeFilesFieldInAndName(): void
 	{
 		$this->dumpTemporaryFile(
 			'composer.json',
@@ -240,8 +240,6 @@ class PHPScoperIncTest extends TestCase
 
 		$this->dumpTemporaryFile('files/foo.css', '');
 		$this->dumpTemporaryFile('files/foo.html', '');
-		$this->dumpTemporaryFile('files/foo.js', '');
-		$this->dumpTemporaryFile('files/foo.html.php', '');
 
 		$instance = new PHPScoperInc($this->getTemporaryPath());
 		$excludeFiles = array_map(
@@ -251,8 +249,45 @@ class PHPScoperIncTest extends TestCase
 
 		$this->assertContains($this->getTemporaryPath('files/foo.css'), $excludeFiles);
 		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
-		$this->assertNotContains($this->getTemporaryPath('files/foo.js'), $excludeFiles);
-		$this->assertNotContains($this->getTemporaryPath('files/foo.html.php'), $excludeFiles);
+	}
+
+	public function testExcludeFilesFieldOnlyIn(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files"}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->dumpTemporaryFile('files/foo.css', '');
+		$this->dumpTemporaryFile('files/foo.html', '');
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+		$excludeFiles = array_map(
+			static fn ($file) => Path::canonicalize($file),
+			$instance->get()['exclude-files'],
+		);
+
+		$this->assertContains($this->getTemporaryPath('files/foo.css'), $excludeFiles);
+		$this->assertContains($this->getTemporaryPath('files/foo.html'), $excludeFiles);
 	}
 
 	public function testWithFinder(): void
