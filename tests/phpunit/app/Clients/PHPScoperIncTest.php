@@ -6,7 +6,6 @@ namespace Syntatis\Tests\Clients;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Clients\PHPScoperInc;
 use Syntatis\Tests\WithTemporaryFiles;
