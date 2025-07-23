@@ -242,6 +242,8 @@ class PHPScoperIncTest extends TestCase
 
 		$instance = new PHPScoperInc($this->getTemporaryPath());
 
+		dd($instance->get()['exclude-files']);
+
 		$this->assertContains($this->getTemporaryPath('files/foo.css'), $instance->get()['exclude-files']);
 		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $instance->get()['exclude-files']);
 		$this->assertNotContains($this->getTemporaryPath('files/foo.js'), $instance->get()['exclude-files']);
