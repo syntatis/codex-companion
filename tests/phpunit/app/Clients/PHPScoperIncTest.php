@@ -317,12 +317,71 @@ class PHPScoperIncTest extends TestCase
 			CONTENT,
 		);
 
-		// If "in" is not set, it defaults to the "vendor" directory.
-		$this->dumpTemporaryFile('vendor/foo.css', '');
-		$this->dumpTemporaryFile('vendor/foo.html', '');
 		$this->expectException(InvalidArgumentException::class);
 
-		$instance = new PHPScoperInc($this->getTemporaryPath());
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesFieldInInvalid(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": 1}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
+	}
+
+	public function testExcludeFilesFieldNameInvalid(): void
+	{
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\": ["app/"]
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files", "name": 1}
+							]
+						}
+					}
+				}
+			}
+			CONTENT,
+		);
+
+		$this->expectException(InvalidArgumentException::class);
+
+		new PHPScoperInc($this->getTemporaryPath());
 	}
 
 	public function testExcludeFilesArray(): void
