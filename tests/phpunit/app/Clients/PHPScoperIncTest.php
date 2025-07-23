@@ -6,9 +6,12 @@ namespace Syntatis\Tests\Clients;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
 use Syntatis\Codex\Companion\Clients\PHPScoperInc;
 use Syntatis\Tests\WithTemporaryFiles;
+
+use function array_map;
 
 class PHPScoperIncTest extends TestCase
 {
@@ -241,8 +244,10 @@ class PHPScoperIncTest extends TestCase
 		$this->dumpTemporaryFile('files/foo.html.php', '');
 
 		$instance = new PHPScoperInc($this->getTemporaryPath());
-
-		dd($instance->get()['exclude-files']);
+		$excludeFiles = array_map(
+			static fn ($file) => Path::canonicalize($file),
+			$instance->get()['exclude-files'],
+		);
 
 		$this->assertContains($this->getTemporaryPath('files/foo.css'), $instance->get()['exclude-files']);
 		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $instance->get()['exclude-files']);
