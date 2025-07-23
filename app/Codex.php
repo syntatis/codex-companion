@@ -14,6 +14,7 @@ use Syntatis\Utils\Arr;
 use Syntatis\Utils\Str;
 use Syntatis\Utils\Val;
 
+use function gettype;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -167,7 +168,7 @@ class Codex
 			$resolver->setAllowedTypes('expose-global-constants', 'bool');
 			$resolver->setAllowedTypes('expose-global-classes', 'bool');
 			$resolver->setAllowedTypes('expose-global-functions', 'bool');
-			$resolver->setAllowedTypes('exclude-files', 'string[]');
+			$resolver->setAllowedTypes('exclude-files', 'array');
 			$resolver->setAllowedTypes('exclude-namespaces', 'string[]');
 			$resolver->setAllowedTypes('install-dev', 'string[]');
 			$resolver->setDefaults([
@@ -176,6 +177,7 @@ class Codex
 				'expose-global-classes' => true,
 				'expose-global-functions' => true,
 				'exclude-namespaces' => [],
+				'exclude-files' => [],
 				'install-dev' => [],
 				'finder' => [],
 			]);
@@ -201,6 +203,43 @@ class Codex
 			$resolver->setNormalizer('prefix', static function (Options $options, string $value): string {
 				return trim(trim($value, '\\'));
 			});
+
+			$resolver->setNormalizer('exclude-files', static function (Options $options, $value): array {
+				foreach ($value as $index => $item) {
+					if (! is_array($item)) {
+						throw new InvalidArgumentException(sprintf('Each parameter must be an array, "%s" given at index %d.', gettype($item), $index));
+					}
+
+					// Validate "in" if present.
+					if (isset($item['in'])) {
+						if (! is_string($item['in']) && ! is_array($item['in'])) {
+							throw new InvalidArgumentException(sprintf('"in" must be a string or array of strings at index %d.', $index));
+						}
+
+						if (is_array($item['in']) && ! self::isStringArray($item['in'])) {
+							throw new InvalidArgumentException(sprintf('"in" must be an array of strings at index %d.', $index));
+						}
+					}
+
+					// Validate "name" if present.
+					if (isset($item['name'])) {
+						if (! is_string($item['name']) && ! is_array($item['name'])) {
+							throw new InvalidArgumentException(sprintf('"name" must be a string or array of strings at index %d.', $index));
+						}
+
+						if (is_array($item['name']) && ! self::isStringArray($item['name'])) {
+							throw new InvalidArgumentException(sprintf('"name" must be an array of strings at index %d.', $index));
+						}
+					}
+
+					// Require "name" only if "in" is not provided.
+					if (! isset($item['in']) && ! isset($item['name'])) {
+						throw new InvalidArgumentException(sprintf('Either "in" or "name" must be provided at index %d.', $index));
+					}
+				}
+
+				return $value;
+			});
 		};
 
 		/**
@@ -219,5 +258,23 @@ class Codex
 		$configs = $this->getResolvedConfigs($options->resolve(is_array($configs) ? $configs : []));
 
 		$this->configs = $configs;
+	}
+
+	/**
+	 * Check if all items in the array are strings.
+	 *
+	 * @param array<mixed> $array The array to check.
+	 *
+	 * @return bool True if all items are strings, false otherwise.
+	 */
+	private static function isStringArray(array $array): bool
+	{
+		foreach ($array as $item) {
+			if (! is_string($item)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
