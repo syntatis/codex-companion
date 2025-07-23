@@ -47,13 +47,31 @@ class PHPScoperIncTest extends TestCase
 
 	public function testOverrideExposeGlobals(): void
 	{
-		$instance = new PHPScoperInc(
-			$this->getTemporaryPath(),
-			[
-				'expose-global-constants' => false,
-				'expose-global-classes' => false,
-			],
+		$this->dumpTemporaryFile(
+			'composer.json',
+			<<<'CONTENT'
+			{
+				"name": "syntatis/howdy",
+				"autoload": {
+					"psr-4": {
+						"PluginName\\Vendor\\": "app/"
+					}
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"expose-global-constants": false,
+							"expose-global-classes": false,
+							"expose-global-functions": true
+						}
+					}
+				}
+			}
+			CONTENT,
 		);
+
+		$instance = new PHPScoperInc($this->getTemporaryPath());
 
 		$this->assertFalse($instance->get()['expose-global-constants']);
 		$this->assertFalse($instance->get()['expose-global-classes']);
@@ -192,7 +210,7 @@ class PHPScoperIncTest extends TestCase
 		$this->assertContains('Symfony\\Component\\Console', $instance->get()['exclude-namespaces']);
 	}
 
-	public function testExcludeFiles(): void
+	public function testExcludeFilesFieldIn(): void
 	{
 		$this->dumpTemporaryFile(
 			'composer.json',
@@ -203,69 +221,32 @@ class PHPScoperIncTest extends TestCase
 					"psr-4": {
 						"PluginName\\": ["app/"]
 					}
-				}
-			}
-			CONTENT,
-		);
-		$this->dumpTemporaryFile('vendor/foo.css', '');
-		$this->dumpTemporaryFile('vendor/foo.html', '');
-		$this->dumpTemporaryFile('vendor/foo.js', '');
-		$this->dumpTemporaryFile('vendor/foo.html.php', '');
-
-		$instance = new PHPScoperInc(
-			$this->getTemporaryPath(),
-			[
-				'exclude-files' => [
-					$this->getTemporaryPath('vendor/foo.css'),
-					$this->getTemporaryPath('vendor/foo.html'),
-					$this->getTemporaryPath('vendor/foo.js'),
-					$this->getTemporaryPath('vendor/foo.html.php'),
-				],
-			],
-		);
-
-		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
-	}
-
-	public function testExcludeFilesWithSplFileInfo(): void
-	{
-		$this->dumpTemporaryFile(
-			'composer.json',
-			<<<'CONTENT'
-			{
-				"name": "syntatis/howdy",
-				"autoload": {
-					"psr-4": {
-						"PluginName\\": ["app/"]
+				},
+				"extra": {
+					"codex": {
+						"scoper": {
+							"prefix": "PVA\\Vendor",
+							"exclude-files": [
+								{"in": "tmp/phpunit-dumps/files", "name": ["foo.css"]}
+							]
+						}
 					}
 				}
 			}
 			CONTENT,
 		);
-		$this->dumpTemporaryFile('vendor/foo.css', '');
-		$this->dumpTemporaryFile('vendor/foo.html', '');
-		$this->dumpTemporaryFile('vendor/foo.js', '');
-		$this->dumpTemporaryFile('vendor/foo.html.php', '');
 
-		$instance = new PHPScoperInc(
-			$this->getTemporaryPath(),
-			[
-				'exclude-files' => [
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.css')),
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.html')),
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.js')),
-					new SplFileInfo($this->getTemporaryPath('vendor/foo.html.php')),
-				],
-			],
-		);
+		$this->dumpTemporaryFile('files/foo.css', '');
+		$this->dumpTemporaryFile('files/foo.html', '');
+		$this->dumpTemporaryFile('files/foo.js', '');
+		$this->dumpTemporaryFile('files/foo.html.php', '');
 
-		$this->assertContains($this->getTemporaryPath('vendor/foo.css'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.js'), $instance->get()['exclude-files']);
-		$this->assertContains($this->getTemporaryPath('vendor/foo.html.php'), $instance->get()['exclude-files']);
+		$instance = new PHPScoperInc($this->getTemporaryPath());
+
+		$this->assertContains($this->getTemporaryPath('files/foo.css'), $instance->get()['exclude-files']);
+		$this->assertNotContains($this->getTemporaryPath('files/foo.html'), $instance->get()['exclude-files']);
+		$this->assertNotContains($this->getTemporaryPath('files/foo.js'), $instance->get()['exclude-files']);
+		$this->assertNotContains($this->getTemporaryPath('files/foo.html.php'), $instance->get()['exclude-files']);
 	}
 
 	public function testWithFinder(): void

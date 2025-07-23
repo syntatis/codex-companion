@@ -19,7 +19,6 @@ use function basename;
 use function class_alias;
 use function class_exists;
 use function is_array;
-use function is_string;
 use function iterator_to_array;
 use function json_decode;
 use function json_encode;
@@ -39,13 +38,6 @@ if (class_exists(IsolatedFinder::class) === false) {
  *
  * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md
  *
- * @phpstan-type Configs = array{
- * 		expose-global-constants:bool,
- * 		expose-global-classes:bool,
- * 		expose-global-functions:bool,
- * 		exclude-namespaces:array<string>,
- * 		exclude-files:iterable<SplFileInfo>|array<string>
- * }
  * @phpstan-type FinderConfigs = array{not-path?:array<string>,exclude?:array<string>}
  */
 class PHPScoperInc
@@ -58,12 +50,8 @@ class PHPScoperInc
 	/** @phpstan-var FinderConfigs|array{} */
 	private array $finderConfigs = [];
 
-	/** @phpstan-param Configs|array{} $configs */
-	public function __construct(string $projectPath, array $configs = [])
+	public function __construct(string $projectPath)
 	{
-		$excludeFiles = $configs['exclude-files'] ?? [];
-		unset($configs['exclude-files']);
-
 		$this->codex = new Codex($projectPath);
 		$this->data = new Dot(array_merge(
 			[
@@ -72,9 +60,8 @@ class PHPScoperInc
 				'expose-global-functions' => $this->codex->getConfig('scoper.expose-global-functions'),
 				'exclude-namespaces' => $this->codex->getConfig('scoper.exclude-namespaces'),
 			],
-			$configs,
 		));
-		$this->excludeFiles($excludeFiles);
+		$this->excludeFiles();
 		$this->finderConfigs = (array) ($this->codex->getConfig('scoper.finder') ?? []);
 	}
 
@@ -242,31 +229,37 @@ class PHPScoperInc
 	 * The list of files that will be left untouched during the scoping process.
 	 *
 	 * @see https://github.com/humbug/php-scoper/blob/main/docs/configuration.md#excluded-files
-	 *
-	 * @param iterable<mixed> $files A list of path of files to exclude. Each path may be an
-	 *                               absolute or relative to the PHP-Scoper config file.
 	 */
-	private function excludeFiles(iterable $files): void
+	private function excludeFiles(): void
 	{
-		$merger = [];
-		$current = $this->data->get('exclude-files', []);
-		$current = is_array($current) ? $current : [];
+		/** @var array<array{in?:string|array<string>,name?:string|array<string>}> $configs List of directory and name file to exclude. */
+		$configs = $this->codex->getConfig('scoper.exclude-files');
+		$excludes = [];
 
-		foreach ($files as $file) {
-			if (is_string($file)) {
-				$merger[] = $file;
+		foreach ($configs as $conf) {
+			$name = $conf['name'] ?? null;
+			$in = $conf['in'] ?? null;
+
+			if (Val::isBlank($name) && Val::isBlank($in)) {
 				continue;
 			}
 
-			if ($file instanceof SplFileInfo) {
-				$merger[] = (string) $file;
+			$finder = IsolatedFinder::create()->files();
+
+			if (! Val::isBlank($name)) {
+				$finder->name($name);
+			}
+
+			if (Val::isBlank($in)) {
 				continue;
 			}
+
+			$finder->in($in);
+
+			$paths = array_values(array_map(static fn ($file): string => $file->getRealPath(), iterator_to_array($finder)));
+			$excludes = array_merge($excludes, $paths);
 		}
 
-		$this->data->set(
-			'exclude-files',
-			array_values(array_unique(array_merge($current, $merger))),
-		);
+		$this->data->set('exclude-files', $excludes);
 	}
 }
