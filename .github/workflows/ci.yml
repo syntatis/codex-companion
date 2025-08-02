@@ -37,12 +37,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: "7.4"
 
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v3
@@ -59,12 +59,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: "7.4"
 
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v3
@@ -84,12 +84,18 @@ jobs:
       PHP_EXTENSIONS: mysqli
     strategy:
       fail-fast: true
-      max-parallel: 2
+      max-parallel: 4
       matrix:
+        os: [windows-latest, ubuntu-latest]
         php-version: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
         wp-version: ["5.*", "6.*"]
-        stability: [lowest, stable]
-        machine: [windows-latest, ubuntu-latest]
+        dependencies: [lowest, highest]
+        include:
+          - os: ubuntu-latest
+            php-version: "8.4"
+            wp-version: "6.*"
+            dependencies: highest
+            coverage: true
     services:
       database:
         image: "mariadb:10.11.5"
@@ -108,25 +114,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Setup PHP extensions cache environment
-        id: php-ext-cache
-        uses: shivammathur/cache-extensions@v1
-        with:
-          php-version: ${{ matrix.php-version }}
-          extensions: ${{ env.PHP_EXTENSIONS }}
-          key: php-${{ matrix.php-version }}-ext
-
-      - name: Setup PHP extensions cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.php-ext-cache.outputs.dir }}
-          key: ${{ steps.php-ext-cache.outputs.key }}
-          restore-keys: ${{ steps.php-ext-cache.outputs.key }}
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -136,7 +123,7 @@ jobs:
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v3
         with:
-          dependency-versions: ${{ matrix.stability }}
+          dependency-versions: ${{ matrix.dependencies }}
 
       - name: Run test
         run: vendor/bin/phpunit --coverage-clover coverage.xml
@@ -145,7 +132,7 @@ jobs:
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.php-version == '8.4' && matrix.wp-version == '6.*' && matrix.stability == 'stable' && matrix.machine == 'ubuntu-latest' }}
+        if: ${{ matrix.coverage }}
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
