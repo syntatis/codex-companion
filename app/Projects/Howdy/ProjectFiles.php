@@ -29,7 +29,7 @@ class ProjectFiles implements IteratorAggregate, Countable
 		$finder = Finder::create()
 			->files()
 			->in($projectDir)
-			->name('/(.*\.(php|json|js|jsx|ts|tsx|pot)|readme\.txt|phpcs\.xml(\.dist)?)$/')
+			->name('/(.*\.(php|json|js|jsx|ts|tsx|scss|pot)|readme\.txt|phpcs\.xml(\.dist)?)$/')
 			->notPath('/vendor|node_modules|.*\.config.js|.*\-lock\.json/');
 
 		if (is_string($outputDir) && ! Val::isBlank($outputDir)) {
