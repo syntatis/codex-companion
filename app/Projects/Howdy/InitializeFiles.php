@@ -34,7 +34,8 @@ use function array_merge;
  * 		wp_plugin_description?:non-empty-string,
  *		camelcase:non-empty-string,
  *		kebabcase:non-empty-string,
- *		snakecase:non-empty-string
+ *		snakecase:non-empty-string,
+ *		titlecase:non-empty-string
  * }
  */
 class InitializeFiles
@@ -63,6 +64,7 @@ class InitializeFiles
 				'camelcase' => Str::toCamelCase($props['wp_plugin_slug']),
 				'kebabcase' => Str::toKebabCase($props['wp_plugin_slug']),
 				'snakecase' => Str::toSnakeCase($props['wp_plugin_slug']),
+				'titlecase' => Str::toTitleCase($props['wp_plugin_slug']),
 			],
 		);
 
@@ -72,6 +74,7 @@ class InitializeFiles
 				'camelcase' => Str::toCamelCase($inputs['wp_plugin_slug']),
 				'kebabcase' => Str::toKebabCase($inputs['wp_plugin_slug']),
 				'snakecase' => Str::toSnakeCase($inputs['wp_plugin_slug']),
+				'titlecase' => Str::toTitleCase($inputs['wp_plugin_slug']),
 			],
 		);
 	}

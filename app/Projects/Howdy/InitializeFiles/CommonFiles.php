@@ -162,6 +162,9 @@ class CommonFiles implements Dumpable, EditableFile
 					return '/(?<=Description:)\s+\K' . preg_quote($value) . '/';
 
 				case 'wp_plugin_slug':
+					return '/' . preg_quote($value) . '/';
+
+				case 'kebabcase':
 					/**
 					 * Generates a RegEx pattern to match the plugin slug in a file.
 					 *
@@ -174,10 +177,7 @@ class CommonFiles implements Dumpable, EditableFile
 					 * - .plugin-name (dot) Usually found in CSS as a class.
 					 * - #plugin-name (hash) Usually found in CSS as an ID.
 					 */
-					return '/(?<=[\s|\"|\'|\.|\#])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])/';
-
-				case 'kebabcase':
-					return '/(?<=[\s|\"|\'|\.|\#])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])/';
+					return '/(?<=[\s|\"|\'|\.|\#])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\-])?/';
 
 				case 'camelcase':
 					/**
@@ -212,6 +212,13 @@ class CommonFiles implements Dumpable, EditableFile
 					 * - #plugin_name (hash) Usually found in CSS as an ID.
 					 */
 					return '/(?<=[\s|__|\$|\"|\'|\.])' . preg_quote($value) . '(?=[\s|\"|\'|\\|\/|\_])/';
+
+				case 'titlecase':
+					/**
+					 * Generates a RegEx pattern to match the given value in "Title Case" format
+					 * in a file.
+					 */
+					return '/(?<=[\"|\'])' . preg_quote($value) . '(?=[\s|\"|\'])/';
 
 				default:
 					return '/' . preg_quote($value) . '/';
