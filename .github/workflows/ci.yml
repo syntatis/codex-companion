@@ -145,7 +145,7 @@ jobs:
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.php-version == '8.4' && matrix.wp-version == '6.*' && matrix.stability == 'stable' }}
+        if: ${{ matrix.php-version == '8.4' && matrix.wp-version == '6.*' && matrix.stability == 'stable' && matrix.machine == 'ubuntu-latest' }}
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
