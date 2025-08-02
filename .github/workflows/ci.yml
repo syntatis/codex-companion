@@ -88,6 +88,8 @@ jobs:
       matrix:
         php-version: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
         wp-version: ["5.*", "6.*"]
+        stability: [lowest, stable]
+        machine: [windows-latest, ubuntu-latest]
     services:
       database:
         image: "mariadb:10.11.5"
@@ -133,6 +135,8 @@ jobs:
 
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: ${{ matrix.stability }}
 
       - name: Run test
         continue-on-error: ${{ matrix.php-version == '8.4' }}

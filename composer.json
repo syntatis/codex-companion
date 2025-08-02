@@ -24,8 +24,8 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Syntatis\\Tests\\": [
-				"tests/app/",
-				"tests/phpunit/"
+				"tests",
+				"tests/app/"
 			]
 		}
 	},
