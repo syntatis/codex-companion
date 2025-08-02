@@ -18,12 +18,11 @@
 		</report>
 	</coverage>
 	<php>
-		<env name="WP_PHPUNIT__TESTS_CONFIG" value="tests/phpunit/wp-tests-config.php"/>
 		<const name="WP_ENVIRONMENT_TYPE" value="development"/>
 	</php>
 	<testsuites>
 		<testsuite name="src">
-			<directory suffix="Test.php">tests/phpunit/app</directory>
+			<directory suffix="Test.php">tests/app</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
