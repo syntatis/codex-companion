@@ -1,10 +1,10 @@
 services:
 
   php:
-    image: ghcr.io/syntatis/php:7.4-fpm
+    image: ghcr.io/syntatis/php:${PHP_VERSION:-7.4}-fpm
     restart: on-failure
     volumes:
-      - ../:/var/www/workspace
+      - ../:/var/www/work
       - ./php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - vscode_server_volume:/root/.vscode-server
 
