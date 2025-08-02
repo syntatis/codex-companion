@@ -13,4 +13,3 @@ A set of tools, commands, and scripts, designed to accompany projects built with
 ## Projects
 
 - 👋 [howdy](https://github.com/syntatis/howdy): A WordPress plugin boilerplate with modern development tools, easier configuration, and an improved folder structure.
-- ✨ [howdy-open-ai](https://github.com/syntatis/howdy-open-ai): A WordPress plugin boilerplate with OpenAI PHP client add-in.
