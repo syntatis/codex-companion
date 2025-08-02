@@ -30,6 +30,7 @@
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="app" value="Syntatis\Codex\Companion"/>
+				<element key="tests" value="Syntatis\Tests"/>
 				<element key="tests/app" value="Syntatis\Tests"/>
 			</property>
 		</properties>
