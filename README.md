@@ -8,7 +8,7 @@
 > [!CAUTION]
 > This project is still in development and currently tagged as `v0.*`, which means it's not stable yet and may include breaking changes between versions. I keep working toward a stable release, but until then, things may change as we improve the project. Thanks for your interest and feel free to explore, test, or contribute!
 
-A set of tools, commands, and scripts, designed to accompany projects built with [Codex](https://github.com/syntatis/codex):
+A set of tools, commands, and scripts to enhance the WordPress® extension development experience.
 
 ## Projects
 
