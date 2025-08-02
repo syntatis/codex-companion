@@ -70,11 +70,11 @@
 		"class": "Syntatis\\Codex\\Companion\\Composer\\Plugin"
 	},
 	"scripts": {
-		"phpcs": "phpcs",
-		"phpcs:fix": "phpcbf",
-		"phpstan": "phpstan",
-		"phpunit": "phpunit --no-coverage",
-		"phpunit:coverage": "phpunit"
+		"analyze": "phpstan --memory-limit=512M",
+		"format": "phpcbf",
+		"lint": "phpcs",
+		"test": "phpunit --no-coverage",
+		"test:coverage": "phpunit"
 	},
 	"non-feature-branches": [
 		"dependabot/*"
