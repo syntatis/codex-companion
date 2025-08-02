@@ -1,32 +1,32 @@
 {
-    "name": "syntatis/codex-companion",
-    "dockerComposeFile": [
-        "./compose.yml"
-    ],
-    "service": "php",
-    "workspaceFolder": "/var/www/workspace",
-    "customizations": {
-        "vscode": {
-            "settings": {
-                "php.validate.executablePath": "/usr/local/bin/php",
-                "terminal.integrated.profiles.linux": {
-                    "bash": {
-                        "path": "/bin/bash",
-                        "args": [
-                            "-l"
-                        ]
-                    }
-                },
-                "terminal.integrated.defaultProfile.linux": "bash"
-            },
-            "extensions": [
-                "bmewburn.vscode-intelephense-client",
-                "christian-kohler.path-intellisense",
-                "editorConfig.editorConfig",
-                "neilbrayfield.php-docblocker",
-                "SanderRonde.phpstan-vscode",
-                "valeryanm.vscode-phpsab"
-            ]
-        }
-    }
+	"name": "syntatis/codex-companion",
+	"dockerComposeFile": [
+		"../compose.yml"
+	],
+	"service": "php",
+	"workspaceFolder": "/var/www/work",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"php.validate.executablePath": "/usr/local/bin/php",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "/bin/bash",
+						"args": [
+							"-l"
+						]
+					}
+				},
+				"terminal.integrated.defaultProfile.linux": "bash"
+			},
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"christian-kohler.path-intellisense",
+				"editorConfig.editorConfig",
+				"neilbrayfield.php-docblocker",
+				"SanderRonde.phpstan-vscode",
+				"valeryanm.vscode-phpsab"
+			]
+		}
+	}
 }
