@@ -1,14 +1,11 @@
 {
-    "recommendations": [
-        "bmewburn.vscode-intelephense-client",
-        "christian-kohler.path-intellisense",
-        "editorconfig.editorconfig",
-        "mikestead.dotenv",
-        "ms-vscode-remote.remote-containers",
-        "neilbrayfield.php-docblocker",
-        "sanderronde.phpstan-vscode",
-        "wmaurer.change-case",
-        "dotjoshjohnson.xml",
-        "valeryanm.vscode-phpsab"
-    ]
+	"recommendations": [
+		"bmewburn.vscode-intelephense-client",
+		"christian-kohler.path-intellisense",
+		"editorConfig.editorConfig",
+		"neilbrayfield.php-docblocker",
+		"SanderRonde.phpstan-vscode",
+		"valeryanm.vscode-phpsab",
+		"ms-vscode-remote.remote-containers",
+	]
 }

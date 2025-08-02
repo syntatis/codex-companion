@@ -25,7 +25,7 @@ trait WithTemporaryFiles
 		parent::setUpBeforeClass();
 
 		$filesystem = new Filesystem();
-		$tempDir = Path::normalize(dirname(__DIR__, 2) . '/tmp/phpunit-dumps');
+		$tempDir = Path::normalize(dirname(__DIR__) . '/tmp/phpunit-dumps');
 		$filesystem->mkdir($tempDir);
 
 		self::$tempDir = $tempDir;

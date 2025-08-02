@@ -1,76 +1,82 @@
 {
-    "name": "syntatis/codex-companion",
-    "description": "Helpful companion for Codex projects",
-    "type": "composer-plugin",
-    "license": "MIT",
-    "keywords": [
-        "cli",
-        "scoper",
-        "dev"
-    ],
-    "homepage": "https://github.com/syntatis/codex-companion#README",
-    "authors": [
-        {
-            "name": "Thoriq Firdaus",
-            "homepage": "https://github.com/tfirdaus",
-            "role": "Developer"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Syntatis\\Codex\\Companion\\": "app/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Syntatis\\Tests\\": [
-                "tests/app/",
-                "tests/phpunit/"
-            ]
-        }
-    },
-    "require": {
-        "php": "^7.4 || ^8.0",
-        "composer-plugin-api": "^2.0",
-        "adbario/php-dot-notation": "^3.3",
-        "doctrine/inflector": "^2.0",
-        "symfony/console": "^5.4 || ^6.0 || ^7.1",
-        "symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
-        "symfony/finder": "^5.4 || ^6.0 || ^7.0",
-        "symfony/options-resolver": "^5.4 || ^6.0 || ^7.0",
-        "symfony/process": "^5.4 || ^6.4 || ^7.0",
-        "syntatis/utils": "^2.1"
-    },
-    "require-dev": {
-        "composer/composer": "^2.8",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
-        "phpcompatibility/php-compatibility": "^9.3",
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.1",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^9.6",
-        "symfony/var-dumper": "^5.4",
-        "syntatis/coding-standard": "^2.0"
-    },
-    "bin": ["bin/codex", "bin/php-scoper", "bin/php-scoper-0.17.5"],
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "phpstan/extension-installer": true
-        },
-        "sort-packages": true
-    },
-    "extra": {
-        "class": "Syntatis\\Codex\\Companion\\Composer\\Plugin"
-    },
-    "scripts": {
-        "phpcs": "phpcs",
-        "phpcs:fix": "phpcbf",
-        "phpstan": "phpstan",
-        "phpunit": "phpunit --no-coverage",
-        "phpunit:coverage": "phpunit"
-    },
-    "non-feature-branches": ["dependabot/*"]
+	"name": "syntatis/codex-companion",
+	"description": "Helpful companion for Codex projects",
+	"type": "composer-plugin",
+	"license": "MIT",
+	"keywords": [
+		"cli",
+		"scoper",
+		"dev"
+	],
+	"homepage": "https://github.com/syntatis/codex-companion#README",
+	"authors": [
+		{
+			"name": "Thoriq Firdaus",
+			"homepage": "https://github.com/tfirdaus",
+			"role": "Developer"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Syntatis\\Codex\\Companion\\": "app/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Syntatis\\Tests\\": [
+				"tests",
+				"tests/app/"
+			]
+		}
+	},
+	"require": {
+		"php": "^7.4 || ^8.0",
+		"composer-plugin-api": "^2.0",
+		"adbario/php-dot-notation": "^3.3",
+		"doctrine/inflector": "^2.0",
+		"symfony/console": "^5.4 || ^6.0 || ^7.1",
+		"symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
+		"symfony/finder": "^5.4 || ^6.0 || ^7.0",
+		"symfony/options-resolver": "^5.4 || ^6.0 || ^7.0",
+		"symfony/process": "^5.4 || ^6.4 || ^7.0",
+		"syntatis/utils": "^2.1"
+	},
+	"require-dev": {
+		"composer/composer": "^2.8",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+		"phpcompatibility/php-compatibility": "^9.3",
+		"phpstan/extension-installer": "^1.4",
+		"phpstan/phpstan": "^2.1",
+		"phpstan/phpstan-deprecation-rules": "^2.0",
+		"phpstan/phpstan-phpunit": "^2.0",
+		"phpstan/phpstan-strict-rules": "^2.0",
+		"phpunit/phpunit": "^9.6",
+		"symfony/var-dumper": "^5.4",
+		"syntatis/coding-standard": "^2.0"
+	},
+	"bin": [
+		"bin/codex",
+		"bin/php-scoper",
+		"bin/php-scoper-0.17.5"
+	],
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true
+		},
+		"sort-packages": true
+	},
+	"extra": {
+		"class": "Syntatis\\Codex\\Companion\\Composer\\Plugin"
+	},
+	"scripts": {
+		"analyze": "phpstan --memory-limit=512M",
+		"format": "phpcbf",
+		"lint": "phpcs",
+		"test": "phpunit --no-coverage",
+		"test:coverage": "phpunit"
+	},
+	"non-feature-branches": [
+		"dependabot/*"
+	]
 }
