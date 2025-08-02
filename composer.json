@@ -1,6 +1,6 @@
 {
 	"name": "syntatis/codex-companion",
-	"description": "Helpful tools for WordPress® extension development",
+	"description": "Companion tools for WordPress® extension development",
 	"type": "composer-plugin",
 	"license": "MIT",
 	"keywords": [
