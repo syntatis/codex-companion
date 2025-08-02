@@ -6,16 +6,17 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = tab
-
-[*.{yml,yaml,neon,neon.dist}]
-indent_style = space
-indent_size = 2
+indent_size = 4
 
 [*.json]
-indent_size = 4
+indent_size = 2
+
+[*.{.md,neon,neon.dist,yml,yaml}]
+indent_style = space
+indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
 
-[{*.txt,wp-config-sample.php}]
+[{*.txt}]
 end_of_line = crlf
