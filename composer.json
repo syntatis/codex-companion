@@ -78,5 +78,9 @@
 	},
 	"non-feature-branches": [
 		"dependabot/*"
-	]
+	],
+	"conflict": {
+		"humbug/php-scoper": "*",
+		"wpify/php-scoper": "*"
+	}
 }
