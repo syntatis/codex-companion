@@ -202,6 +202,15 @@ class InitializeFilesTest extends TestCase
 					use PluginName\Vendor\PluginName\UUID;
 					use PluginName\Vendor\Codex\Hook;
 					use \PluginName\HelloWorld\Plugin;
+
+					add_submenu_page(
+						'options-general.php',
+						__('Plugin Name Settings', 'plugin-name'),
+						__('Plugin Name', 'plugin-name'),
+						'manage_options',
+						'plugin-name',
+						static fn () => include_once PLUGIN_DIR . '/inc/views/setting-page.php',
+					);
 					CONTENT,
 					'expect' => <<<'CONTENT'
 					<?php
@@ -213,6 +222,15 @@ class InitializeFilesTest extends TestCase
 					use AW\Vendor\PluginName\UUID;
 					use AW\Vendor\Codex\Hook;
 					use \Awesome\PluginName\HelloWorld\Plugin;
+
+					add_submenu_page(
+						'options-general.php',
+						__('Awesome Plugin Name Settings', 'awesome-plugin-name'),
+						__('Awesome Plugin Name', 'awesome-plugin-name'),
+						'manage_options',
+						'awesome-plugin-name',
+						static fn () => include_once PLUGIN_DIR . '/inc/views/setting-page.php',
+					);
 					CONTENT,
 				],
 				'foo.js' => [
@@ -345,7 +363,7 @@ class InitializeFilesTest extends TestCase
 					}
 					CONTENT,
 				],
-				'file.css' => [
+				'file.js' => [
 					'origin' => <<<'CONTENT'
 					const $pluginNameContainer = document.querySelector( '#plugin-name-settings' );
 					const $pluginNameWrappres = document.querySelector( '.plugin-name' );
@@ -355,12 +373,18 @@ class InitializeFilesTest extends TestCase
 					const $awesomePluginNameWrappres = document.querySelector( '.awesome-plugin-name' );
 					CONTENT,
 				],
-				'file.js' => [
+				'file.css' => [
 					'origin' => <<<'CONTENT'
 					.plugin-name-foo {
 						color: red;
 					}
 					.pluginNameFoo {
+						color: red;
+					}
+					.foo-plugin-name {
+						color: red;
+					}
+					.foo-plugin-name-bar {
 						color: red;
 					}
 					CONTENT,
@@ -369,6 +393,42 @@ class InitializeFilesTest extends TestCase
 						color: red;
 					}
 					.awesomePluginNameFoo {
+						color: red;
+					}
+					.foo-awesome-plugin-name {
+						color: red;
+					}
+					.foo-awesome-plugin-name-bar {
+						color: red;
+					}
+					CONTENT,
+				],
+				'file.scss' => [
+					'origin' => <<<'CONTENT'
+					.plugin-name-foo {
+						color: red;
+					}
+					.pluginNameFoo {
+						color: red;
+					}
+					.foo-plugin-name {
+						color: red;
+					}
+					.foo-plugin-name-bar {
+						color: red;
+					}
+					CONTENT,
+					'expect' => <<<'CONTENT'
+					.awesome-plugin-name-foo {
+						color: red;
+					}
+					.awesomePluginNameFoo {
+						color: red;
+					}
+					.foo-awesome-plugin-name {
+						color: red;
+					}
+					.foo-awesome-plugin-name-bar {
 						color: red;
 					}
 					CONTENT,
