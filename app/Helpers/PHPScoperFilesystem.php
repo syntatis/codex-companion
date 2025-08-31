@@ -122,7 +122,7 @@ class PHPScoperFilesystem
 
 	public function getBinPath(): string
 	{
-		if (PHP_VERSION_ID <= 80000) {
+		if (PHP_VERSION_ID <= 80100) {
 			return $this->codex->getProjectPath('vendor/bin/php-scoper-0.17.5');
 		}
 
