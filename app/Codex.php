@@ -54,7 +54,7 @@ class Codex
 		$projectPath = $this->projectPath;
 
 		if (! Val::isBlank($path)) {
-			if (Str::startsWith($path, '..') || Path::isAbsolute($path)) {
+			if (Str::startsWith($path, '..') || Str::startsWith($path, '\\') || Path::isAbsolute($path)) {
 				throw new InvalidArgumentException(
 					sprintf('The path "%s" is invalid. The path must be relative to the project path.', $path),
 				);

@@ -78,7 +78,7 @@ class PHPScoperFilesystem
 		$outputPath = $this->outputPath;
 
 		if (! Val::isBlank($path)) {
-			if (Path::isAbsolute($path) || Str::startsWith($path, '..')) {
+			if (Path::isAbsolute($path) || Str::startsWith($path, '..') || Str::startsWith($path, '\\')) {
 				throw new InvalidArgumentException(
 					sprintf('The path appended must be a relative path, "%s" given.', $path),
 				);
@@ -106,7 +106,7 @@ class PHPScoperFilesystem
 		$buildPath = $this->outputPath . '-build-' . $this->hash;
 
 		if (! Val::isBlank($path)) {
-			if (Path::isAbsolute($path) || Str::startsWith($path, '..')) {
+			if (Path::isAbsolute($path) || Str::startsWith($path, '..') || Str::startsWith($path, '\\')) {
 				throw new InvalidArgumentException(
 					sprintf('The path appended must be a relative path, "%s" given.', $path),
 				);
