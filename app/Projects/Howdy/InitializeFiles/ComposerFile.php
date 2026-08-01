@@ -15,6 +15,7 @@ use Syntatis\Utils\Val;
 use function array_filter;
 use function array_map;
 use function array_unique;
+use function array_values;
 use function dot;
 use function file_get_contents;
 use function is_array;
@@ -109,8 +110,22 @@ class ComposerFile implements Dumpable, EditableFile
 			return null;
 		}
 
+		$result = [];
+
 		foreach ($autoloads as $namespace => $dirs) {
-			unset($autoloads[$namespace]);
+			if (! is_string($namespace)) {
+				continue;
+			}
+
+			if (is_array($dirs)) {
+				$dirs = array_values(array_filter($dirs, 'is_string'));
+
+				if ($dirs === []) {
+					continue;
+				}
+			} elseif (! is_string($dirs)) {
+				continue;
+			}
 
 			$newNamespace = preg_replace(
 				'/^' . preg_quote($this->searches['php_namespace'], '/') . '\\\\/',
@@ -118,10 +133,10 @@ class ComposerFile implements Dumpable, EditableFile
 				$namespace,
 			);
 
-			$autoloads[$newNamespace] = $dirs;
+			$result[$newNamespace] = $dirs;
 		}
 
-		return $autoloads;
+		return $result;
 	}
 
 	/** @phpstan-return list<string>|null */
@@ -133,9 +148,8 @@ class ComposerFile implements Dumpable, EditableFile
 			return null;
 		}
 
-		$namespaces = array_filter(
-			array_unique($namespaces),
-			static fn ($namespace) => is_string($namespace),
+		$namespaces = array_unique(
+			array_filter($namespaces, static fn ($namespace): bool => is_string($namespace)),
 		);
 
 		if (! Arr::isList($namespaces)) {

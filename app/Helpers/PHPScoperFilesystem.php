@@ -194,9 +194,13 @@ class PHPScoperFilesystem
 			ARRAY_FILTER_USE_BOTH,
 		);
 		$installDev = $this->codex->getConfig('scoper.install-dev');
-		$installDev = array_filter(
-			is_array($installDev) ? array_unique($installDev) : [],
-			static fn ($v) => is_string($v),
+
+		if (! is_array($installDev)) {
+			return $requireDev;
+		}
+
+		$installDev = array_unique(
+			array_filter($installDev, static fn ($v): bool => is_string($v)),
 		);
 
 		if (! Arr::isList($installDev)) {
@@ -240,14 +244,20 @@ class PHPScoperFilesystem
 
 		$autoloads = $this->codex->getComposer($key);
 
-		if (is_array($autoloads) && ! Val::isBlank($autoloads)) {
-			foreach ($autoloads as $std => $autoload) {
-				$autoloads[$std] = array_map($mapper, is_array($autoload) ? $autoload : [$autoload]);
-			}
-
-			return $autoloads;
+		if (! is_array($autoloads) || Val::isBlank($autoloads)) {
+			return null;
 		}
 
-		return null;
+		$result = [];
+
+		foreach ($autoloads as $std => $autoload) {
+			if (! is_string($std)) {
+				continue;
+			}
+
+			$result[$std] = array_map($mapper, is_array($autoload) ? $autoload : [$autoload]);
+		}
+
+		return $result;
 	}
 }
