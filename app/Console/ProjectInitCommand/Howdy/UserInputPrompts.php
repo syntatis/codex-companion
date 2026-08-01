@@ -19,10 +19,7 @@ use Syntatis\Utils\Val;
 use function array_filter;
 use function array_keys;
 use function count;
-use function in_array;
 use function is_string;
-
-use const ARRAY_FILTER_USE_BOTH;
 
 /** @phpstan-import-type ValidatedItems from InitializeFiles */
 class UserInputPrompts implements Executable
@@ -74,8 +71,7 @@ class UserInputPrompts implements Executable
 					'wp_plugin_name' => $props['wp_plugin_name'] ?? null,
 					'wp_plugin_slug' => $props['wp_plugin_slug'] ?? null,
 				],
-				static fn ($val, $key) => in_array($key, $required, true) && (! is_string($val) || Val::isBlank($val)),
-				ARRAY_FILTER_USE_BOTH,
+				static fn ($val): bool => ! is_string($val) || Val::isBlank($val),
 			),
 		);
 
