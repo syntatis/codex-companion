@@ -52,7 +52,7 @@
 		"phpstan/phpstan-strict-rules": "^2.0",
 		"phpunit/phpunit": "^9.6",
 		"symfony/var-dumper": "^5.4",
-		"syntatis/coding-standard": "^2.0"
+		"syntatis/coding-standard": "^2.1"
 	},
 	"bin": [
 		"bin/codex",
