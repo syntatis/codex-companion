@@ -32,7 +32,7 @@
 	"require": {
 		"php": "^7.4 || ^8.0",
 		"composer-plugin-api": "^2.0",
-		"adbario/php-dot-notation": "^3.3",
+		"adbario/php-dot-notation": "^3.5",
 		"doctrine/inflector": "^2.1",
 		"symfony/console": "^5.4 || ^6.0 || ^7.1",
 		"symfony/filesystem": "^5.4 || ^6.0 || ^7.0",
